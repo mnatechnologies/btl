@@ -4,7 +4,6 @@
 import {ThreeItemGrid} from "@/components/grid/three-items";
 import {Carousel} from "@/components/carousel";
 import AboutSection from "@/components/AboutSection";
-import Footer from "../../commerce/footer";
 import ProductShowcase from "@/components/ProductShowcase";
 
 export default function Home() {
