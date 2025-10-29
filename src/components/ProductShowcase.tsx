@@ -1,12 +1,24 @@
 
 'use client'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 
-const ProductShowcase = () => {
-  const [selectedColor, setSelectedColor] = useState("Black");
+interface ProductShowcaseProps {
+  initialColor?: string;
+}
+
+const ProductShowcase = ({ initialColor }: ProductShowcaseProps) => {
+  const [selectedColor, setSelectedColor] = useState(initialColor || "Black");
   const [selectedSize, setSelectedSize] = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Ensure that when the incoming initialColor changes (e.g., via client nav), the state syncs once
+  useEffect(() => {
+    if (initialColor) {
+      setSelectedColor(initialColor);
+      setCurrentImageIndex(0);
+    }
+  }, [initialColor]);
 
   const colors = [
     { name: "Black", value: "bg-black", available: true },
