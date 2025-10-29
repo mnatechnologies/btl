@@ -90,18 +90,18 @@ const Navigation = () => {
                     </div>
 
                     {/* Mobile menu button */}
-                    <div className="md:hidden">
+                    <div className="md:hidden ">
                         <button
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
                         >
-                            {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                            {isMenuOpen ? <X className="h-5 w-5 cursor-pointer" /> : <Menu className="h-5 w-5 cursor-pointer" />}
                         </button>
                     </div>
                 </div>
 
                 {/* Mobile Navigation */}
                 {isMenuOpen && (
-                    <div className="md:hidden bg-background border-t border-border">
+                    <div className="md:hidden ">
                         <div className="px-2 pt-2 pb-3 space-y-1">
                             <Link href="/public" className="block px-3 py-2 text-brand-charcoal hover:text-brand-grey font-medium">
                                 Home

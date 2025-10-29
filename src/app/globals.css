@@ -350,3 +350,13 @@ html {
 .animate-reveal {
   animation: reveal-image 1s ease-out;
 }
+
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-carousel {
+  animation: marquee 60s linear infinite;
+  will-change: transform;
+}
