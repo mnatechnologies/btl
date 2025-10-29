@@ -45,7 +45,7 @@ const Hero = () => {
                   Built To Last
                 </h1>
 
-                <p className="text-xl text-foreground/80 max-w-lg leading-relaxed animate-fade-in [animation-delay:200ms]">
+                <p className="text-xl text-foreground/80 max-w-lg leading-relaxed animate-fade-in [animation-delay:200ms] gra">
                   Premium quality t-shirts designed for those who value craftsmanship and timeless style.
                 </p>
               </div>
