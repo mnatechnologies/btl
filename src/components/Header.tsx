@@ -10,7 +10,7 @@ const Navigation = () => {
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
     return (
-        <nav className='sticky top-0 w-full bg-gradient-to-tl from-background via-secondary to-background backdrop-blur-md border-b border-accent/20 shadow-sm z-40'>
+        <nav className='sticky top-0 w-full bg-gradient-to-tl from-background via-secondary to-background backdrop-blur-md border-b border-accent/20 shadow-sm z-40 '>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-14 sm:h-16 lg:h-20">
                     {/* Logo */}

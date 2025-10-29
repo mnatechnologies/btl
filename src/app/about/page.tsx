@@ -1,13 +1,13 @@
 const About = () => {
     return (
-        <section id="about" className="py-10 bg-gradient-to-bl from-primary via-secondary to-background section-pattern  mx-auto">
+        <section id="about" className="py-10 bg-gradient-to-bl from-primary via-secondary to-background   mx-auto">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <div className="space-y-12 fade-up">
                     <div className="space-y-6">
                         <h2 className="text-4xl sm:text-5xl font-display font-bold text-brand-charcoal">
                             Our Philosophy
                         </h2>
-                        <p className="text-xl bg-gradient-to-tl from-primary via-brand-charcoal/80 to-muted bg-clip-text text-transparent animate-pulse-slow leading-relaxed max-w-3xl mx-auto">
+                        <p className="text-xl bg-gradient-to-bl from-primary via-brand-charcoal/80 to-muted bg-clip-text text-transparent animate-pulse-slow leading-relaxed max-w-3xl mx-auto">
                             In a world of fast fashion and disposable clothing, we believe in creating
                             pieces that stand the test of time. Every BTL garment is meticulously crafted
                             with premium materials and timeless design.

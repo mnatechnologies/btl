@@ -332,7 +332,13 @@ html {
   mix-blend-mode: overlay;
   pointer-events: none;
   /* You'll need to add a noise.png image to /public/ */
-  background-image: url('/noise.png');
+  background-image: repeating-linear-gradient(
+          45deg,
+          transparent,
+          transparent 2px,
+          rgba(0, 0, 0, 0.03) 2px,
+          rgba(0, 0, 0, 0.03) 4px
+  );
 }
 
 /* 19. Image Reveal Animation */
