@@ -39,7 +39,7 @@ const AboutSection = () => {
               <div className="w-16 h-16 bg-brand-charcoal mx-auto flex items-center justify-center transition-all duration-300 hover:scale-110 hover:rotate-12 hover:shadow-xl cursor-pointer">
                 <div className="w-8 h-8 border-2 border-white"></div>
               </div>
-              <h3 className="text-lg font-medium text-brand-charcoal">Quality</h3>
+              <h3 className="text-lg font-medium text-brand-charcoal">Sustainability</h3>
               <p className="text-brand-grey text-sm leading-relaxed">
                 Ethically sourced materials and responsible manufacturing practices.
               </p>
