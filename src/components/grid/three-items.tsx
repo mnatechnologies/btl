@@ -73,21 +73,21 @@ export function ThreeItemGrid({ onProductClick }: { onProductClick?: (p: Product
       handle: 'essential-tee-black',
       title: 'Essential Tee – Black',
       featuredImage: { url: '/images/black-tshirt-front-flat.jpg' },
-      priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'USD' } },
+      priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'AUD' } },
       color: 'Black'
     },
     {
       handle: 'essential-tee-offwhite',
       title: 'Essential Tee – Off-White',
       featuredImage: { url: '/images/offwhite-tshirt-front-flat-new.jpg' },
-      priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'USD' } },
+      priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'AUD' } },
       color: 'Off-White'
     },
     {
       handle: 'coming soon',
       title: 'Placeholder',
       featuredImage: { url: '/images/btl-logo-white.jpg' },
-      priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'USD' } },
+      priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'AUD' } },
       color: 'Grey'
     }
   ];
