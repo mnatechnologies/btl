@@ -72,24 +72,21 @@ const Navigation = () => {
                 {isMenuOpen && (
                     <div className="md:hidden ">
                         <div className="px-2 pt-2 pb-3 space-y-1">
-                            <Link href="/" className="block px-3 py-2 text-brand-charcoal hover:text-brand-grey font-medium">
+                            <Link href="/" className="block px-3 py-2 text-white hover:text-brand-grey font-medium">
                                 Home
                             </Link>
-                            <Link href="/store" className="block px-3 py-2 text-brand-charcoal hover:text-brand-grey font-medium">
-                                Store
-                            </Link>
-                            <Link href="/about" className="block px-3 py-2 text-brand-charcoal hover:text-brand-grey font-medium">
+                            <Link href="/about" className="block px-3 py-2 text-white hover:text-brand-grey font-medium">
                                 About
                             </Link>
-                            <Link href="/account" className="block px-3 py-2 text-brand-charcoal hover:text-brand-grey font-medium">
+                            <Link href="/account" className="block px-3 py-2 text-white hover:text-brand-grey font-medium">
                                 Account
                             </Link>
-                            <Link href="/cart" className="block px-3 py-2 text-brand-charcoal hover:text-brand-grey font-medium">
+                            <Link href="/cart" className="block px-3 py-2 text-white hover:text-brand-grey font-medium">
                                 Cart
                             </Link>
-                            {/*<a href="#contact" className="block px-3 py-2 text-brand-charcoal hover:text-brand-grey font-medium">*/}
-                            {/*    Contact*/}
-                            {/*</a>*/}
+                            <a href="/contact" className="block px-3 py-2 text-contact hover:text-brand-grey font-medium">
+                                Contact
+                            </a>
                             {/*<div className="px-3 pt-2 space-y-2">*/}
                             {/*    {authState.isAuthenticated ? (*/}
                             {/*        <div className="space-y-2">*/}
