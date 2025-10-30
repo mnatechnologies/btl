@@ -53,7 +53,7 @@ export function Carousel({ onProductClick }: { onProductClick?: (p: ProductClick
   const carouselProducts = [...products, ...products, ...products];
 
   return (
-    <div className="w-full overflow-x-auto pb-6 pt-1 brand-gradient-dark">
+    <div className="w-full overflow-x-hidden pb-6 pt-1 brand-gradient-dark">
       <ul className="flex animate-carousel gap-4">
         {carouselProducts.map((product, i) => {
           const content = (
