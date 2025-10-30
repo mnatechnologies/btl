@@ -9,9 +9,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No items' }, { status: 400 })
     }
 
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-      apiVersion: '2025-10-29.clover',
-      })
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
     const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = items.map((i: any) => ({
       quantity: i.quantity || 1,
