@@ -18,9 +18,9 @@ export function Carousel({ onProductClick }: { onProductClick?: (p: ProductClick
   // Static demo products to reproduce the Next.js Commerce carousel styling
   const products: DemoProduct[] = [
     {
-      handle: 'essential-tee-black',
-      title: 'Essential Tee – Black',
-      featuredImage: { url: '/images/black-tshirt-front-flat.jpg' },
+      handle: 'placeholder',
+      title: 'Placeholder',
+      featuredImage: { url: '/images/btl-logo-white.jpg' },
       priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'AUD' } },
       color: 'Black'
     },
@@ -39,9 +39,9 @@ export function Carousel({ onProductClick }: { onProductClick?: (p: ProductClick
       color: 'Grey'
     },
     {
-      handle: 'essential-tee-white',
-      title: 'Essential Tee – White',
-      featuredImage: { url: '/images/white-tshirt-front-flat.jpg' },
+      handle: 'placeholder2',
+      title: 'Placeholder2',
+      featuredImage: { url: '/images/btl-logo-white.jpg' },
       priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'AUD' } },
       color: 'White'
     },

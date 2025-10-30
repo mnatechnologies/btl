@@ -2,12 +2,14 @@
 'use client'
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import {useCart} from "@/context/CartContext";
 
 interface ProductShowcaseProps {
   initialColor?: string;
 }
 
 const ProductShowcase = ({ initialColor }: ProductShowcaseProps) => {
+  const { addItem } = useCart();
   const [selectedColor, setSelectedColor] = useState(initialColor || "Black");
   const [selectedSize, setSelectedSize] = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -92,7 +94,7 @@ const ProductShowcase = ({ initialColor }: ProductShowcaseProps) => {
       id: "btl-essential-tee",
       name: "Essential Tee",
       description: "Premium organic cotton t-shirt designed for comfort and durability",
-      basePrice: 220.00,
+      basePrice: 220.0,
       images: currentImages,
       variants: [],
       category: "T-Shirts",
@@ -107,14 +109,28 @@ const ProductShowcase = ({ initialColor }: ProductShowcaseProps) => {
       size: selectedSize,
       color: selectedColor,
       sku: `BTL-TEE-${selectedColor.toUpperCase()}-${selectedSize}`,
-      price: 220.00,
+      price: 220.0,
       inventory: 50,
       images: currentImages,
     };
+
+    // Add to cart (price in cents)
+    addItem({
+      id: variant.id,
+      title: `${product.name} — ${selectedColor} / ${selectedSize}`,
+      price: Math.round(variant.price * 100),
+      image: currentImages[0],
+      quantity: 1,
+    });
+
+    console.log(
+      "Added to cart:",
+      `${product.name} — ${selectedColor} / ${selectedSize}`
+    );
   };
 
   return (
-      <section id="shop" className="py-12 bg-gradient-to-tr from-primary/50 ">
+      <section id="shop" className="py-12  ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Product Images */}
@@ -163,15 +179,15 @@ const ProductShowcase = ({ initialColor }: ProductShowcaseProps) => {
             <div className="space-y-6 fade-up">
               <div className="space-y-4">
                 <div className="inline-flex">
-                  <span className="px-4 py-1.5 border border-brand-charcoal bg-brand-off-white text-brand-charcoal text-xs font-semibold uppercase tracking-wider transition-colors hover:bg-brand-charcoal hover:text-white">
+                  <span className="px-4 py-1.5 border border-brand-charcoal  text-white text-xs font-semibold uppercase tracking-wider transition-colors hover:bg-brand-charcoal hover:text-white">
                     New Release
                   </span>
                 </div>
 
-                <h2 className="text-4xl font-display font-bold text-brand-charcoal">
+                <h2 className="text-4xl font-display font-bold text-white">
                   Essential Tee
                 </h2>
-                <p className="text-2xl font-medium text-brand-charcoal">
+                <p className="text-2xl font-medium text-white">
                   $220.00
                 </p>
                 <p className="text-brand-grey leading-relaxed">
@@ -183,7 +199,7 @@ const ProductShowcase = ({ initialColor }: ProductShowcaseProps) => {
 
               {/* Color Selection */}
               <div className="space-y-4">
-                <h3 className="text-sm font-medium text-brand-charcoal uppercase tracking-wider">
+                <h3 className="text-sm font-medium text-white uppercase tracking-wider">
                   Color
                 </h3>
                 <div className="flex gap-3">
@@ -205,7 +221,7 @@ const ProductShowcase = ({ initialColor }: ProductShowcaseProps) => {
 
               {/* Size Selection */}
               <div className="space-y-4">
-                <h3 className="text-sm font-medium text-brand-charcoal uppercase tracking-wider">
+                <h3 className="text-sm font-medium text-white uppercase tracking-wider">
                   Size
                 </h3>
                 <div className="grid grid-cols-6 gap-2">
@@ -217,7 +233,7 @@ const ProductShowcase = ({ initialColor }: ProductShowcaseProps) => {
                           px-4 py-2 border ${
                               selectedSize === size
                                   ? "bg-brand-charcoal text-white border-brand-charcoal"
-                                  : "bg-transparent text-brand-charcoal border-border hover:border-brand-charcoal"
+                                  : "bg-transparent text-white border-border hover:border-brand-charcoal"
                           }`}
                       >
                         {size}
@@ -229,19 +245,19 @@ const ProductShowcase = ({ initialColor }: ProductShowcaseProps) => {
               {/* Add to Cart */}
               <div className="space-y-4 pt-4">
                 <button
-                    className="w-full py-3 px-6 bg-brand-charcoal text-white hover:bg-opacity-90 transition-colors hover-lift"
+                    className="w-full py-3 px-6 bg-brand-charcoal border border-white text-white hover:bg-opacity-90 transition-colors hover-lift"
                     onClick={handleAddToCart}
                 >
                   Add to Cart - $220.00
                 </button>
-                <button className="w-full py-3 px-6 border border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal hover:text-white transition-colors">
+                <button className="w-full py-3 px-6 border border-white text-white hover:bg-brand-charcoal hover:text-white transition-colors">
                   Size Guide
                 </button>
               </div>
 
               {/* Product Features */}
               <div className="space-y-4 pt-8 border-t border-border">
-                <h3 className="text-sm font-medium text-brand-charcoal uppercase tracking-wider">
+                <h3 className="text-sm font-medium text-brand-grey uppercase tracking-wider">
                   Features
                 </h3>
                 <ul className="space-y-2 text-brand-grey">

@@ -55,7 +55,7 @@ function ThreeItemGridItem({
         </button>
       ) : (
         <Link
-          className="relative block aspect-square h-full w-full "
+          className="relative block aspect-square h-full w-full  "
           href={{ pathname: `/product/${item.handle}`, query: { color: item.color } }}
           prefetch={true}
         >
@@ -84,9 +84,9 @@ export function ThreeItemGrid({ onProductClick }: { onProductClick?: (p: Product
       color: 'Off-White'
     },
     {
-      handle: 'essential-tee-grey',
-      title: 'Essential Tee – Grey',
-      featuredImage: { url: '/images/grey-tshirt-front-flat.jpg' },
+      handle: 'coming soon',
+      title: 'Placeholder',
+      featuredImage: { url: '/images/btl-logo-white.jpg' },
       priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'USD' } },
       color: 'Grey'
     }
@@ -95,7 +95,7 @@ export function ThreeItemGrid({ onProductClick }: { onProductClick?: (p: Product
   const [firstProduct, secondProduct, thirdProduct] = homepageItems;
 
   return (
-    <section className="mx-auto brand-gradient-dark grid max-w-(--breakpoint-2xl) gap-4 px-4 pb-4  md:grid-cols-6">
+    <section className="mx-auto brand-gradient-dark grid max-w-none w-[95vw] sm:w-[90vw] lg:w-[85vw] xl:w-[80vw] 2xl:w-[75vw] gap-4 px-4 pb-4  md:grid-cols-6">
       {/* Hero text integrated fluidly within the grid */}
     {/*  <div className="md:col-span-6 flex flex-col items-center justify-center py-6">*/}
 

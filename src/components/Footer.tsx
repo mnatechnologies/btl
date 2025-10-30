@@ -4,7 +4,7 @@ import Image from "next/image";
 
 const Footer = () => {
   return (
-    <footer className="brand-gradient-dark text-primary-foreground pt-6 pb-6">
+    <footer className="brand-black text-primary-foreground pt-6 pb-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-center items-center mx-auto">
           {/* Brand - Logo and text side by side */}

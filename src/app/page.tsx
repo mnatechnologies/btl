@@ -61,8 +61,8 @@ export default function Home() {
           />
 
           {/* Modal content */}
-          <div className="relative z-10 w-full max-w-6xl max-h-[90vh] overflow-y-auto rounded-lg bg-background p-4 shadow-xl">
-            <div className="flex justify-end bg-gradient-to-tr from-primary via-secondary to-background">
+          <div className="relative z-10 max-w-none w-[95vw] sm:w-[90vw] lg:w-[85vw] xl:w-[80vw] 2xl:w-[75vw] max-h-[90vh] overflow-y-auto rounded-lg bg-neutral-900 p-4 sm:p-6 lg:p-8 shadow-xl">
+            <div className="flex justify-end bg-neutral-900 ">
               <button
                 aria-label="Close"
                 className="rounded p-2 text-foreground/70 hover:text-foreground"
