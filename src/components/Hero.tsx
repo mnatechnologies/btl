@@ -32,7 +32,7 @@ const Hero = () => {
         {/* Shop Now Button - Bottom Right (rightmost edge) */}
         <Link 
           href="/store"
-          className="absolute border  bottom-8 right-4 sm:right-6 lg:right-8 text-white text-xl sm:text-2xl lg:text-3xl font-medium hover:text-white/80 transition-all duration-300"
+          className="absolute border p-2 bottom-8 right-4 sm:right-6 lg:right-8 text-white text-xl sm:text-2xl lg:text-3xl font-medium hover:text-white/80 transition-all duration-300"
         >
           Shop Now
         </Link>
