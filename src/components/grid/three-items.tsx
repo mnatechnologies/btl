@@ -95,24 +95,20 @@ export function ThreeItemGrid({ onProductClick }: { onProductClick?: (p: Product
   const [firstProduct, secondProduct, thirdProduct] = homepageItems;
 
   return (
-    <section className="mx-auto brand-gradient-dark grid max-w-none w-[95vw] sm:w-[90vw] lg:w-[85vw] xl:w-[80vw] 2xl:w-[75vw] gap-4 px-4 pb-4  md:grid-cols-6">
-      {/* Hero text integrated fluidly within the grid */}
-    {/*  <div className="md:col-span-6 flex flex-col items-center justify-center py-6">*/}
-
-    {/*    <div className="space-y-3">*/}
-    {/*      <h1 className="text-4xl  sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-display font-bold leading-tight*/}
-    {/*bg-gradient-to-br from-brand-charcoal via-accent to-brand-grey bg-clip-text text-transparent animate-fade-in">*/}
-    {/*        Built To Last*/}
-    {/*      </h1>*/}
-
-    {/*      <p className="text-xl text-foreground/80 max-w-lg leading-relaxed animate-fade-in [animation-delay:200ms] gra">*/}
-    {/*        Premium quality t-shirts designed for those who value craftsmanship and timeless style.*/}
-    {/*      </p>*/}
-    {/*    </div>*/}
-    {/*  </div>*/}
-      <ThreeItemGridItem size="full" item={firstProduct} priority={true} onProductClick={onProductClick} />
-      <ThreeItemGridItem size="half" item={secondProduct} priority={true} onProductClick={onProductClick} />
-      <ThreeItemGridItem size="half" item={thirdProduct} onProductClick={onProductClick} />
+    <section className="mx-auto mt-4 max-w-none w-[95vw] sm:w-[90vw] lg:w-[85vw] xl:w-[80vw] 2xl:w-[75vw] px-4 pb-4">
+      {/* Heading */}
+      <div className="py-6 text-left">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-white">
+          Our Favourites
+        </h2>
+      </div>
+      
+      {/* Grid */}
+      <div className="grid gap-4 md:grid-cols-6">
+        <ThreeItemGridItem size="full" item={firstProduct} priority={true} onProductClick={onProductClick} />
+        <ThreeItemGridItem size="half" item={secondProduct} priority={true} onProductClick={onProductClick} />
+        <ThreeItemGridItem size="half" item={thirdProduct} onProductClick={onProductClick} />
+      </div>
     </section>
   );
 }
