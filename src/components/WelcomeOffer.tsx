@@ -16,7 +16,7 @@ export default function WelcomeOffer() {
         const sevenDays = 7 * 24 * 60 * 60 * 1000;
         if (Date.now() - dismissedAt < sevenDays) setVisible(false);
         }
-    } catch (_) {
+    } catch (err) {
       if (process.env.NODE_ENV !== 'production') {
         console.debug('WelcomeOffer localStorage access failed', err);
       }
@@ -29,7 +29,7 @@ export default function WelcomeOffer() {
 
     try {
       localStorage.setItem(LS_KEY, String(Date.now()));
-    } catch (_){
+    } catch (err){
       if (process.env.NODE_ENV !== 'production') {
         console.debug('WelcomeOffer localStorage access failed', err);
       }
