@@ -72,7 +72,7 @@ export default function ContactPage() {
         <button
           type="submit"
           disabled={loading}
-          className="rounded bg-black text-white px-4 py-2 disabled:opacity-60"
+          className="cursor-pointer rounded bg-black text-white px-4 py-2 disabled:opacity-60"
         >
           {loading ? "Sending…" : "Send message"}
         </button>

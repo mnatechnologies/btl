@@ -245,12 +245,12 @@ const ProductShowcase = ({ initialColor }: ProductShowcaseProps) => {
               {/* Add to Cart */}
               <div className="space-y-4 pt-4">
                 <button
-                    className="w-full py-3 px-6 bg-brand-charcoal border border-white text-white hover:bg-opacity-90 transition-colors hover-lift"
+                    className=" cursor-pointer w-full py-3 px-6 bg-brand-charcoal border border-white text-white hover:bg-opacity-90 transition-colors hover-lift"
                     onClick={handleAddToCart}
                 >
                   Add to Cart - $220.00
                 </button>
-                <button className="w-full py-3 px-6 border border-white text-white hover:bg-brand-charcoal hover:text-white transition-colors">
+                <button className="cursor-pointer w-full py-3 px-6 border border-white text-white hover:bg-brand-charcoal hover:text-white transition-colors">
                   Size Guide
                 </button>
               </div>

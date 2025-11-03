@@ -34,13 +34,18 @@ export default function CartPage() {
     }
   }
 
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    void checkout()
+  }
+
   return (
     <main className="max-w-4xl mx-auto px-4 py-8">
       <h1 className="text-2xl font-semibold mb-6">Your Cart</h1>
       {!hasItems ? (
         <p>Your cart is empty.</p>
       ) : (
-        <div className="space-y-6">
+        <form onSubmit={onSubmit} className="space-y-6">
           <ul className="divide-y divide-border rounded-md border border-border">
             {items.map((item) => (
               <li key={item.id} className="p-4 flex items-center gap-4">
@@ -58,16 +63,16 @@ export default function CartPage() {
                     min={1}
                     value={item.quantity}
                     onChange={(e) => updateQty(item.id, parseInt(e.target.value || '1'))}
-                    className="w-16 border rounded px-2 py-1"
+                    className=" cursor-pointer w-16 border rounded px-2 py-1"
                   />
-                  <button onClick={() => removeItem(item.id)} className="text-red-600 hover:underline">Remove</button>
+                  <button type="button" onClick={() => removeItem(item.id)} className=" cursor-pointer text-red-600 hover:underline">Remove</button>
                 </div>
               </li>
             ))}
           </ul>
 
           <div className="flex items-center justify-between">
-            <button onClick={clear} className="text-sm text-muted-foreground hover:underline">Clear cart</button>
+            <button type="button" onClick={clear} className="text-sm cursor-pointer text-muted-foreground hover:underline">Clear cart</button>
             <div className="text-lg font-semibold">Total: ${totalFormatted}</div>
           </div>
 
@@ -79,17 +84,18 @@ export default function CartPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full border rounded px-3 py-2"
+              required
             />
           </div>
 
           <button
-            onClick={checkout}
+            type="submit"
             disabled={!hasItems || loading}
-            className="w-full rounded bg-black text-white py-3 disabled:opacity-60"
+            className=" cursor-pointer w-full rounded bg-black text-white py-3 disabled:opacity-60"
           >
             {loading ? 'Preparing checkout…' : 'Checkout'}
           </button>
-        </div>
+        </form>
       )}
     </main>
   )

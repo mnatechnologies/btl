@@ -42,10 +42,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const addItem = (item: CartItem) => {
     setItems((prev) => {
       const existing = prev.find((p) => p.id === item.id);
-      if (existing) {
-        return prev.map((p) => (p.id === item.id ? { ...p, quantity: p.quantity + item.quantity } : p));
+      const next = existing
+        ? prev.map((p) => (p.id === item.id ? { ...p, quantity: p.quantity + item.quantity } : p))
+        : [...prev, item];
+      // Fire a lightweight client-side event so UI can show feedback (toast)
+      if (typeof window !== 'undefined') {
+        try {
+          window.dispatchEvent(new CustomEvent('cart:add', { detail: { item } }));
+        } catch {}
       }
-      return [...prev, item];
+      return next;
     });
   };
 

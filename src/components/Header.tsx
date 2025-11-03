@@ -1,16 +1,34 @@
 'use client'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Menu, X, UserRound, } from "lucide-react";
 import CartButton from "./CartButton";
 import CartDrawer from "./CartDrawer";
 import { SiTiktok, SiInstagram } from '@icons-pack/react-simple-icons';
+import { supabase } from '@/lib/supabaseClient';
 
 const Navigation = () => {
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isCartOpen, setIsCartOpen] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    // Determine auth state to set dynamic hover text for account icon
+    useEffect(() => {
+        let mounted = true;
+        supabase.auth.getUser().then(({ data }) => {
+            if (!mounted) return;
+            setIsLoggedIn(!!data.user);
+        });
+        const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+            setIsLoggedIn(!!session?.user);
+        });
+        return () => {
+            mounted = false;
+            sub.subscription.unsubscribe();
+        };
+    }, []);
 
     return (
         <>
@@ -53,7 +71,12 @@ const Navigation = () => {
                                 <SiTiktok className="h-5 w-5" />
                             </Link>
                         </div>
-                        <Link href="/account" className="text-white hover:text-brand-grey transition-colors font-medium">
+                        <Link
+                            href="/account"
+                            className="text-white hover:text-brand-grey transition-colors font-medium"
+                            title={isLoggedIn ? 'My account' : 'Log in'}
+                            aria-label={isLoggedIn ? 'My account' : 'Log in'}
+                        >
                             <UserRound className="h-5 w-5" />
                         </Link>
                         <CartButton onClick={() => setIsCartOpen(true)} />

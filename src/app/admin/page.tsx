@@ -77,7 +77,7 @@ export default function AdminPage() {
                 </div>
                 <div>
                   <label className="block text-xs text-muted-foreground">Status</label>
-                  <select defaultValue={o.status || 'created'} id={`st-${o.id}`} className="w-full border rounded px-2 py-1">
+                  <select defaultValue={o.status || 'created'} id={`st-${o.id}`} className="w-full border rounded px-2 py-1 bg-black text-white">
                     <option value="created">created</option>
                     <option value="paid">paid</option>
                     <option value="fulfilled">fulfilled</option>
@@ -92,7 +92,7 @@ export default function AdminPage() {
                       const st = (document.getElementById(`st-${o.id}`) as HTMLSelectElement)?.value
                       updateTracking(o.id, tn, st)
                     }}
-                    className="w-full rounded bg-black text-white py-2"
+                    className="w-full rounded bg-black text-white py-2 cursor-pointer"
                   >
                     Save
                   </button>

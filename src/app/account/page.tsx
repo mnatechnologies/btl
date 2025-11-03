@@ -1,12 +1,11 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
-import { useSearchParams } from 'next/navigation'
-import { useCart } from '@/context/CartContext'
 
 export default function AccountPage() {
   const [email, setEmail] = useState('')
   const [sent, setSent] = useState(false)
+  const [sending, setSending] = useState(false)
   const [userEmail, setUserEmail] = useState<string | null>(null)
   const [orders, setOrders] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
@@ -48,6 +47,8 @@ export default function AccountPage() {
   }
 
   const sendMagicLink = async () => {
+    if (!email) return
+    setSending(true)
     try {
       const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.href } })
       if (error) throw error
@@ -55,7 +56,14 @@ export default function AccountPage() {
     } catch (e) {
       console.error(e)
       alert('Failed to send magic link. Check your email and try again.')
+    } finally {
+      setSending(false)
     }
+  }
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    void sendMagicLink()
   }
 
   const signOut = async () => {
@@ -69,7 +77,7 @@ export default function AccountPage() {
       <h1 className="text-2xl font-semibold mb-6">Your Account</h1>
 
       {!userEmail ? (
-        <div className="space-y-4 max-w-md">
+        <form onSubmit={onSubmit} className="space-y-4 max-w-md">
           <p>Sign in with your email to view orders and tracking.</p>
           <input
             type="email"
@@ -77,10 +85,13 @@ export default function AccountPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full border rounded px-3 py-2"
+            required
           />
-          <button onClick={sendMagicLink} className="rounded bg-black text-white px-4 py-2">Send magic link</button>
-          {sent && <p className="text-sm text-green-600">Magic link sent. Check your inbox.</p>}
-        </div>
+          <button type="submit" disabled={sending} className="rounded bg-black text-white px-4 py-2 disabled:opacity-60">
+            {sending ? 'Sending…' : 'Send magic link'}
+          </button>
+          {sent && !sending && <p className="text-sm text-green-600">Magic link sent. Check your inbox.</p>}
+        </form>
       ) : (
         <div className="space-y-6">
           <div className="flex items-center justify-between">

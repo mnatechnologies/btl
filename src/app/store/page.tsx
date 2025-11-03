@@ -74,7 +74,7 @@ const products: DemoProduct[] = [
 const Store = () => {
   return (
     <div className="min-h-screen">
-      <main className="min-h-screen py-8">
+      <main className="min-h-screen pb-8">
         {/* Page Heading */}
         <div className="py-6 text-center">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold text-white">
