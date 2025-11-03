@@ -6,11 +6,11 @@ import {SiTiktok, SiInstagram } from "@icons-pack/react-simple-icons";
 
 const Footer = () => {
   return (
-    <footer className="brand-black text-primary-foreground pt-10 pb-10">
+    <footer className=" bg-black brand-black text-primary-foreground  pb-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Top: brand blurb */}
         <div className="flex justify-center items-center mx-auto">
-          <div className="flex flex-col items-center text-center space-y-2 max-w-2xl mx-auto pb-8">
+          <div className="flex flex-col items-center text-center space-y-2 max-w-2xl mx-auto py-4">
             <Image
               src={'/images/logo-footer.png'}
               alt="Built To Last"

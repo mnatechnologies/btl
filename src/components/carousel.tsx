@@ -53,8 +53,12 @@ export function Carousel({ onProductClick }: { onProductClick?: (p: ProductClick
   const carouselProducts = [...products, ...products, ...products];
 
   return (
-    <div className="w-full overflow-x-hidden pb-6 pt-1 brand-gradient-dark">
-      <ul className="flex animate-carousel gap-4">
+    <section className="w-full overflow-x-hidden pb-6 ">
+        <div className=' mx-auto mt-4 max-w-none w-[95vw] sm:w-[90vw] lg:w-[85vw] xl:w-[80vw] 2xl:w-[75vw] px-4 pb-4 text-left'>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-white"
+            >PLACERHOLDER TEXT</h2>
+        </div>
+      <ul className="flex animate-carousel">
         {carouselProducts.map((product, i) => {
           const content = (
             <GridTileImage
@@ -96,6 +100,6 @@ export function Carousel({ onProductClick }: { onProductClick?: (p: ProductClick
           );
         })}
       </ul>
-    </div>
+    </section>
   );
 }

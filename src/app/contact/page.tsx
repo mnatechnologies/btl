@@ -32,57 +32,59 @@ export default function ContactPage() {
   }
 
   return (
-    <main className=" bg-black max-w-2xl mx-auto px-4 py-10">
-      <h1 className="text-3xl font-semibold mb-6">Contact Us</h1>
-      <p className="text-muted-foreground mb-8">Have a question about an order or our products? Send us a message and we'll get back to you.</p>
+    <main className=" bg-black">
+        <div className="max-w-2xl py-4 py-10 mx-auto">
+          <h1 className="text-3xl font-semibold mb-6">Contact Us</h1>
+          <p className="text-muted-foreground mb-8">Have a question about an order or our products? Send us a message and we'll get back to you.</p>
 
-      <form onSubmit={onSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm mb-1">Name</label>
-          <input
-            type="text"
-            required
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full border rounded px-3 py-2"
-            placeholder="Your name"
-          />
-        </div>
-        <div>
-          <label className="block text-sm mb-1">Email</label>
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full border rounded px-3 py-2"
-            placeholder="you@example.com"
-          />
-        </div>
-        <div>
-          <label className="block text-sm mb-1">Message</label>
-          <textarea
-            required
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            className="w-full border rounded px-3 py-2 min-h-[140px]"
-            placeholder="How can we help?"
-          />
-        </div>
-        <button
-          type="submit"
-          disabled={loading}
-          className="cursor-pointer rounded bg-black text-white px-4 py-2 disabled:opacity-60"
-        >
-          {loading ? "Sending…" : "Send message"}
-        </button>
-      </form>
+          <form onSubmit={onSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm mb-1">Name</label>
+              <input
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full border  px-3 py-2"
+                placeholder="Your name"
+              />
+            </div>
+            <div>
+              <label className="block text-sm mb-1">Email</label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full border  px-3 py-2"
+                placeholder="you@example.com"
+              />
+            </div>
+            <div>
+              <label className="block text-sm mb-1">Message</label>
+              <textarea
+                required
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                className="w-full border px-3 py-2 min-h-[140px]"
+                placeholder="How can we help?"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="cursor-pointer border  rounded bg-black text-white px-4 py-2 disabled:opacity-60"
+            >
+              {loading ? "Sending…" : "Send message"}
+            </button>
+          </form>
 
-      {status && (
-        <div className={`mt-4 text-sm ${status.ok ? "text-green-600" : "text-red-600"}`}>
-          {status.msg}
+          {status && (
+            <div className={`mt-4 text-sm ${status.ok ? "text-green-600" : "text-red-600"}`}>
+              {status.msg}
+            </div>
+          )}
         </div>
-      )}
     </main>
   )
 }
