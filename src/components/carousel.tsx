@@ -27,14 +27,14 @@ export function Carousel({ onProductClick }: { onProductClick?: (p: ProductClick
     {
       handle: 'essential-tee-offwhite',
       title: 'Essential Tee – Off-White',
-      featuredImage: { url: '/images/offwhite-tshirt-front-flat-new.jpg' },
+      featuredImage: { url: '/images/Flat lay retouched/offwhite-shirt.jpg' },
       priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'AUD' } },
       color: 'Off-White'
     },
     {
       handle: 'essential-tee-grey',
       title: 'Essential Tee – Grey',
-      featuredImage: { url: '/images/grey-tshirt-front-flat.jpg' },
+      featuredImage: { url: '/images/Flat lay retouched/grey-shirt-front.jpg' },
       priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'AUD' } },
       color: 'Grey'
     },

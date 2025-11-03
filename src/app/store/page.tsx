@@ -15,28 +15,28 @@ const products: DemoProduct[] = [
   {
     handle: 'essential-tee-black',
     title: 'Essential Tee – Black',
-    featuredImage: { url: '/images/black-tshirt-front-flat.jpg' },
+    featuredImage: { url: '/images/Flat lay retouched/black-shirt-front.jpg' },
     priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'AUD' } },
     color: 'Black'
   },
   {
     handle: 'essential-tee-offwhite',
     title: 'Essential Tee – Off-White',
-    featuredImage: { url: '/images/offwhite-tshirt-front-flat-new.jpg' },
+    featuredImage: { url: '/images/Flat lay retouched/offwhite-shirt.jpg' },
     priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'AUD' } },
     color: 'Off-White'
   },
   {
     handle: 'essential-tee-grey',
     title: 'Essential Tee – Grey',
-    featuredImage: { url: '/images/grey-tshirt-front-flat.jpg' },
+    featuredImage: { url: '/images/Flat lay retouched/grey-shirt-front.jpg' },
     priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'AUD' } },
     color: 'Grey'
   },
   {
     handle: 'essential-tee-white',
     title: 'Essential Tee – White',
-    featuredImage: { url: '/images/white-tshirt-front-flat.jpg' },
+    featuredImage: { url: '/images/Flat lay retouched/white-shirt-front.jpg' },
     priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'AUD' } },
     color: 'White'
   },
