@@ -62,7 +62,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             <h2 className="text-xl font-semibold">Your Cart</h2>
             <button
               onClick={onClose}
-              className="text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+              className="cursor-pointer text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
             >
               <X className="h-6 w-6" />
             </button>
@@ -95,7 +95,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                         />
                         <button 
                           onClick={() => removeItem(item.id)} 
-                          className="text-xs text-red-600 hover:underline"
+                          className=" cursor-pointer text-xs text-red-600 hover:underline"
                         >
                           Remove
                         </button>
@@ -107,7 +107,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 <div className="flex items-center justify-between pt-4 border-t border-neutral-200 dark:border-neutral-800">
                   <button 
                     onClick={clear} 
-                    className="text-sm text-neutral-500 dark:text-neutral-400 hover:underline"
+                    className="text-sm cursor-pointer text-neutral-500 dark:text-neutral-400 hover:underline"
                   >
                     Clear cart
                   </button>
@@ -136,7 +136,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               <button
                 onClick={checkout}
                 disabled={!hasItems || loading}
-                className="w-full rounded bg-black dark:bg-white text-white dark:text-black py-3 disabled:opacity-60 font-medium"
+                className="w-full cursor-pointer rounded bg-black dark:bg-white text-white dark:text-black py-3 disabled:opacity-60 font-medium"
               >
                 {loading ? 'Preparing checkout…' : 'Checkout'}
               </button>

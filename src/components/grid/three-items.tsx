@@ -56,7 +56,7 @@ function ThreeItemGridItem({
       ) : (
         <Link
           className="relative block aspect-square h-full w-full  "
-          href={{ pathname: `/product/${item.handle}`, query: { color: item.color } }}
+          href={`/product/${item.handle}?color=${item.color}`}
           prefetch={true}
         >
           {content}

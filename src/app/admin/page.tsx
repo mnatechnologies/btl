@@ -2,14 +2,31 @@
 import { useEffect, useState } from 'react'
 
 export default function AdminPage() {
-  const [token, setToken] = useState('')
-  const [authed, setAuthed] = useState(false)
-  const [orders, setOrders] = useState<any[]>([])
-  const [loading, setLoading] = useState(false)
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+    const [token, setToken] = useState('')
+    const [authed, setAuthed] = useState(false)
+    const [orders, setOrders] = useState<any[]>([])
+    const [loading, setLoading] = useState(false)
 
-  const authenticate = () => setAuthed(Boolean(token))
+
+    const authenticate = async () => {
+        const res = await fetch('/api/admin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        })
+        const data = await res.json()
+        if (res.ok) {
+            setToken(data.token)
+            setAuthed(true)
+        } else {
+            alert(data.error || 'Authentication failed')
+        }
+    }
 
   useEffect(() => {
+      console.log(authed, token)
     if (!authed) return
     ;(async () => {
       setLoading(true)
@@ -35,16 +52,36 @@ export default function AdminPage() {
     setOrders((prev) => prev.map((o) => (o.id === id ? data.order : o)))
   }
 
-  if (!authed) {
-    return (
-      <main className="max-w-md mx-auto px-4 py-8 space-y-4">
-        <h1 className="text-2xl font-semibold">Admin</h1>
-        <p className="text-sm text-muted-foreground">Enter your admin token to view orders.</p>
-        <input value={token} onChange={(e) => setToken(e.target.value)} className="w-full border rounded px-3 py-2" placeholder="Admin token" />
-        <button onClick={authenticate} className="rounded bg-black text-white px-4 py-2">Continue</button>
-      </main>
-    )
-  }
+    if (!authed) {
+        return (
+            <main className="max-w-md mx-auto px-4 py-8 space-y-4">
+                <h1 className="text-2xl font-semibold">Admin Login</h1>
+                <div className="space-y-3">
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Username</label>
+                        <input
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            className="w-full border rounded px-3 py-2"
+                            placeholder="Enter username"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Password</label>
+                        <input
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="w-full border rounded px-3 py-2"
+                            placeholder="Enter password"
+                            onKeyDown={(e) => e.key === 'Enter' && authenticate()}
+                        />
+                    </div>
+                </div>
+                <button onClick={authenticate} className="w-full rounded bg-black text-white px-4 py-2">Login</button>
+            </main>
+        )
+    }
 
   return (
     <main className="max-w-5xl mx-auto px-4 py-8">

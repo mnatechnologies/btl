@@ -177,7 +177,7 @@ All colors MUST be HSL.
   body {
     /*background-color: hsl(var(--background));*/
     color: hsl(var(--background));
-    font-family: "Playfair Display", serif;
+    font-family: "Cardo", serif;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 

@@ -3,13 +3,13 @@ import Image from 'next/image';
 
 const Hero = () => {
   return (
-    <section className="relative w-full h-[60vh] sm:h-[70vh] lg:h-[80vh] overflow-hidden">
+    <section className="relative w-full h-[45vh] sm:h-[50vh] lg:h-[55vh] overflow-hidden bg-black">
       {/* Background Image */}
       <Image
-        src="/images/hiclipart.com.png"
+        src="/images/hero.png"
         alt="Hero background"
         fill
-        className="object-contain object-center"
+        className="object-cover " style={{objectPosition: 'center 13%'}}
         priority
       />
       
@@ -19,12 +19,12 @@ const Hero = () => {
       {/* Content Container */}
       <div className="relative h-full w-full">
         {/* Text - Bottom Left (leftmost on larger viewports) */}
-        <div className="absolute bottom-8 left-4 sm:left-6 lg:left-8 space-y-2 max-w-md lg:max-w-lg">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold leading-tight text-white">
+        <div className="absolute bottom-24 sm:bottom-32 lg:bottom-40 left-4 sm:left-6 lg:left-8 space-y-3 sm:space-y-4 max-w-md lg:max-w-2xl">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold leading-tight text-white">
             Built To Last
           </h1>
           
-          <p className="text-sm sm:text-base text-white/90 leading-relaxed">
+          <p className="text-base sm:text-lg md:text-xl text-white/90 leading-relaxed">
             Premium quality essentials designed for those who value craftsmanship and timeless style.
           </p>
         </div>
