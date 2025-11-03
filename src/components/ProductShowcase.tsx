@@ -2,6 +2,7 @@
 import {useState, useEffect} from "react";
 import Image from "next/image";
 import {useCart} from "@/context/CartContext";
+import {useRouter} from "next/navigation";
 
 interface ProductShowcaseProps {
     initialColor?: string;
@@ -9,6 +10,7 @@ interface ProductShowcaseProps {
 
 const ProductShowcase = ({initialColor}: ProductShowcaseProps) => {
     const {addItem} = useCart();
+    const router = useRouter();
     const [selectedColor, setSelectedColor] = useState(initialColor || "Black");
     const [selectedSize, setSelectedSize] = useState("");
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -78,6 +80,10 @@ const ProductShowcase = ({initialColor}: ProductShowcaseProps) => {
         console.log("Color changed to", colorName)
         setSelectedColor(colorName);
         setCurrentImageIndex(0);
+
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('color', colorName);
+        router.replace(currentUrl.pathname + currentUrl.search);
     };
 
     const handleAddToCart = () => {

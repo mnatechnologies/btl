@@ -3,13 +3,13 @@ import Image from 'next/image';
 
 const Hero = () => {
   return (
-    <section className="relative w-full h-[60vh] sm:h-[70vh] lg:h-[70vh] overflow-hidden bg-black">
+    <section className="relative w-full h-[45vh] sm:h-[50vh] lg:h-[55vh] overflow-hidden bg-black">
       {/* Background Image */}
       <Image
         src="/images/hero.png"
         alt="Hero background"
         fill
-        className="object-contain object-center"
+        className="object-cover " style={{objectPosition: 'center 13%'}}
         priority
       />
       

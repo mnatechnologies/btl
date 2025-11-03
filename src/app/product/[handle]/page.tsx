@@ -4,12 +4,17 @@ export default async function ProductPage({
   params,
   searchParams
 }: {
-  params:  { handle: string };
-  searchParams: { color?: string };
+  params:  Promise<{ handle: string }>;
+  searchParams: Promise<{ color?: string }>;
 }) {
-  const { handle } = params;
-  const initialColor = await typeof searchParams?.color === 'string' ? searchParams.color : undefined;
-  const title = await typeof handle === 'string' ? handle.replace(/-/g, ' ') : 'Product';
+
+  const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
+
+    const { handle } = resolvedParams;
+    const initialColor = typeof resolvedSearchParams?.color === 'string'
+        ? resolvedSearchParams.color
+        : undefined;
 
   return (
     <main className="max-w-(--breakpoint-2xl) mx-auto px-4 brand">
