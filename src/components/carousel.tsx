@@ -86,7 +86,7 @@ export function Carousel({ onProductClick }: { onProductClick?: (p: ProductClick
                 </button>
               ) : (
                 <Link
-                  href={{ pathname: `/product/${product.handle}`, query: { color: product.color } }}
+                  href={`/product/${product.handle}?color=${product.color}`}
                   className="relative h-full w-full"
                 >
                   {content}

@@ -105,8 +105,8 @@ const Store = () => {
               );
 
               const href = item.handle.startsWith('coming-soon')
-                ? { pathname: '/store' }
-                : { pathname: `/product/${item.handle}`, query: { color: item.color } };
+                ? '/store'
+                : `/product/${item.handle}?color=${item.color}`;
 
               return (
                 <div key={item.handle} className="md:col-span-2 md:row-span-1">
