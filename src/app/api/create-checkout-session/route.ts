@@ -5,6 +5,7 @@ import { supabaseAdmin } from '@/lib/supabaseServer'
 export async function POST(req: NextRequest) {
   try {
     const { items, email } = await req.json()
+      console.log(items)
     if (!Array.isArray(items) || items.length === 0) {
       return NextResponse.json({ error: 'No items' }, { status: 400 })
     }

@@ -1,77 +1,41 @@
 import Link from 'next/link';
 import { GridTileImage } from '@/components/grid/tile';
+import { getAllProducts } from '@/lib/products';
 
-// Minimal local Product shape for styling/demo purposes only (no integration)
-// Mirrors the structure used on the home page grid
-type DemoProduct = {
+type StoreItem = {
   handle: string;
   title: string;
-  featuredImage: { url: string };
-  priceRange: { maxVariantPrice: { amount: string; currencyCode: string } };
-  color: 'Black' | 'Off-White' | 'Grey' | 'White';
+  image: string;
+  price: number;
+  color: string;
 };
 
-const products: DemoProduct[] = [
-  {
-    handle: 'essential-tee-black',
-    title: 'Essential Tee – Black',
-    featuredImage: { url: '/images/Flat lay retouched/black-shirt-front.jpg' },
-    priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'AUD' } },
-    color: 'Black'
-  },
-  {
-    handle: 'essential-tee-offwhite',
-    title: 'Essential Tee – Off-White',
-    featuredImage: { url: '/images/Flat lay retouched/offwhite-shirt.jpg' },
-    priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'AUD' } },
-    color: 'Off-White'
-  },
-  {
-    handle: 'essential-tee-grey',
-    title: 'Essential Tee – Grey',
-    featuredImage: { url: '/images/Flat lay retouched/grey-shirt-front.jpg' },
-    priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'AUD' } },
-    color: 'Grey'
-  },
-  {
-    handle: 'essential-tee-white',
-    title: 'Essential Tee – White',
-    featuredImage: { url: '/images/Flat lay retouched/white-shirt-front.jpg' },
-    priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'AUD' } },
-    color: 'White'
-  },
-  // Placeholders to fill the grid similar to the home three-grid tile
-  {
-    handle: 'coming-soon-1',
-    title: 'Placeholder',
-    featuredImage: { url: '/images/btl-logo-white.jpg' },
-    priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'AUD' } },
-    color: 'Grey'
-  },
-  {
-    handle: 'coming-soon-2',
-    title: 'Placeholder',
-    featuredImage: { url: '/images/btl-logo-white.jpg' },
-    priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'AUD' } },
-    color: 'Grey'
-  },
-  {
-    handle: 'coming-soon-3',
-    title: 'Placeholder',
-    featuredImage: { url: '/images/btl-logo-white.jpg' },
-    priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'AUD' } },
-    color: 'Grey'
-  },
-  {
-    handle: 'coming-soon-4',
-    title: 'Placeholder',
-    featuredImage: { url: '/images/btl-logo-white.jpg' },
-    priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'AUD' } },
-    color: 'Grey'
-  }
-];
+export default async function Store() {
+  // Fetch all products from Supabase
+  const products = await getAllProducts();
 
-const Store = () => {
+  // Create store items from products - one item per color variant
+  const storeItems: StoreItem[] = [];
+  
+  for (const product of products) {
+    // Get unique colors from variants
+    const uniqueColors = [...new Set(product.variants.map(v => v.color))];
+    
+    for (const color of uniqueColors) {
+      // Get the first variant of this color to use its image and price
+      const variantWithColor = product.variants.find(v => v.color === color);
+      const image = variantWithColor?.images?.[0] || product.images?.[0] || '/images/btl-logo-white.jpg';
+      
+      storeItems.push({
+        handle: product.name.toLowerCase().replace(/\s+/g, '-'),
+        title: `${product.name} – ${color}`,
+        image,
+        price: variantWithColor?.price || product.basePrice,
+        color
+      });
+    }
+  }
+
   return (
     <div className="min-h-screen">
       <main className="min-h-screen pb-8">
@@ -87,40 +51,42 @@ const Store = () => {
 
         {/* Grid section styled like home page */}
         <section className="mx-auto mt-2 max-w-none w-[95vw] sm:w-[90vw] lg:w-[85vw] xl:w-[80vw] 2xl:w-[75vw] px-4 pb-8">
-          <div className="grid gap-4 md:grid-cols-6">
-            {products.map((item) => {
-              const content = (
-                <GridTileImage
-                  src={item.featuredImage.url}
-                  fill
-                  sizes="(min-width: 768px) 33vw, 100vw"
-                  alt={item.title}
-                  label={{
-                    position: 'bottom',
-                    title: item.title,
-                    amount: item.priceRange.maxVariantPrice.amount,
-                    currencyCode: item.priceRange.maxVariantPrice.currencyCode
-                  }}
-                />
-              );
+          {storeItems.length === 0 ? (
+            <div className="flex justify-center items-center py-12">
+              <p className="text-white">No products available.</p>
+            </div>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-6">
+              {storeItems.map((item) => {
+                const content = (
+                  <GridTileImage
+                    src={item.image}
+                    fill
+                    sizes="(min-width: 768px) 33vw, 100vw"
+                    alt={item.title}
+                    label={{
+                      position: 'bottom',
+                      title: item.title,
+                      amount: item.price.toString(),
+                      currencyCode: 'AUD'
+                    }}
+                  />
+                );
 
-              const href = item.handle.startsWith('coming-soon')
-                ? '/store'
-                : `/product/${item.handle}?color=${item.color}`;
+                const href = `/product/${item.handle}?color=${item.color}`;
 
-              return (
-                <div key={item.handle} className="md:col-span-2 md:row-span-1">
-                  <Link className="relative block aspect-square h-full w-full" href={href as any} prefetch={true}>
-                    {content}
-                  </Link>
-                </div>
-              );
-            })}
-          </div>
+                return (
+                  <div key={`${item.handle}-${item.color}`} className="md:col-span-2 md:row-span-1">
+                    <Link className="relative block aspect-square h-full w-full" href={href} prefetch={true}>
+                      {content}
+                    </Link>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </section>
       </main>
     </div>
   );
-};
-
-export default Store;
+}
