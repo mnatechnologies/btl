@@ -2,73 +2,87 @@
 
 import Link from 'next/link';
 import { GridTileImage } from '@/components/grid/tile';
+import { useEffect, useState } from 'react';
+import { getAllProducts } from '@/lib/products';
+import { Product } from '@/app/types/Product';
 
-// Minimal local Product shape for styling/demo purposes only (no integration)
-type DemoProduct = {
-  handle: string;
-  title: string;
-  featuredImage: { url: string };
-  priceRange: { maxVariantPrice: { amount: string; currencyCode: string } };
-  color: 'Black' | 'Off-White' | 'Grey' | 'White';
-};
-
-type ProductClick = Pick<DemoProduct, 'handle' | 'title' | 'color'>;
+type ProductClick = { handle: string; title: string; color: string };
 
 export function Carousel({ onProductClick }: { onProductClick?: (p: ProductClick) => void }) {
-  // Static demo products to reproduce the Next.js Commerce carousel styling
-  const products: DemoProduct[] = [
-    {
-      handle: 'placeholder',
-      title: 'Placeholder',
-      featuredImage: { url: '/images/btl-logo-white.jpg' },
-      priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'AUD' } },
-      color: 'Black'
-    },
-    {
-      handle: 'essential-tee-offwhite',
-      title: 'Essential Tee – Off-White',
-      featuredImage: { url: '/images/Flat lay retouched/offwhite-shirt.jpg' },
-      priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'AUD' } },
-      color: 'Off-White'
-    },
-    {
-      handle: 'essential-tee-grey',
-      title: 'Essential Tee – Grey',
-      featuredImage: { url: '/images/Flat lay retouched/grey-shirt-front.jpg' },
-      priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'AUD' } },
-      color: 'Grey'
-    },
-    {
-      handle: 'placeholder2',
-      title: 'Placeholder2',
-      featuredImage: { url: '/images/btl-logo-white.jpg' },
-      priceRange: { maxVariantPrice: { amount: '220.00', currencyCode: 'AUD' } },
-      color: 'White'
-    },
-  ];
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const fetchedProducts = await getAllProducts();
+        setProducts(fetchedProducts);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProducts();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="w-full overflow-x-hidden pb-6">
+        <div className='mx-auto mt-4 max-w-none w-[95vw] sm:w-[90vw] lg:w-[85vw] xl:w-[80vw] 2xl:w-[75vw] px-4 pb-4 text-left'>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-white">Featured Products</h2>
+        </div>
+        <div className="flex justify-center items-center py-12">
+          <p className="text-white">Loading products...</p>
+        </div>
+      </section>
+    );
+  }
 
   if (!products?.length) return null;
 
+  // Create carousel items from products - one item per color variant
+  const carouselItems = products.flatMap(product => {
+    // Get unique colors from variants
+    const uniqueColors = [...new Set(product.variants.map(v => v.color))];
+    
+    return uniqueColors.map(color => {
+      // Get the first variant of this color to use its image
+      const variantWithColor = product.variants.find(v => v.color === color);
+      const image = variantWithColor?.images?.[0] || product.images?.[0] || '/images/btl-logo-white.jpg';
+      
+      return {
+        id: `${product.id}-${color}`,
+        productId: product.id,
+        handle: product.name.toLowerCase().replace(/\s+/g, '-'),
+        title: `${product.name} – ${color}`,
+        image,
+        price: variantWithColor?.price || product.basePrice,
+        color
+      };
+    });
+  });
+
   // Purposefully duplicating products to make the carousel loop and not run out of products on wide screens.
-  const carouselProducts = [...products, ...products, ...products];
+  const carouselProducts = [...carouselItems, ...carouselItems, ...carouselItems];
 
   return (
     <section className="w-full overflow-x-hidden pb-6 ">
         <div className=' mx-auto mt-4 max-w-none w-[95vw] sm:w-[90vw] lg:w-[85vw] xl:w-[80vw] 2xl:w-[75vw] px-4 pb-4 text-left'>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-white"
-            >PLACERHOLDER TEXT</h2>
+            >Featured Products</h2>
         </div>
       <ul className="flex animate-carousel">
-        {carouselProducts.map((product, i) => {
+        {carouselProducts.map((item, i) => {
           const content = (
             <GridTileImage
-              alt={product.title}
+              alt={item.title}
               label={{
-                title: product.title,
-                amount: product.priceRange.maxVariantPrice.amount,
-                currencyCode: product.priceRange.maxVariantPrice.currencyCode
+                title: item.title,
+                amount: item.price.toString(),
+                currencyCode: 'AUD'
               }}
-              src={product.featuredImage?.url}
+              src={item.image}
               fill
               sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
             />
@@ -76,21 +90,21 @@ export function Carousel({ onProductClick }: { onProductClick?: (p: ProductClick
 
           return (
             <li
-              key={`${product.handle}${i}`}
+              key={`${item.id}${i}`}
               className="relative aspect-square  w-2/3 max-w-[475px] flex-none md:w-1/3"
             >
               {onProductClick ? (
                 <button
                   type="button"
                   className="relative h-full w-full cursor-pointer"
-                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); onProductClick && onProductClick({ handle: product.handle, title: product.title, color: product.color }); }}
-                  aria-label={`View ${product.title}`}
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); onProductClick && onProductClick({ handle: item.handle, title: item.title, color: item.color }); }}
+                  aria-label={`View ${item.title}`}
                 >
                   {content}
                 </button>
               ) : (
                 <Link
-                  href={`/product/${product.handle}?color=${product.color}`}
+                  href={`/product/${item.handle}?color=${item.color}`}
                   className="relative h-full w-full"
                 >
                   {content}

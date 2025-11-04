@@ -45,7 +45,7 @@ export default function ContactPage() {
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full border  px-3 py-2"
+                className="w-full font-display text-black bg-white border border-black px-3 py-2"
                 placeholder="Your name"
               />
             </div>
@@ -56,7 +56,7 @@ export default function ContactPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full border  px-3 py-2"
+                className="w-full font-display text-black bg-white border border-black px-3 py-2"
                 placeholder="you@example.com"
               />
             </div>
@@ -66,7 +66,7 @@ export default function ContactPage() {
                 required
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                className="w-full border px-3 py-2 min-h-[140px]"
+                className="w-full bg-white text-black font-display border border-black px-3 py-2 min-h-[140px]"
                 placeholder="How can we help?"
               />
             </div>
