@@ -7,6 +7,7 @@ export type CartItem = {
   price: number; // in cents
   image?: string;
   quantity: number;
+  sku: string;
 };
 
 type CartContextType = {

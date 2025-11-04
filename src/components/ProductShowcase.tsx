@@ -3,74 +3,63 @@ import {useState, useEffect} from "react";
 import Image from "next/image";
 import {useCart} from "@/context/CartContext";
 import {useRouter} from "next/navigation";
+import {Product, ProductVariant} from "@/app/types/Product";
 
 interface ProductShowcaseProps {
+    product: Product;
     initialColor?: string;
 }
 
-const ProductShowcase = ({initialColor}: ProductShowcaseProps) => {
+const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
     const {addItem} = useCart();
     const router = useRouter();
-    const [selectedColor, setSelectedColor] = useState(initialColor || "Black");
-    const [selectedSize, setSelectedSize] = useState("");
+    const [selectedColor, setSelectedColor] = useState(() => {
+        // Initialize selected color from initialColor or first available color
+        const availableColors = [...new Set(product.variants.map(v => v.color))];
+        if (initialColor && availableColors.includes(initialColor)) {
+            return initialColor;
+        }
+        return availableColors[0] || "Black";
+    });
+    const [selectedSize, setSelectedSize] = useState("M");
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     // Ensure that when the incoming initialColor changes (e.g., via client nav), the state syncs once
     useEffect(() => {
-        if (initialColor) {
-            setSelectedColor(initialColor);
-            setCurrentImageIndex(0);
+        if (initialColor && product) {
+            const availableColors = [...new Set(product.variants.map(v => v.color))];
+            if (availableColors.includes(initialColor)) {
+                setSelectedColor(initialColor);
+                setCurrentImageIndex(0);
+            }
         }
-    }, [initialColor]);
+    }, [initialColor, product]);
 
-    const colors = [
-        {name: "Black", value: "bg-black", available: true},
-        {name: "White", value: "bg-white border border-border", available: true},
-        {name: "Grey", value: "bg-brand-grey", available: true},
-        {name: "Off-White", value: "bg-stone border border-border", available: true},
-    ];
-
-    const sizes = ["XXS", "XS", "S", "M", "L", "XL"];
-
+    // Get available colors and sizes from product variants
+    const availableColors = [...new Set(product.variants.map(v => v.color))];
+    const availableSizes = [...new Set(product.variants.filter(v => v.color === selectedColor).map(v => v.size))];
+    
+    // Get images for selected color
     const getProductImages = () => {
-        switch (selectedColor) {
-            case "White":
-                return [
-                    "/images/Flat lay retouched/white-shirt-front.jpg",
-                    "/images/Flat lay retouched/white-shirt-neck.jpg",
-                    "/images/Flat lay retouched/wihite-shirt-back.jpg",
-                    "/images/Flat lay retouched/white-shirt-bottom.jpg",
-                    "/images/Flat lay retouched/white-shirt sleeve.jpg"
-                ];
-            case "Grey":
-                return [
-                    "/images/Flat lay retouched/grey-shirt-front.jpg",
-                    "/images/Flat lay retouched/grey-shirt-neck.jpg",
-                    "/images/Flat lay retouched/grey-shirt-back.jpg",
-                    "/images/Flat lay retouched/grey-shirt-bottom.jpg",
-                    "/images/Flat lay retouched/grey-shirt-sleeve.jpg"
-                ];
-            case "Off-White":
-                return [
-                    "/images/Flat lay retouched/offwhite-shirt.jpg",
-                    "/images/Flat lay retouched/offwhite-shirt-neck.jpg",
-                    "/images/Flat lay retouched/offwhite-shirt-back.jpg",
-                    "/images/Flat lay retouched/offwhite-shirt-bottom.jpg",
-                    "/images/Flat lay retouched/offwhite-shirt-sleeve.jpg"
-                ];
-            default: // Black
-                return [
-                    "/images/Flat lay retouched/black-shirt-front.jpg",
-                    "/images/Flat lay retouched/black-shirt-neck-front.jpg",
-                    "/images/Flat lay retouched/black-shirt-back.jpg",
-                    "/images/Flat lay retouched/black-shirt-bottom.jpg",
-                    "/images/Flat lay retouched/black-shirt-sleeve.jpg"
-                ];
+        // Find a variant with the selected color
+        const variantWithColor = product.variants.find(v => v.color === selectedColor);
+        
+        // Use variant images if available, otherwise fall back to product images
+        if (variantWithColor?.images && variantWithColor.images.length > 0) {
+            return variantWithColor.images;
         }
+        
+        return product.images || [];
     };
 
     const currentImages = getProductImages();
     const displayImages = currentImages.slice(0, 5);
+    
+    // Get the current selected variant
+    const getCurrentVariant = (): ProductVariant | undefined => {
+        if (!selectedSize) return undefined;
+        return product.variants.find(v => v.color === selectedColor && v.size === selectedSize);
+    };
 
     const handleImageClick = () => {
         setCurrentImageIndex((prev) => (prev + 1) % currentImages.length);
@@ -96,43 +85,54 @@ const ProductShowcase = ({initialColor}: ProductShowcaseProps) => {
             return;
         }
 
-        const product = {
-            id: "btl-essential-tee",
-            name: "Essential Tee",
-            description: "Premium organic cotton t-shirt designed for comfort and durability",
-            basePrice: 220.0,
-            images: currentImages,
-            variants: [],
-            category: "T-Shirts",
-            tags: ["organic", "cotton", "sustainable"],
-            featured: true,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-        };
+        const variant = getCurrentVariant();
+        
+        if (!variant) {
+            console.log({
+                title: "Variant not available",
+                description: "This size/color combination is not available.",
+                variant: "destructive",
+            });
+            return;
+        }
 
-        const variant = {
-            id: `${product.id}-${selectedColor.toLowerCase()}-${selectedSize.toLowerCase()}`,
-            size: selectedSize,
-            color: selectedColor,
-            sku: `BTL-TEE-${selectedColor.toUpperCase()}-${selectedSize}`,
-            price: 220.0,
-            inventory: 50,
-            images: currentImages,
-        };
+        // Check inventory
+        if (variant.inventory <= 0) {
+            console.log({
+                title: "Out of stock",
+                description: "This item is currently out of stock.",
+                variant: "destructive",
+            });
+            return;
+        }
 
         // Add to cart (price in cents)
         addItem({
             id: variant.id,
             title: `${product.name} — ${selectedColor} / ${selectedSize}`,
             price: Math.round(variant.price * 100),
-            image: currentImages[0],
+            image: currentImages[0] || product.images[0],
             quantity: 1,
+            sku: variant.sku,
         });
 
         console.log(
             "Added to cart:",
-            `${product.name} — ${selectedColor} / ${selectedSize}`
+            `${product.name} — ${selectedColor} / ${selectedSize}`,
+            variant.sku
         );
+    };
+
+    // Get color display values for UI
+    const getColorClass = (color: string) => {
+        switch (color.toLowerCase()) {
+            case 'black': return 'bg-black';
+            case 'white': return 'bg-white border border-border';
+            case 'grey':
+            case 'light grey': return 'bg-gray-400';
+            case 'beige': return 'bg-amber-100 border border-border';
+            default: return 'bg-gray-300 border border-border';
+        }
     };
 
     return (
@@ -146,61 +146,73 @@ const ProductShowcase = ({initialColor}: ProductShowcaseProps) => {
                             className="aspect-[4/5] relative overflow-hidden brand-shadow rounded-sm cursor-pointer"
                             onClick={handleImageClick}
                         >
-                            <Image
-                                src={currentImages[currentImageIndex]}
-                                alt={`BTL T-Shirt ${selectedColor} - View ${currentImageIndex + 1}`}
-                                fill
-                                className="object-contain object-center hover:scale-120 transition-transform duration-700"
-                                style={{objectPosition: 'center 20%'}}
-                            />
+                            {currentImages.length > 0 ? (
+                                <Image
+                                    src={currentImages[currentImageIndex]}
+                                    alt={`${product.name} ${selectedColor} - View ${currentImageIndex + 1}`}
+                                    fill
+                                    className="object-contain object-center hover:scale-120 transition-transform duration-700"
+                                    style={{objectPosition: 'center 20%'}}
+                                />
+                            ) : (
+                                <div className="flex items-center justify-center h-full bg-gray-800">
+                                    <p className="text-white">No image available</p>
+                                </div>
+                            )}
                             {/* Click indicator */}
-                            <div className="absolute bottom-4 right-4 bg-black/50 text-white px-2 py-1 rounded text-sm">
-                                {currentImageIndex + 1} / {currentImages.length}
-                            </div>
+                            {currentImages.length > 1 && (
+                                <div className="absolute bottom-4 right-4 bg-black/50 text-white px-2 py-1 rounded text-sm">
+                                    {currentImageIndex + 1} / {currentImages.length}
+                                </div>
+                            )}
                         </div>
 
                         {/* Thumbnail Images */}
-                        <div className="grid grid-cols-5 gap-2">
-                            {displayImages.map((image, index) => (
-                                <div
-                                    key={index}
-                                    className={`aspect-[4/5] relative overflow-hidden brand-shadow rounded-sm cursor-pointer transition-all duration-200 ${
-                                        currentImageIndex === index ? 'ring-2 ring-brand-charcoal' : 'hover:opacity-80'
-                                    }`}
-                                    onClick={() => setCurrentImageIndex(index)}
-                                >
-                                    <Image
-                                        src={currentImages[index]}
-                                        alt={`BTL T-Shirt ${selectedColor} - Thumbnail ${index + 1}`}
-                                        fill
-                                        className="object-cover object-center"
-                                        style={{objectPosition: 'center 20%'}}
-                                    />
-                                </div>
-                            ))}
-                        </div>
+                        {displayImages.length > 1 && (
+                            <div className="grid grid-cols-5 gap-2">
+                                {displayImages.map((image, index) => (
+                                    <div
+                                        key={index}
+                                        className={`aspect-[4/5] relative overflow-hidden brand-shadow rounded-sm cursor-pointer transition-all duration-200 ${
+                                            currentImageIndex === index ? 'ring-2 ring-brand-charcoal' : 'hover:opacity-80'
+                                        }`}
+                                        onClick={() => setCurrentImageIndex(index)}
+                                    >
+                                        <Image
+                                            src={currentImages[index]}
+                                            alt={`${product.name} ${selectedColor} - Thumbnail ${index + 1}`}
+                                            fill
+                                            className="object-cover object-center"
+                                            style={{objectPosition: 'center 20%'}}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
                     {/* Product Details */}
                     <div className="space-y-6 fade-up">
                         <div className="space-y-4">
-                            <div className="inline-flex">
-                  <span
-                      className="px-4 py-1.5 border border-brand-charcoal  text-white text-xs font-semibold uppercase tracking-wider transition-colors hover:bg-brand-charcoal hover:text-white">
-                    New Release
-                  </span>
-                            </div>
+                            {product.featured && (
+                                <div className="inline-flex">
+                                    <span className="px-4 py-1.5 border border-white  text-white text-xs font-semibold uppercase tracking-wider transition-colors hover:bg-brand-charcoal hover:text-white">
+                                        New Release
+                                    </span>
+                                </div>
+                            )}
 
                             <h2 className="text-4xl font-display font-bold text-white">
-                                Essential Tee
+                                {product.name}
                             </h2>
+                            <h4 className="text-xs font-display font-medium text-white">
+                                {getCurrentVariant()?.sku}
+                            </h4>
                             <p className="text-2xl font-medium text-white">
-                                $220.00
+                                ${(getCurrentVariant()?.price || product.basePrice).toFixed(2)}
                             </p>
                             <p className="text-brand-grey leading-relaxed">
-                                Our signature t-shirt crafted from premium 100% organic cotton.
-                                Designed for comfort, built to last. Features the iconic BTL branding
-                                with a modern minimalist aesthetic.
+                                {product.description}
                             </p>
                         </div>
 
@@ -210,17 +222,15 @@ const ProductShowcase = ({initialColor}: ProductShowcaseProps) => {
                                 Color
                             </h3>
                             <div className="flex gap-3">
-                                {colors.map((color) => (
+                                {availableColors.map((color) => (
                                     <button
-                                        key={color.name}
-                                        onClick={() => handleColorChange(color.name)}
-                                        disabled={!color.available}
-                                        className={`relative cursor-pointer overflow-hidden group w-12 h-12 rounded-full transition-all ${color.value} ${
-                                            selectedColor === color.name ? "ring-2 ring-accent ring-offset-2" : ""
+                                        key={color}
+                                        onClick={() => handleColorChange(color)}
+                                        className={`relative cursor-pointer overflow-hidden group w-12 h-12 rounded-full transition-all ${getColorClass(color)} ${
+                                            selectedColor === color ? "ring-2 ring-accent ring-offset-2" : ""
                                         }`}
                                     >
-                        <span className="absolute inset-0 bg-white/20 scale-0 group-active:scale-100
-                              transition-transform duration-300 rounded-full"/>
+                                        <span className="absolute inset-0 bg-white/20 scale-0 group-active:scale-100 transition-transform duration-300 rounded-full"/>
                                     </button>
                                 ))}
                             </div>
@@ -232,20 +242,28 @@ const ProductShowcase = ({initialColor}: ProductShowcaseProps) => {
                                 Size
                             </h3>
                             <div className="grid grid-cols-6 gap-2">
-                                {sizes.map((size) => (
-                                    <button
-                                        key={size}
-                                        onClick={() => setSelectedSize(size)}
-                                        className={`cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95
-                          px-4 py-2 border ${
-                                            selectedSize === size
-                                                ? "bg-brand-charcoal text-white border-brand-charcoal"
-                                                : "bg-transparent text-white border-border hover:border-brand-charcoal"
-                                        }`}
-                                    >
-                                        {size}
-                                    </button>
-                                ))}
+                                {availableSizes.map((size) => {
+                                    const sizeVariant = product.variants.find(v => v.color === selectedColor && v.size === size);
+                                    const isOutOfStock = sizeVariant ? sizeVariant.inventory <= 0 : true;
+                                    
+                                    return (
+                                        <button
+                                            key={size}
+                                            onClick={() => !isOutOfStock && setSelectedSize(size)}
+                                            disabled={isOutOfStock}
+                                            className={`cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95
+                                                px-4 py-2 border ${
+                                                selectedSize === size
+                                                    ? "bg-brand-charcoal text-white border-brand-charcoal"
+                                                    : isOutOfStock
+                                                        ? "bg-transparent text-gray-600 border-gray-700 cursor-not-allowed"
+                                                        : "bg-transparent text-white border-border hover:border-brand-charcoal"
+                                            }`}
+                                        >
+                                            {size}
+                                        </button>
+                                    );
+                                })}
                             </div>
                         </div>
 
@@ -255,7 +273,7 @@ const ProductShowcase = ({initialColor}: ProductShowcaseProps) => {
                                 className=" cursor-pointer w-full py-3 px-6 bg-brand-charcoal border border-white text-white hover:bg-opacity-90 transition-colors hover-lift"
                                 onClick={handleAddToCart}
                             >
-                                Add to Cart - $220.00
+                                Add to Cart - ${(getCurrentVariant()?.price || product.basePrice).toFixed(2)}
                             </button>
                             <button
                                 className="cursor-pointer w-full py-3 px-6 border border-white text-white hover:bg-brand-charcoal hover:text-white transition-colors">
