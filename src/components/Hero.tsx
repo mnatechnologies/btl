@@ -23,10 +23,10 @@ const slides: Slide[] = [
   },
   {
     id: 2,
-    image: '/images/V2 edited/Built To Last V2-5_(2).jpg',
-    title: 'PLACEHOLDER',
-    description: "YOUR TEXT HERE",
-    objectPosition: 'center 13%'
+    image: '/images/herosample.jpeg',
+    title: '',
+    description: "",
+    objectPosition: 'center '
   },
   {
     id: 3,
