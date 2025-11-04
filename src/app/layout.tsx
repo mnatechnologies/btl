@@ -19,7 +19,6 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'Built To Last ',
   description: "",
-    themeColor: []
 };
 
 export const viewport: Viewport = {
