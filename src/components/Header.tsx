@@ -63,14 +63,6 @@ const Navigation = () => {
 
                     {/* Right Side Actions */}
                     <div className="hidden md:flex items-center space-x-4">
-                        <div className="flex items-center space-x-4 ">
-                            <Link href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-white hover:text-brand-grey transition-colors">
-                                <SiInstagram  className="h-5 w-5" />
-                            </Link>
-                            <Link href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="text-white hover:text-brand-grey transition-colors">
-                                <SiTiktok className="h-5 w-5" />
-                            </Link>
-                        </div>
                         <Link
                             href="/account"
                             className="text-white hover:text-brand-grey transition-colors font-medium"
