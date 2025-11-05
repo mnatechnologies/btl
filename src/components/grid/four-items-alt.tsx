@@ -42,7 +42,7 @@ function AltGridItem({
     />
   );
 
-  const spanClass = size === 'large' ? 'md:col-span-3 md:row-span-2' : 'md:col-span-1 md:row-span-1';
+  const spanClass = size === 'large' ? 'col-span-3 row-span-2' : 'col-span-1 row-span-1';
   const aspectClass = size === 'large' ? 'h-full w-full' : 'aspect-square h-full w-full';
 
   return (
@@ -166,7 +166,7 @@ export function FourItemGridAlt({ onProductClick }: { onProductClick?: (p: Produ
       </div>
       
       {/* Grid: large on top, 3 small in row below */}
-      <div className="grid gap-4 md:grid-cols-3 md:auto-rows-fr" style={{ gridAutoRows: '1fr' }}>
+      <div className="grid gap-4 grid-cols-3 auto-rows-fr" style={{ gridAutoRows: '1fr' }}>
         <AltGridItem size="large" item={firstProduct} onProductClick={onProductClick} />
         <AltGridItem size="small" item={secondProduct} onProductClick={onProductClick} />
         <AltGridItem size="small" item={thirdProduct} onProductClick={onProductClick} />

@@ -42,7 +42,7 @@ function MirrorGridItem({
     />
   );
 
-  const spanClass = size === 'large' ? 'md:col-span-3 md:row-span-3 md:col-start-2 md:row-start-1' : 'md:col-span-1 md:row-span-1 md:col-start-1';
+  const spanClass = size === 'large' ? 'col-span-3 row-span-3 col-start-2 row-start-1' : 'col-span-1 row-span-1 col-start-1';
   const aspectClass = size === 'large' ? 'h-full w-full min-h-full' : 'aspect-square h-full w-full';
 
   return (
@@ -166,7 +166,7 @@ export function FourItemGridMirror({ onProductClick }: { onProductClick?: (p: Pr
       </div>
       
       {/* Grid: 3 small stacked on left, 1 large on right */}
-      <div className="grid gap-4 md:grid-cols-4 md:grid-rows-3 md:auto-rows-fr">
+      <div className="grid gap-4 grid-cols-4 grid-rows-3 auto-rows-fr">
         {smallProducts.map((item, idx) => (
           <MirrorGridItem key={idx} size="small" item={item} onProductClick={onProductClick} />
         ))}

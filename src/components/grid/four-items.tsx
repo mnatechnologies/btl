@@ -42,7 +42,7 @@ function FourItemGridItem({
     />
   );
 
-  const spanClass = size === 'large' ? 'md:col-span-3 md:row-span-3' : 'md:col-span-1 md:row-span-1';
+  const spanClass = size === 'large' ? 'col-span-3 row-span-3' : 'col-span-1 row-span-1';
   const aspectClass = size === 'large' ? 'h-full w-full' : 'aspect-square h-full w-full';
 
   return (
@@ -175,7 +175,7 @@ export function FourItemGrid({ onProductClick }: { onProductClick?: (p: ProductC
       </div>
       
       {/* Grid: 1 large item on left, 3 small stacked on right */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 grid-cols-4 grid-rows-3">
         <FourItemGridItem size="large" item={firstProduct} onProductClick={onProductClick} />
         {rest.map((item, idx) => (
           <FourItemGridItem key={idx} size="small" item={item} onProductClick={onProductClick} />

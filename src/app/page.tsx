@@ -14,7 +14,7 @@ export default function Home() {
         </div>
       </section>
       <Hero />
-      <ThreeItemGrid />
+     
       <FourItemGrid />
       <FourItemGridAlt />
       <FourItemGridMirror />
