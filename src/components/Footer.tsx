@@ -1,8 +1,6 @@
-import { Instagram, Twitter, Facebook } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import {SiTiktok, SiInstagram } from "@icons-pack/react-simple-icons";
-
+import {SiTiktok, SiInstagram, SiFacebook } from "@icons-pack/react-simple-icons";
 
 const Footer = () => {
   return (
@@ -24,53 +22,35 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Middle: link columns (asos-like) */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8 border-t border-primary-foreground/20 pt-8">
-          {/* Help & Information */}
-          <div>
-            <h3 className="text-xs font-semibold tracking-wider uppercase text-primary-foreground/80">Help & Information</h3>
-            <ul className="mt-4 space-y-3 text-sm text-primary-foreground/70">
-              <li><Link href="#" className="hover:text-primary-foreground transition-colors">Track order</Link></li>
-              <li><Link href="/returns" className="hover:text-primary-foreground transition-colors">Returns and Exchanges </Link></li>
-              <li><Link href="#" className="hover:text-primary-foreground transition-colors">Shipping</Link></li>
-              <li><Link href="/contact" className="hover:text-primary-foreground transition-colors">Contact us</Link></li>
-            </ul>
-          </div>
+        {/* Middle: Help & Information and Socials */}
 
-          {/* About */}
-          <div>
-            <h3 className="text-xs font-semibold tracking-wider uppercase text-primary-foreground/80">About</h3>
-            <ul className="mt-4 space-y-3 text-sm text-primary-foreground/70">
-              <li><Link href="/about" className="hover:text-primary-foreground transition-colors">Our story</Link></li>
-              <li><Link href="#" className="hover:text-primary-foreground transition-colors">Sustainability</Link></li>
-              <li><Link href="#" className="hover:text-primary-foreground transition-colors">Careers</Link></li>
-              <li><Link href="#" className="hover:text-primary-foreground transition-colors">Press</Link></li>
-            </ul>
-          </div>
+        <div className="border-t border-primary-foreground/20 pt-8 pb-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-start gap-8">
+            {/* Help & Information */}
+            <div className="flex-1">
+              <h3 className="text-xs font-semibold tracking-wider uppercase text-primary-foreground/80">Help & Information</h3>
+              <ul className="mt-4 space-y-3 text-sm text-primary-foreground/70">
+                <li><Link href="#" className="hover:text-primary-foreground transition-colors">Track order</Link></li>
+                <li><Link href="/returns" className="hover:text-primary-foreground transition-colors">Returns and Exchanges</Link></li>
+                <li><Link href="#" className="hover:text-primary-foreground transition-colors">Shipping</Link></li>
+                <li><Link href="/contact" className="hover:text-primary-foreground transition-colors">Contact us</Link></li>
+              </ul>
+            </div>
 
-          {/* More from us */}
-          <div>
-            <h3 className="text-xs font-semibold tracking-wider uppercase text-primary-foreground/80">More from Built To Last</h3>
-            <ul className="mt-4 space-y-3 text-sm text-primary-foreground/70">
-              <li><a href="#" className="hover:text-primary-foreground transition-colors">Gift cards</a></li>
-              <li><a href="#" className="hover:text-primary-foreground transition-colors">Affiliates</a></li>
-              <li><a href="#" className="hover:text-primary-foreground transition-colors">Wholesale</a></li>
-              <li><a href="#" className="hover:text-primary-foreground transition-colors">Student discount</a></li>
-            </ul>
-          </div>
-
-          {/* Follow us */}
-          <div className="sm:col-span-1 col-span-2 lg:col-span-1">
-            <h3 className="text-xs font-semibold tracking-wider uppercase text-primary-foreground/80">Follow us</h3>
-            <p className="mt-4 text-sm text-primary-foreground/70">Join us on social for new drops and behind-the-scenes.</p>
-            <div className="mt-4 flex space-x-4">
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/70 hover:text-primary-foreground transition-colors" aria-label="Instagram">
-                <SiInstagram className="h-5 w-5" />
-              </a>
-              <a href="https://tiktok.com." target="_blank" rel="noopener noreferrer" className="text-primary-foreground/70 hover:text-primary-foreground transition-colors" aria-label="Twitter">
-                <SiTiktok className="h-5 w-5" />
-              </a>
-
+            {/* Follow us */}
+            <div className="flex-1 flex flex-col items-start md:items-end">
+              <h3 className="text-xs font-semibold tracking-wider uppercase text-primary-foreground/80 mb-4">Follow us</h3>
+              <div className="flex space-x-6">
+                <Link href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/70 hover:text-primary-foreground transition-colors" aria-label="Instagram">
+                  <SiInstagram className="h-6 w-6" />
+                </Link>
+                <Link href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/70 hover:text-primary-foreground transition-colors" aria-label="TikTok">
+                  <SiTiktok className="h-6 w-6" />
+                </Link>
+                  <Link href="https://www.facebook.com/btlclothing" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/70 hover:text-primary-foreground transition-colors" aria-label="TikTok">
+                      <SiFacebook className="h-6 w-6" />
+                  </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -85,6 +65,7 @@ const Footer = () => {
         </div>
       </div>
     </footer>
+  
   );
 };
 

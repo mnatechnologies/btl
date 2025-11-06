@@ -47,12 +47,14 @@ export default function RootLayout({
             rel="stylesheet"/>
     </head>
     <body
-        className='bg-neutral-50 text-black selection:bg-brand dark:bg-neutral-900 dark:text-white dark:selection:bg-brand-grey dark:selection:text-white'
+        className='min-h-screen flex flex-col bg-neutral-50 text-black selection:bg-brand dark:bg-neutral-900 dark:text-white dark:selection:bg-brand-grey dark:selection:text-white'
     >
     <Providers>
         <Header/>
         <WelcomeOffer/>
-        {children}
+        <div className="flex-grow">
+            {children}
+        </div>
         <Footer/>
     </Providers>
     </body>

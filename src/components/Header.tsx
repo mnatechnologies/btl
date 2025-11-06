@@ -49,28 +49,20 @@ const Navigation = () => {
                     </div>
 
                     {/* Desktop Navigation */}
-                    <div className="hidden md:flex items-center space-x-8">
-                        <Link href={"/store"} className="text-white hover:text-brand-grey transition-colors font-medium">
+                    <div className="hidden md:flex items-center space-x-12">
+                        <Link href={"/store"} className="text-white hover:text-brand-grey transition-colors font-medium text-2xl">
                             Shop
                         </Link>
-                        <Link href={"/about"} className="text-white hover:text-brand-grey transition-colors font-medium">
+                        <Link href={"/about"} className="text-white hover:text-brand-grey transition-colors font-medium text-2xl">
                             About
                         </Link>
-                        <Link href={"/contact"} className="text-white hover:text-brand-grey transition-colors font-medium">
+                        <Link href={"/contact"} className="text-white hover:text-brand-grey transition-colors font-medium text-2xl">
                             Contact
                         </Link>
                     </div>
 
                     {/* Right Side Actions */}
                     <div className="hidden md:flex items-center space-x-4">
-                        <div className="flex items-center space-x-4 ">
-                            <Link href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-white hover:text-brand-grey transition-colors">
-                                <SiInstagram  className="h-5 w-5" />
-                            </Link>
-                            <Link href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="text-white hover:text-brand-grey transition-colors">
-                                <SiTiktok className="h-5 w-5" />
-                            </Link>
-                        </div>
                         <Link
                             href="/account"
                             className="text-white hover:text-brand-grey transition-colors font-medium"
@@ -96,21 +88,21 @@ const Navigation = () => {
                 {isMenuOpen && (
                     <div className="md:hidden">
                         <div className="px-2 pt-2 pb-3 space-y-1">
-                            <Link href="/store" className="block px-3 py-2 text-white hover:text-brand-grey font-medium">
+                            <Link href="/store" className="block px-3 py-2 text-white hover:text-brand-grey font-medium text-2xl">
                                 Store
                             </Link>
-                            <Link href="/about" className="block px-3 py-2 text-white hover:text-brand-grey font-medium">
+                            <Link href="/about" className="block px-3 py-2 text-white hover:text-brand-grey font-medium text-2xl">
                                 About
                             </Link>
-                            <Link href="/contact" className="block px-3 py-2 text-white hover:text-brand-grey font-medium">
+                            <Link href="/contact" className="block px-3 py-2 text-white hover:text-brand-grey font-medium text-2xl">
                                 Contact
                             </Link>
-                            <Link href="/account" className="block px-3 py-2 text-white hover:text-brand-grey font-medium">
+                            <Link href="/account" className="block px-3 py-2 text-white hover:text-brand-grey font-medium text-2xl">
                                 Account
                             </Link>
                             <button 
                                 onClick={() => setIsCartOpen(true)}
-                                className="block w-full text-left px-3 py-2 text-white hover:text-brand-grey font-medium"
+                                className="block w-full text-left px-3 py-2 text-white hover:text-brand-grey font-medium text-2xl"
                             >
                                 Cart
                             </button>

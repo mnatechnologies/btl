@@ -1,12 +1,14 @@
 'use client'
-import Link from 'next/link';
 import {useState, useEffect} from 'react';
 import { X } from 'lucide-react';
+import Image from 'next/image';
 
 const LS_KEY = 'welcomeOfferDismissedAt';
 
 export default function WelcomeOffer() {
-  const [visible, setVisible] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const [email, setEmail] = useState('');
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     try {
@@ -14,19 +16,23 @@ export default function WelcomeOffer() {
       if (dismissed) {
         const dismissedAt = Number(dismissed);
         const sevenDays = 7 * 24 * 60 * 60 * 1000;
-        if (Date.now() - dismissedAt < sevenDays) setVisible(false);
+        if (Date.now() - dismissedAt < sevenDays) {
+          setIsOpen(false);
+          return;
         }
+      }
+      // Show modal after 1 second
+      const timer = setTimeout(() => setIsOpen(true), 1000);
+      return () => clearTimeout(timer);
     } catch (err) {
       if (process.env.NODE_ENV !== 'production') {
         console.debug('WelcomeOffer localStorage access failed', err);
       }
     }
   }, []);
-  if (!visible) return null;
 
   const handleClose = () => {
-    setVisible(false);
-
+    setIsOpen(false);
     try {
       localStorage.setItem(LS_KEY, String(Date.now()));
     } catch (err){
@@ -35,30 +41,78 @@ export default function WelcomeOffer() {
       }
     }
   }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
+    // TODO: Send email to backend/subscribe service
+    setTimeout(() => handleClose(), 2000);
+  }
+
+  if (!isOpen) return null;
+
   return (
-    <div
-      className="w-full bg-neutral-900 text-white border-b border-accent/20"
-      role="region"
-      aria-label="Welcome offer announcement"
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className=" relative flex items-center justify-center h-10 sm:h-11 text-xs sm:text-sm">
-          <button
-            type="button"
-            onClick={handleClose}
-            className="absolute right-0 top-1/2 -translate-y-1/2 h-6 w-6 inline-flex items-center justify-center rounded hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/ cursor-pointer"
-            aria-label="Close welcome offer"
-            >
-            <X className="h-4 w-4" aria-hidden />
-          </button>
-          <p className="text-center">
-            <span className="font-medium"> PLACEHOLDER: Welcome offer:</span> 10% off your first order with code <span className="font-semibold tracking-wide">WELCOME10</span>.{' '}
-            <Link href="/terms" className="underline hover:no-underline ml-1">
-              T&Cs apply
-            </Link>
-          </p>
+    <>
+      {/* Backdrop */}
+      <div 
+        className="fixed inset-0 bg-black/50 z-40" 
+        onClick={handleClose}
+        aria-hidden="true"
+      />
+      
+      {/* Modal */}
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white text-black rounded-lg shadow-2xl z-50 w-full max-w-md mx-4 p-8">
+        <button
+          onClick={handleClose}
+          className=" cursor-pointer absolute top-4 right-4 h-6 w-6 flex items-center justify-center hover:bg-neutral-100 rounded transition-colors"
+          aria-label="Close modal"
+        >
+          <X className="h-5 w-5" />
+        </button>
+
+        <div className="space-y-4">
+          <div>
+              <div>
+                  <Image
+                      src="/images/btl-logo-black.jpg"
+                      alt="Built To Last Logo"
+                      width={100}
+                      height={100}
+                      className="mx-auto mb-4" />
+              </div>
+            <h2 className="text-2xl font-display font-bold mb-2">Welcome to Built To Last</h2>
+            <p className="text-sm text-neutral-600">Get 10% off your first order</p>
+          </div>
+
+          {submitted ? (
+            <div className="text-center py-4">
+              <p className="text-green-600 font-medium">Check your email for your discount code!</p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  className="w-full border border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/50"
+                />
+              </div>
+              <button
+                type="submit"
+                className="cursor-pointer w-full bg-black text-white py-2 font-medium hover:bg-neutral-800 transition-colors"
+              >
+                Claim Discount
+              </button>
+              <p className="text-xs text-neutral-500 text-center">
+                Code: <span className="font-semibold">WELCOME10</span>
+              </p>
+            </form>
+          )}
         </div>
       </div>
-    </div>
+    </>
   );
 }
