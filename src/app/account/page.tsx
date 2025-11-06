@@ -1,13 +1,14 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
+import { DatabaseOrder } from '@/app/types/Order'
 
 export default function AccountPage() {
   const [email, setEmail] = useState('')
   const [sent, setSent] = useState(false)
   const [sending, setSending] = useState(false)
   const [userEmail, setUserEmail] = useState<string | null>(null)
-  const [orders, setOrders] = useState<any[]>([])
+  const [orders, setOrders] = useState<DatabaseOrder[]>([])
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {

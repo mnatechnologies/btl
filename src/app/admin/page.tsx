@@ -1,12 +1,13 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { DatabaseOrder } from '@/app/types/Order'
 
 export default function AdminPage() {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [token, setToken] = useState('')
     const [authed, setAuthed] = useState(false)
-    const [orders, setOrders] = useState<any[]>([])
+    const [orders, setOrders] = useState<DatabaseOrder[]>([])
     const [loading, setLoading] = useState(false)
 
 
@@ -26,7 +27,6 @@ export default function AdminPage() {
     }
 
   useEffect(() => {
-      console.log(authed, token)
     if (!authed) return
     ;(async () => {
       setLoading(true)

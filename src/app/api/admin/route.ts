@@ -14,8 +14,9 @@ export async function POST(req: NextRequest) {
         } else {
             return NextResponse.json({error: 'Invalid credentials'}, {status: 401})
         }
-    } catch (e: any) {
+    } catch (e) {
+        const error = e as { message?: string }
         console.error(e)
-        return NextResponse.json({error: 'Server error'}, {status: 500})
+        return NextResponse.json({error: error?.message || 'Server error'}, {status: 500})
     }
 }

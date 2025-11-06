@@ -24,8 +24,9 @@ export default function ContactPage() {
       setName("")
       setEmail("")
       setMessage("")
-    } catch (err: any) {
-      setStatus({ ok: false, msg: err?.message || "Unable to send. Please try again later." })
+    } catch (err) {
+      const error = err as { message?: string }
+      setStatus({ ok: false, msg: error?.message || "Unable to send. Please try again later." })
     } finally {
       setLoading(false)
     }

@@ -5,7 +5,6 @@ import Image from "next/image";
 import { Menu, X, UserRound, } from "lucide-react";
 import CartButton from "./CartButton";
 import CartDrawer from "./CartDrawer";
-import { SiTiktok, SiInstagram } from '@icons-pack/react-simple-icons';
 import { supabase } from '@/lib/supabaseClient';
 
 const Navigation = () => {

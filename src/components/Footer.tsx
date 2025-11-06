@@ -30,9 +30,9 @@ const Footer = () => {
             <div className="flex-1">
               <h3 className="text-xs font-semibold tracking-wider uppercase text-primary-foreground/80">Help & Information</h3>
               <ul className="mt-4 space-y-3 text-sm text-primary-foreground/70">
-                <li><Link href="#" className="hover:text-primary-foreground transition-colors">Track order</Link></li>
+                <li><Link href="/account" className="hover:text-primary-foreground transition-colors">Track order</Link></li>
                 <li><Link href="/returns" className="hover:text-primary-foreground transition-colors">Returns and Exchanges</Link></li>
-                <li><Link href="#" className="hover:text-primary-foreground transition-colors">Shipping</Link></li>
+                <li><Link href="/contact" className="hover:text-primary-foreground transition-colors">Shipping</Link></li>
                 <li><Link href="/contact" className="hover:text-primary-foreground transition-colors">Contact us</Link></li>
               </ul>
             </div>
