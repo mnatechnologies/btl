@@ -10,7 +10,6 @@ export default function Home() {
       <section className="bg-black text-white py-8 text-center border-b border-accent/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl sm:text-5xl font-display font-bold">Built To Last</h2>
-          <p className="mt-2 text-neutral-300 text-sm sm:text-base">Premium quality essentials designed for those who value craftsmanship and timeless style.</p>
         </div>
       </section>
       <Hero />

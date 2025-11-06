@@ -1,5 +1,6 @@
 import Image from "next/image";
-import {SiTiktok, SiInstagram } from "@icons-pack/react-simple-icons";
+import Link from "next/link";
+import {SiTiktok, SiInstagram, SiFacebook } from "@icons-pack/react-simple-icons";
 
 const Footer = () => {
   return (
@@ -21,17 +22,35 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Middle: socials */}
+        {/* Middle: Help & Information and Socials */}
+
         <div className="border-t border-primary-foreground/20 pt-8 pb-8">
-          <div className="flex flex-col items-center">
-            <h3 className="text-xs font-semibold tracking-wider uppercase text-primary-foreground/80 mb-4">Follow us</h3>
-            <div className="flex space-x-6">
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/70 hover:text-primary-foreground transition-colors" aria-label="Instagram">
-                <SiInstagram className="h-6 w-6" />
-              </a>
-              <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/70 hover:text-primary-foreground transition-colors" aria-label="TikTok">
-                <SiTiktok className="h-6 w-6" />
-              </a>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-start gap-8">
+            {/* Help & Information */}
+            <div className="flex-1">
+              <h3 className="text-xs font-semibold tracking-wider uppercase text-primary-foreground/80">Help & Information</h3>
+              <ul className="mt-4 space-y-3 text-sm text-primary-foreground/70">
+                <li><Link href="#" className="hover:text-primary-foreground transition-colors">Track order</Link></li>
+                <li><Link href="/returns" className="hover:text-primary-foreground transition-colors">Returns and Exchanges</Link></li>
+                <li><Link href="#" className="hover:text-primary-foreground transition-colors">Shipping</Link></li>
+                <li><Link href="/contact" className="hover:text-primary-foreground transition-colors">Contact us</Link></li>
+              </ul>
+            </div>
+
+            {/* Follow us */}
+            <div className="flex-1 flex flex-col items-start md:items-end">
+              <h3 className="text-xs font-semibold tracking-wider uppercase text-primary-foreground/80 mb-4">Follow us</h3>
+              <div className="flex space-x-6">
+                <Link href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/70 hover:text-primary-foreground transition-colors" aria-label="Instagram">
+                  <SiInstagram className="h-6 w-6" />
+                </Link>
+                <Link href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/70 hover:text-primary-foreground transition-colors" aria-label="TikTok">
+                  <SiTiktok className="h-6 w-6" />
+                </Link>
+                  <Link href="https://www.facebook.com/btlclothing" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/70 hover:text-primary-foreground transition-colors" aria-label="TikTok">
+                      <SiFacebook className="h-6 w-6" />
+                  </Link>
+              </div>
             </div>
           </div>
         </div>

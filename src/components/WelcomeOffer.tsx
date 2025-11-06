@@ -1,6 +1,7 @@
 'use client'
 import {useState, useEffect} from 'react';
 import { X } from 'lucide-react';
+import Image from 'next/image';
 
 const LS_KEY = 'welcomeOfferDismissedAt';
 
@@ -63,7 +64,7 @@ export default function WelcomeOffer() {
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white text-black rounded-lg shadow-2xl z-50 w-full max-w-md mx-4 p-8">
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 h-6 w-6 flex items-center justify-center hover:bg-neutral-100 rounded transition-colors"
+          className=" cursor-pointer absolute top-4 right-4 h-6 w-6 flex items-center justify-center hover:bg-neutral-100 rounded transition-colors"
           aria-label="Close modal"
         >
           <X className="h-5 w-5" />
@@ -71,6 +72,14 @@ export default function WelcomeOffer() {
 
         <div className="space-y-4">
           <div>
+              <div>
+                  <Image
+                      src="/images/btl-logo-black.jpg"
+                      alt="Built To Last Logo"
+                      width={100}
+                      height={100}
+                      className="mx-auto mb-4" />
+              </div>
             <h2 className="text-2xl font-display font-bold mb-2">Welcome to Built To Last</h2>
             <p className="text-sm text-neutral-600">Get 10% off your first order</p>
           </div>
@@ -93,7 +102,7 @@ export default function WelcomeOffer() {
               </div>
               <button
                 type="submit"
-                className="w-full bg-black text-white py-2 font-medium hover:bg-neutral-800 transition-colors"
+                className="cursor-pointer w-full bg-black text-white py-2 font-medium hover:bg-neutral-800 transition-colors"
               >
                 Claim Discount
               </button>
