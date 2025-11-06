@@ -17,8 +17,9 @@ export async function GET(req: NextRequest) {
       .limit(limit)
     if (error) throw error
     return NextResponse.json({ orders: data })
-  } catch (e: any) {
+  } catch (e) {
+    const error = e as { message?: string }
     console.error(e)
-    return NextResponse.json({ error: e?.message || 'Server error' }, { status: 500 })
+    return NextResponse.json({ error: error?.message || 'Server error' }, { status: 500 })
   }
 }

@@ -1,18 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { supabaseAdmin } from '@/lib/supabaseServer'
+import { CartItem } from '@/context/CartContext'
 
 export async function POST(req: NextRequest) {
   try {
-    const { items, email } = await req.json()
-      console.log(items)
+    const { items, email } = await req.json() as { items?: CartItem[]; email?: string }
     if (!Array.isArray(items) || items.length === 0) {
       return NextResponse.json({ error: 'No items' }, { status: 400 })
     }
 
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
+    if (!process.env.STRIPE_SECRET_KEY) {
+      return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 })
+    }
 
-    const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = items.map((i: any) => ({
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
+
+    const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = items.map((i) => ({
       quantity: i.quantity || 1,
       price_data: {
         currency: 'aud',
@@ -33,14 +37,14 @@ export async function POST(req: NextRequest) {
       cancel_url,
       customer_email: email || undefined,
       metadata: {
-        items: JSON.stringify(items.map((i: any) => ({ id: i.id, qty: i.quantity, price: i.price }))),
+        items: JSON.stringify(items.map((i) => ({ id: i.id, qty: i.quantity, price: i.price }))),
       },
     })
 
     // Insert provisional order (optional, requires service role and table)
     try {
       if (supabaseAdmin) {
-        const total = items.reduce((s: number, i: any) => s + i.price * i.quantity, 0)
+        const total = items.reduce((s, i) => s + i.price * i.quantity, 0)
         await supabaseAdmin.from('orders').insert({
           stripe_session_id: session.id,
           status: 'created',
@@ -54,8 +58,9 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ id: session.id, url: session.url })
-  } catch (e: any) {
+  } catch (e) {
+    const error = e as { message?: string }
     console.error(e)
-    return NextResponse.json({ error: e?.message || 'Server error' }, { status: 500 })
+    return NextResponse.json({ error: error?.message || 'Server error' }, { status: 500 })
   }
 }
