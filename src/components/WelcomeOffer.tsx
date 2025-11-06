@@ -42,11 +42,28 @@ export default function WelcomeOffer() {
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    // TODO: Send email to backend/subscribe service
-    setTimeout(() => handleClose(), 2000);
+    if (!email) return;
+    
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed to subscribe');
+      }
+      
+      setSubmitted(true);
+      setTimeout(() => handleClose(), 2000);
+    } catch (err) {
+      console.error('Subscription error:', err);
+      alert('Failed to subscribe. Please try again.');
+    }
   }
 
   if (!isOpen) return null;

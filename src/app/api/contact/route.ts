@@ -23,9 +23,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Message is too short.' }, { status: 400 })
     }
 
-    // Attempt to send via Supabase Edge Function (recommended)
-    // Create an Edge Function named `send-contact-email` in your Supabase project
-    // that sends the email using your provider of choice. The payload below will be passed through.
+  
     try {
       if (supabaseAdmin) {
         const { data, error } = await supabaseAdmin.functions.invoke('send-contact-email', {
@@ -35,11 +33,10 @@ export async function POST(req: Request) {
           return NextResponse.json({ message: data?.message || 'Message sent successfully.' }, { status: 200 })
         }
       }
-    } catch (_e) {
+    } catch {
       // fall through to DB capture
     }
 
-    // Fallback: store the message in a table for review (`contact_messages`) and handle email via DB trigger if desired
     try {
       const { error: insertError } = await supabaseAdmin.from('contact_messages').insert({
         name,
@@ -48,10 +45,12 @@ export async function POST(req: Request) {
       })
       if (insertError) throw insertError
       return NextResponse.json({ message: 'Message received. We will reply shortly.' }, { status: 200 })
-    } catch (e: any) {
-      return NextResponse.json({ error: e?.message || 'Unable to process your message.' }, { status: 500 })
+    } catch (e) {
+      const error = e as { message?: string }
+      return NextResponse.json({ error: error?.message || 'Unable to process your message.' }, { status: 500 })
     }
-  } catch (e: any) {
-    return NextResponse.json({ error: e?.message || 'Unexpected error.' }, { status: 500 })
+  } catch (e) {
+    const error = e as { message?: string }
+    return NextResponse.json({ error: error?.message || 'Unexpected error.' }, { status: 500 })
   }
 }
