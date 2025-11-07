@@ -1,9 +1,10 @@
 'use client'
-import {useState, useEffect} from "react";
+import {useState, useEffect, useRef, startTransition} from "react";
 import Image from "next/image";
 import {useCart} from "@/context/CartContext";
 import {useRouter} from "next/navigation";
 import {Product, ProductVariant} from "@/app/types/Product";
+import SizeChart from "./SizeChart";
 
 interface ProductShowcaseProps {
     product: Product;
@@ -23,17 +24,22 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
     });
     const [selectedSize, setSelectedSize] = useState("M");
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [isSizeChartOpen, setIsSizeChartOpen] = useState(false);
+    const prevInitialColorRef = useRef<string | undefined>(initialColor);
 
     // Ensure that when the incoming initialColor changes (e.g., via client nav), the state syncs once
     useEffect(() => {
-        if (initialColor && product) {
+        if (initialColor && product && initialColor !== prevInitialColorRef.current) {
             const availableColors = [...new Set(product.variants.map(v => v.color))];
-            if (availableColors.includes(initialColor)) {
-                setSelectedColor(initialColor);
-                setCurrentImageIndex(0);
+            if (availableColors.includes(initialColor) && initialColor !== selectedColor) {
+                prevInitialColorRef.current = initialColor;
+                startTransition(() => {
+                    setSelectedColor(initialColor);
+                    setCurrentImageIndex(0);
+                });
             }
         }
-    }, [initialColor, product]);
+    }, [initialColor, product, selectedColor]);
 
     // Get available colors and sizes from product variants
     const availableColors = [...new Set(product.variants.map(v => v.color))];
@@ -276,6 +282,7 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
                                 Add to Cart - ${(getCurrentVariant()?.price || product.basePrice).toFixed(2)}
                             </button>
                             <button
+                                onClick={() => setIsSizeChartOpen(true)}
                                 className="cursor-pointer w-full py-3 px-6 border border-white text-white hover:bg-brand-charcoal hover:text-white transition-colors">
                                 Size Guide
                             </button>
@@ -308,6 +315,7 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
                     </div>
                 </div>
             </div>
+            <SizeChart isOpen={isSizeChartOpen} onClose={() => setIsSizeChartOpen(false)} />
         </section>
     );
 };

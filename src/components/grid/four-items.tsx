@@ -51,6 +51,7 @@ function FourItemGridItem({
         <button
           type="button"
           className={`relative block ${aspectClass}`}
+          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); onProductClick && onProductClick({ handle: item.handle, title: item.title, color: item.color }); }}
           aria-label={`View ${item.title}`}
         >
@@ -121,13 +122,13 @@ export function FourItemGrid({ onProductClick }: { onProductClick?: (p: ProductC
   const gridItems: ProductItem[] = [];
   
   for (const product of products) {
-    if (gridItems.length >= 3) break;
+    if (gridItems.length >= 4) break;
     
     // Get unique colors from variants
     const uniqueColors = [...new Set(product.variants.map(v => v.color))];
     
     for (const color of uniqueColors) {
-      if (gridItems.length >= 3) break;
+      if (gridItems.length >= 4) break;
       
       // Get the first variant of this color to use its image
       const variantWithColor = product.variants.find(v => v.color === color);
