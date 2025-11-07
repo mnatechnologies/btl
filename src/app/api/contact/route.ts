@@ -45,7 +45,7 @@ export async function POST(req: Request) {
       }
     } catch (emailError) {
       console.error('Failed to send email:', emailError)
-      // Continue to save to DB even if email fails
+      
     }
 
     // Save to database
