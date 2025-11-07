@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server'
+import { Resend } from 'resend'
 import { supabaseAdmin } from '@/lib/supabaseServer'
+
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 function isValidEmail(email: string) {
   return /.+@.+\..+/.test(email)
@@ -23,20 +26,29 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Message is too short.' }, { status: 400 })
     }
 
-  
+    // Try to send email via Resend
     try {
-      if (supabaseAdmin) {
-        const { data, error } = await supabaseAdmin.functions.invoke('send-contact-email', {
-          body: { name, email, message }
+      if (process.env.RESEND_API_KEY) {
+        await resend.emails.send({
+          from: process.env.RESEND_FROM_EMAIL || 'Built To Last <noreply@yourdomain.com>',
+          to: process.env.CONTACT_EMAIL || 'info@btlclothing.au',
+          subject: `New Contact Form Submission from ${name}`,
+          html: `
+            <h2>New Contact Form Submission</h2>
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Message:</strong></p>
+            <p>${message.replace(/\n/g, '<br>')}</p>
+          `,
+          replyTo: email,
         })
-        if (!error) {
-          return NextResponse.json({ message: data?.message || 'Message sent successfully.' }, { status: 200 })
-        }
       }
-    } catch {
-      // fall through to DB capture
+    } catch (emailError) {
+      console.error('Failed to send email:', emailError)
+      // Continue to save to DB even if email fails
     }
 
+    // Save to database
     try {
       const { error: insertError } = await supabaseAdmin.from('contact_messages').insert({
         name,
