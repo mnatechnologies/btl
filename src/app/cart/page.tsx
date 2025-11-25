@@ -5,6 +5,8 @@ import { useMemo, useState } from 'react'
 export default function CartPage() {
   const { items, removeItem, updateQty, total, clear } = useCart()
   const [email, setEmail] = useState('')
+  const [name, setName] = useState('')
+  const [phone, setPhone] = useState('')
   const [loading, setLoading] = useState(false)
   const hasItems = items.length > 0
 
@@ -17,7 +19,7 @@ export default function CartPage() {
       const res = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items, email })
+        body: JSON.stringify({ items, email, name, phone })
       })
       if (!res.ok) throw new Error('Failed to create checkout session')
       const data = await res.json()
@@ -76,16 +78,42 @@ export default function CartPage() {
             <div className="text-lg font-semibold">Total: ${totalFormatted}</div>
           </div>
 
-          <div className="space-y-2">
-            <label className="block text-sm text-muted-foreground">Email for receipt and order updates</label>
-            <input
-              type="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border rounded px-3 py-2"
-              required
-            />
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm text-muted-foreground mb-1">Full Name *</label>
+              <input
+                type="text"
+                placeholder="John Smith"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full border rounded px-3 py-2"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm text-muted-foreground mb-1">Email *</label>
+              <input
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full border rounded px-3 py-2"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm text-muted-foreground mb-1">Phone Number</label>
+              <input
+                type="tel"
+                placeholder="0400 000 000"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-full border rounded px-3 py-2"
+              />
+              <p className="text-xs text-muted-foreground mt-1">Optional - helps with delivery</p>
+            </div>
           </div>
 
           <button

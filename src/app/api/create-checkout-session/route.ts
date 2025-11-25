@@ -5,7 +5,12 @@ import { CartItem } from '@/context/CartContext'
 
 export async function POST(req: NextRequest) {
   try {
-    const { items, email } = await req.json() as { items?: CartItem[]; email?: string }
+    const { items, email, name, phone } = await req.json() as {
+      items?: CartItem[]
+      email?: string
+      name?: string
+      phone?: string
+    }
     if (!Array.isArray(items) || items.length === 0) {
       return NextResponse.json({ error: 'No items' }, { status: 400 })
     }
@@ -27,8 +32,10 @@ export async function POST(req: NextRequest) {
       },
     }))
 
-    const success_url = `${req.nextUrl.origin}/account?status=success`
-    const cancel_url = `${req.nextUrl.origin}/cart?status=cancelled`
+    //const success_url = `${req.nextUrl.origin}/order-confirmation?session_id={CHECKOUT_SESSION_ID}`
+    const success_url = `https://unrainy-obstreperously-ayden.ngrok-free.dev/order-confirmation?session_id={CHECKOUT_SESSION_ID}`
+    const cancel_url = 'https://unrainy-obstreperously-ayden.ngrok-free.dev/cart?status=cancelled'
+    //const cancel_url = `${req.nextUrl.origin}/cart?status=cancelled`
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -36,8 +43,16 @@ export async function POST(req: NextRequest) {
       success_url,
       cancel_url,
       customer_email: email || undefined,
+      shipping_address_collection: {
+        allowed_countries: ['AU'],
+      },
+      phone_number_collection: {
+        enabled: true,
+      },
       metadata: {
         items: JSON.stringify(items.map((i) => ({ id: i.id, qty: i.quantity, price: i.price }))),
+        customer_name: name || '',
+        customer_phone: phone || '',
       },
     })
 
@@ -50,6 +65,8 @@ export async function POST(req: NextRequest) {
           status: 'created',
           total_cents: total,
           customer_email: email || null,
+          shipping_name: name || null,
+          shipping_phone: phone || null,
           items,
         })
       }
