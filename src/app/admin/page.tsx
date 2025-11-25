@@ -18,8 +18,8 @@ export default function AdminPage() {
     const [authed, setAuthed] = useState(false)
     const [orders, setOrders] = useState<DatabaseOrder[]>([])
     const [loading, setLoading] = useState(false)
-    const [generatingLabel, setGeneratingLabel] = useState<string | null>(null)
-    const [showAddressForm, setShowAddressForm] = useState<string | null>(null)
+  const [generatingLabel, setGeneratingLabel] = useState<number | null>(null)
+  const [showAddressForm, setShowAddressForm] = useState<number | null>(null)
 
 
     const authenticate = async () => {
@@ -52,7 +52,7 @@ export default function AdminPage() {
     })()
   }, [authed, token])
 
-  const updateTracking = async (id: number, tracking_number: string, status?: string) => {
+  const updateTracking = async (id: number, tracking_number: string | undefined, status?: string | undefined) => {
     const res = await fetch('/api/orders/update-tracking', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
@@ -78,7 +78,7 @@ export default function AdminPage() {
       return
     }
 
-    setGeneratingLabel(orderId.toString())
+    setGeneratingLabel(orderId)
     try {
       const res = await fetch('/api/orders/generate-label', {
         method: 'POST',
@@ -305,7 +305,7 @@ export default function AdminPage() {
                     </div>
 
                     <button
-                      onClick={() => generateLabel(o.id.toString())}
+                      onClick={() => generateLabel(o.id)}
                       disabled={generatingLabel === o.id}
                       className="w-full rounded bg-blue-600 text-white py-2 cursor-pointer hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
