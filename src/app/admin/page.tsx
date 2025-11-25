@@ -52,7 +52,7 @@ export default function AdminPage() {
     })()
   }, [authed, token])
 
-  const updateTracking = async (id: string, tracking_number: string, status?: string) => {
+  onst updateTracking = async (id: number, tracking_number: string, status?: string) => {
     const res = await fetch('/api/orders/update-tracking', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
@@ -63,7 +63,7 @@ export default function AdminPage() {
     setOrders((prev) => prev.map((o) => (o.id === id ? data.order : o)))
   }
 
-  const generateLabel = async (orderId: string) => {
+  const generateLabel = async (orderId: number) => {
     const customerName = (document.getElementById(`name-${orderId}`) as HTMLInputElement)?.value
     const line1 = (document.getElementById(`addr1-${orderId}`) as HTMLInputElement)?.value
     const line2 = (document.getElementById(`addr2-${orderId}`) as HTMLInputElement)?.value
@@ -78,7 +78,7 @@ export default function AdminPage() {
       return
     }
 
-    setGeneratingLabel(orderId)
+    setGeneratingLabel(orderId.toString())
     try {
       const res = await fetch('/api/orders/generate-label', {
         method: 'POST',
