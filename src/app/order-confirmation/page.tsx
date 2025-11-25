@@ -1,11 +1,11 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { DatabaseOrder } from '@/app/types/Order'
 import Link from 'next/link'
 import Image from 'next/image'
 
-export default function OrderConfirmationPage() {
+function OrderConfirmationContent() {
   const searchParams = useSearchParams()
   const sessionId = searchParams.get('session_id')
   const [order, setOrder] = useState<DatabaseOrder | null>(null)
@@ -69,12 +69,12 @@ export default function OrderConfirmationPage() {
   return (
     <main className="max-w-2xl mx-auto px-4 py-12">
       <div className="text-center space-y-4 mb-8">
-          <Image
-        src='/images/btl-original-white.png'
-        width='100'
-        height='100'
-        alt='logo'
-        className='mx-auto'
+        <Image
+          src='/images/btl-original-white.png'
+          width={100}
+          height={100}
+          alt='logo'
+          className='mx-auto'
         />
         <h1 className="text-3xl font-bold">Order Confirmed!</h1>
         <p className="text-lg text-muted-foreground">
@@ -82,11 +82,12 @@ export default function OrderConfirmationPage() {
         </p>
       </div>
 
-      <div className="  rounded-lg p-6 space-y-6">
+      <div className="rounded-lg p-6 space-y-6">
         <div className="grid grid-cols-2 gap-4 pb-4 border-b border-border">
           <div>
             <div className="text-sm text-muted-foreground">Order Number</div>
-            <div className="font-medium">#{order.id.toString().padStart(6, '0')}</div>          </div>
+            <div className="font-medium">#{order.id.toString().padStart(6, '0')}</div>
+          </div>
           <div>
             <div className="text-sm text-muted-foreground">Order Date</div>
             <div className="font-medium">{new Date(order.created_at).toLocaleDateString()}</div>
@@ -141,14 +142,14 @@ export default function OrderConfirmationPage() {
           We'll send you shipping confirmation with tracking information once your order ships.
         </p>
         <div className="flex gap-4 justify-center">
-          <Link 
-            href="/account" 
+          <Link
+            href="/account"
             className="px-6 py-3 bg-black text-white rounded hover:bg-gray-800 transition-colors"
           >
             View Order History
           </Link>
-          <Link 
-            href="/" 
+          <Link
+            href="/"
             className="px-6 py-3 border border-border rounded hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
           >
             Continue Shopping
@@ -156,5 +157,20 @@ export default function OrderConfirmationPage() {
         </div>
       </div>
     </main>
+  )
+}
+
+export default function OrderConfirmationPage() {
+  return (
+    <Suspense fallback={
+      <main className="max-w-2xl mx-auto px-4 py-12 text-center">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-48 mx-auto mb-4"></div>
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-64 mx-auto"></div>
+        </div>
+      </main>
+    }>
+      <OrderConfirmationContent />
+    </Suspense>
   )
 }
