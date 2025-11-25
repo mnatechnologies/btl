@@ -214,7 +214,7 @@ export async function createLabelForOrder(orderId: string, orderData: {
     lines: [
       orderData.senderAddress?.line1 || process.env.AUSPOST_SENDER_ADDRESS_LINE1 || '',
       orderData.senderAddress?.line2 || process.env.AUSPOST_SENDER_ADDRESS_LINE2 || ''
-    ].filter(Boolean),
+    ].filter(Boolean) as string[],
     suburb: orderData.senderAddress?.suburb || process.env.AUSPOST_SENDER_SUBURB || '',
     state: orderData.senderAddress?.state || process.env.AUSPOST_SENDER_STATE || '',
     postcode: orderData.senderAddress?.postcode || process.env.AUSPOST_SENDER_POSTCODE || '',
@@ -228,7 +228,7 @@ export async function createLabelForOrder(orderId: string, orderData: {
     lines: [
       orderData.shippingAddress.line1,
       orderData.shippingAddress.line2
-    ].filter(Boolean),
+    ].filter(Boolean) as string[],
     suburb: orderData.shippingAddress.suburb,
     state: orderData.shippingAddress.state,
     postcode: orderData.shippingAddress.postcode,
