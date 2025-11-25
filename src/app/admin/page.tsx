@@ -52,7 +52,7 @@ export default function AdminPage() {
     })()
   }, [authed, token])
 
-  onst updateTracking = async (id: number, tracking_number: string, status?: string) => {
+  const updateTracking = async (id: number, tracking_number: string, status?: string) => {
     const res = await fetch('/api/orders/update-tracking', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
