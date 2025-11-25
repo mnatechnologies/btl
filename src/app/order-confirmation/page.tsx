@@ -139,7 +139,7 @@ function OrderConfirmationContent() {
 
       <div className="mt-8 space-y-4 text-center">
         <p className="text-muted-foreground">
-          We'll send you shipping confirmation with tracking information once your order ships.
+          We&#39;ll send you shipping confirmation with tracking information once your order ships.
         </p>
         <div className="flex gap-4 justify-center">
           <Link
