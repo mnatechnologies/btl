@@ -2,14 +2,45 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { supabaseAdmin } from '@/lib/supabaseServer'
 import { CartItem } from '@/context/CartContext'
+import { getPromoCode } from '@/lib/promoCodes'
+
+// Get or create a Stripe coupon for the promo code
+async function getOrCreateCoupon(stripe: Stripe, code: string): Promise<string | null> {
+  const promo = getPromoCode(code)
+  if (!promo) return null
+
+  const couponId = `PROMO_${code.toUpperCase()}`
+  
+  try {
+    // Try to retrieve existing coupon
+    await stripe.coupons.retrieve(couponId)
+    return couponId
+  } catch {
+    // Coupon doesn't exist, create it
+    try {
+      await stripe.coupons.create({
+        id: couponId,
+        amount_off: promo.discount,
+        currency: promo.currency,
+        duration: 'once',
+        name: `${code} - ${promo.description}`,
+      })
+      return couponId
+    } catch (createError) {
+      console.error('Failed to create coupon:', createError)
+      return null
+    }
+  }
+}
 
 export async function POST(req: NextRequest) {
   try {
-    const { items, email, name, phone } = await req.json() as {
+    const { items, email, name, phone, promoCode } = await req.json() as {
       items?: CartItem[]
       email?: string
       name?: string
       phone?: string
+      promoCode?: string
     }
     if (!Array.isArray(items) || items.length === 0) {
       return NextResponse.json({ error: 'No items' }, { status: 400 })
@@ -32,12 +63,20 @@ export async function POST(req: NextRequest) {
       },
     }))
 
+    // Get coupon ID if promo code is valid
+    let couponId: string | null = null
+    if (promoCode) {
+      const upperCode = promoCode.toUpperCase().trim()
+      couponId = await getOrCreateCoupon(stripe, upperCode)
+    }
+
     //const success_url = `${req.nextUrl.origin}/order-confirmation?session_id={CHECKOUT_SESSION_ID}`
-    const success_url = `https://unrainy-obstreperously-ayden.ngrok-free.dev/order-confirmation?session_id={CHECKOUT_SESSION_ID}`
-    const cancel_url = 'https://unrainy-obstreperously-ayden.ngrok-free.dev/cart?status=cancelled'
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || req.nextUrl.origin
+    const success_url = `${baseUrl}/order-confirmation?session_id={CHECKOUT_SESSION_ID}`
+    const cancel_url = `${baseUrl}/?status=cancelled`
     //const cancel_url = `${req.nextUrl.origin}/cart?status=cancelled`
 
-    const session = await stripe.checkout.sessions.create({
+    const sessionParams: Stripe.Checkout.SessionCreateParams = {
       mode: 'payment',
       line_items,
       success_url,
@@ -53,8 +92,16 @@ export async function POST(req: NextRequest) {
         items: JSON.stringify(items.map((i) => ({ id: i.id, qty: i.quantity, price: i.price }))),
         customer_name: name || '',
         customer_phone: phone || '',
+        promo_code: promoCode || '',
       },
-    })
+    }
+
+    // Apply discount coupon if valid
+    if (couponId) {
+      sessionParams.discounts = [{ coupon: couponId }]
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams)
 
     // Insert provisional order (optional, requires service role and table)
     try {

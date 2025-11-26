@@ -1,20 +1,11 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import { DatabaseOrder } from '@/app/types/Order'
-import { ScanLine, Package, Truck, Plus, Minus } from 'lucide-react'
+import { ScanLine, Package, Truck, Plus, Minus, Barcode, Printer } from 'lucide-react'
 
 // Dynamic import for barcode scanner (camera access needs client-side only)
 const BarcodeScanner = dynamic(() => import('@/components/BarcodeScanner'), { ssr: false })
-
-interface ShippingAddress {
-  line1: string
-  line2?: string
-  suburb: string
-  state: string
-  postcode: string
-  country?: string
-}
 
 interface ProductVariant {
   id: string
@@ -37,12 +28,17 @@ export default function AdminPage() {
   const [showAddressForm, setShowAddressForm] = useState<number | null>(null)
   
   // Inventory management state
-  const [activeTab, setActiveTab] = useState<'orders' | 'inventory'>('orders')
+  const [activeTab, setActiveTab] = useState<'orders' | 'inventory' | 'barcodes'>('orders')
   const [showScanner, setShowScanner] = useState(false)
   const [skuSearch, setSkuSearch] = useState('')
   const [scannedVariant, setScannedVariant] = useState<ProductVariant | null>(null)
   const [inventoryLoading, setInventoryLoading] = useState(false)
   const [adjustmentAmount, setAdjustmentAmount] = useState(0)
+  
+  // Barcode management state
+  const [allVariants, setAllVariants] = useState<ProductVariant[]>([])
+  const [barcodesLoading, setBarcodesLoading] = useState(false)
+  const [selectedSkus, setSelectedSkus] = useState<Set<string>>(new Set())
 
 
     const authenticate = async () => {
@@ -84,6 +80,99 @@ export default function AdminPage() {
     const data = await res.json()
     if (!res.ok) return alert(data.error || 'Update failed')
     setOrders((prev) => prev.map((o) => (o.id === id ? data.order : o)))
+  }
+
+  // Fetch all variants for barcode tab
+  const fetchAllVariants = useCallback(async () => {
+    setBarcodesLoading(true)
+    try {
+      const res = await fetch('/api/inventory', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      const data = await res.json()
+      if (res.ok && data.variants) {
+        setAllVariants(data.variants)
+      }
+    } catch {
+      console.error('Failed to fetch variants')
+    } finally {
+      setBarcodesLoading(false)
+    }
+  }, [token])
+
+  // Load variants when switching to barcodes tab
+  useEffect(() => {
+    if (activeTab === 'barcodes' && authed && allVariants.length === 0) {
+      fetchAllVariants()
+    }
+  }, [activeTab, authed, allVariants.length, fetchAllVariants])
+
+  const toggleSkuSelection = (sku: string) => {
+    setSelectedSkus(prev => {
+      const next = new Set(prev)
+      if (next.has(sku)) {
+        next.delete(sku)
+      } else {
+        next.add(sku)
+      }
+      return next
+    })
+  }
+
+  const selectAllSkus = () => {
+    if (selectedSkus.size === allVariants.length) {
+      setSelectedSkus(new Set())
+    } else {
+      setSelectedSkus(new Set(allVariants.map(v => v.sku)))
+    }
+  }
+
+  const printBarcodes = (skus: string[]) => {
+    const printWindow = window.open('', '_blank')
+    if (!printWindow) return
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Barcode Labels</title>
+          <style>
+            @page { margin: 10mm; }
+            body { font-family: Arial, sans-serif; }
+            .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+            .label { 
+              border: 1px solid #ccc; 
+              padding: 10px; 
+              text-align: center;
+              page-break-inside: avoid;
+            }
+            .label img { max-width: 100%; height: auto; }
+            .sku { font-size: 12px; margin-top: 5px; font-weight: bold; }
+            @media print {
+              .no-print { display: none; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="no-print" style="margin-bottom: 20px;">
+            <button onclick="window.print()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">
+              Print Labels
+            </button>
+            <span style="margin-left: 10px;">${skus.length} label(s)</span>
+          </div>
+          <div class="grid">
+            ${skus.map(sku => `
+              <div class="label">
+                <img src="/api/barcode?sku=${encodeURIComponent(sku)}" alt="${sku}" />
+                <div class="sku">${sku}</div>
+              </div>
+            `).join('')}
+          </div>
+        </body>
+      </html>
+    `
+    printWindow.document.write(html)
+    printWindow.document.close()
   }
 
   // Inventory functions
@@ -264,6 +353,17 @@ export default function AdminPage() {
           <Package className="w-4 h-4" />
           Inventory
         </button>
+        <button
+          onClick={() => setActiveTab('barcodes')}
+          className={`flex items-center gap-2 px-4 py-2 font-medium transition-colors ${
+            activeTab === 'barcodes' 
+              ? 'border-b-2 border-black text-black' 
+              : 'text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          <Barcode className="w-4 h-4" />
+          Barcodes
+        </button>
       </div>
 
       {/* Barcode Scanner Modal */}
@@ -401,6 +501,104 @@ export default function AdminPage() {
                   </button>
                 </div>
               </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Barcodes Tab */}
+      {activeTab === 'barcodes' && (
+        <div className="space-y-6">
+          {/* Actions Bar */}
+          <div className="flex items-center justify-between p-4 border rounded-lg bg-gray-50 dark:bg-gray-900">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={selectAllSkus}
+                className="px-3 py-2 text-sm border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+              >
+                {selectedSkus.size === allVariants.length ? 'Deselect All' : 'Select All'}
+              </button>
+              <span className="text-sm text-gray-500">
+                {selectedSkus.size} selected
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => printBarcodes(Array.from(selectedSkus))}
+                disabled={selectedSkus.size === 0}
+                className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Printer className="w-4 h-4" />
+                Print Selected ({selectedSkus.size})
+              </button>
+              <button
+                onClick={() => printBarcodes(allVariants.map(v => v.sku))}
+                className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+              >
+                <Printer className="w-4 h-4" />
+                Print All
+              </button>
+            </div>
+          </div>
+
+          {/* Variants Grid */}
+          {barcodesLoading ? (
+            <p className="text-center py-8">Loading variants...</p>
+          ) : allVariants.length === 0 ? (
+            <p className="text-center py-8 text-gray-500">No variants found</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {allVariants.map((variant) => (
+                <div
+                  key={variant.sku}
+                  className={`p-4 border rounded-lg cursor-pointer transition-all ${
+                    selectedSkus.has(variant.sku) 
+                      ? 'border-black bg-gray-50 dark:bg-gray-900' 
+                      : 'hover:border-gray-400'
+                  }`}
+                  onClick={() => toggleSkuSelection(variant.sku)}
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <p className="font-medium">{variant.products?.name}</p>
+                      <p className="text-sm text-gray-500">{variant.color} / {variant.size}</p>
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={selectedSkus.has(variant.sku)}
+                      onChange={() => toggleSkuSelection(variant.sku)}
+                      className="w-5 h-5"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </div>
+                  
+                  {/* Barcode Preview */}
+                  <div className="bg-white p-3 rounded border">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`/api/barcode?sku=${encodeURIComponent(variant.sku)}`}
+                      alt={variant.sku}
+                      className="w-full h-auto"
+                    />
+                  </div>
+                  
+                  <div className="mt-2 flex items-center justify-between">
+                    <code className="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
+                      {variant.sku}
+                    </code>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        printBarcodes([variant.sku])
+                      }}
+                      className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
+                      title="Print this barcode"
+                    >
+                      <Printer className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>

@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { getFeaturedProducts } from '@/lib/products';
 import { Product } from '@/app/types/Product';
+import QuickView from '@/components/QuickView';
+import { Plus } from 'lucide-react';
 
 type ProductItem = {
   handle: string;
@@ -16,15 +18,29 @@ type ProductItem = {
 
 type ProductClick = Pick<ProductItem, 'handle' | 'title' | 'color'>;
 
+function QuickAddButton({ onClick }: { onClick: (e: React.MouseEvent) => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="cursor-pointer absolute bottom-14 right-3 z-20 bg-black/80 hover:bg-black text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-105"
+    >
+      <Plus className="w-3 h-3" />
+      Quick Add
+    </button>
+  );
+}
+
 function MirrorGridItem({
   item,
   size,
-  onProductClick
+  onProductClick,
+  onQuickAdd
 }: {
   item: ProductItem;
   size: 'large' | 'small';
   priority?: boolean;
   onProductClick?: (p: ProductClick) => void;
+  onQuickAdd?: (handle: string, color: string, image: string) => void;
 }) {
   const content = (
     <GridTileImage
@@ -46,12 +62,12 @@ function MirrorGridItem({
   const aspectClass = size === 'large' ? 'h-full w-full min-h-full' : 'aspect-square h-full w-full';
 
   return (
-    <div className={`${spanClass} ${size === 'large' ? 'min-h-full' : ''}`}>
+    <div className={`${spanClass} ${size === 'large' ? 'min-h-full' : ''} group relative`}>
       {onProductClick ? (
         <button
           type="button"
           className={`relative block ${aspectClass}`}
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onProductClick && onProductClick({ handle: item.handle, title: item.title, color: item.color }); }}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onProductClick({ handle: item.handle, title: item.title, color: item.color }); }}
           aria-label={`View ${item.title}`}
         >
           {content}
@@ -60,10 +76,19 @@ function MirrorGridItem({
         <Link
           className={`relative block ${aspectClass}`}
           href={`/product/${item.handle}?color=${item.color}`}
-          prefetch={true}
+          prefetch={false}
         >
           {content}
         </Link>
+      )}
+      {onQuickAdd && (
+        <QuickAddButton 
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onQuickAdd(item.handle, item.color, item.image);
+          }} 
+        />
       )}
     </div>
   );
@@ -72,6 +97,18 @@ function MirrorGridItem({
 export function FourItemGridMirror({ onProductClick }: { onProductClick?: (p: ProductClick) => void }) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [quickViewOpen, setQuickViewOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<{ handle: string; color: string; image: string } | null>(null);
+
+  const openQuickView = (handle: string, color: string, image: string) => {
+    setSelectedProduct({ handle, color, image });
+    setQuickViewOpen(true);
+  };
+
+  const closeQuickView = () => {
+    setQuickViewOpen(false);
+    setSelectedProduct(null);
+  };
 
   useEffect(() => {
     async function fetchProducts() {
@@ -151,10 +188,21 @@ export function FourItemGridMirror({ onProductClick }: { onProductClick?: (p: Pr
       {/* Grid: 3 small stacked on left, 1 large on right */}
       <div className="grid gap-4 grid-cols-4 grid-rows-3 auto-rows-fr">
         {smallProducts.map((item, idx) => (
-          <MirrorGridItem key={idx} size="small" item={item} onProductClick={onProductClick} />
+          <MirrorGridItem key={idx} size="small" item={item} onProductClick={onProductClick} onQuickAdd={openQuickView} />
         ))}
-        <MirrorGridItem size="large" item={largeProduct} onProductClick={onProductClick} />
+        <MirrorGridItem size="large" item={largeProduct} onProductClick={onProductClick} onQuickAdd={openQuickView} />
       </div>
+
+      {/* QuickView Modal */}
+      {selectedProduct && (
+        <QuickView
+          isOpen={quickViewOpen}
+          onClose={closeQuickView}
+          productHandle={selectedProduct.handle}
+          selectedColor={selectedProduct.color}
+          productImage={selectedProduct.image}
+        />
+      )}
     </section>
   );
 }

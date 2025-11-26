@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import WelcomeOffer from "../components/WelcomeOffer";
+import LaunchGate from "../components/LaunchGate";
 import Providers from "./providers";
 
 const geistSans = Geist({
@@ -17,8 +18,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Built To Last ',
-  description: "",
+  title: 'Built To Last | Premium Quality Essentials',
+  description: 'Premium quality essentials designed for those who value craftsmanship and timeless style. Australian-made clothing built to last.',
+  keywords: ['clothing', 'premium', 'Australian', 'quality', 'essentials', 'fashion'],
+  openGraph: {
+    title: 'Built To Last',
+    description: 'Premium quality essentials designed for those who value craftsmanship and timeless style.',
+    type: 'website',
+  },
 };
 
 export const viewport: Viewport = {
@@ -50,12 +57,14 @@ export default function RootLayout({
         className='min-h-screen flex flex-col bg-neutral-50 text-black selection:bg-brand dark:bg-neutral-900 dark:text-white dark:selection:bg-brand-grey dark:selection:text-white'
     >
     <Providers>
-        <Header/>
-        <WelcomeOffer/>
-        <div className="flex-grow">
-            {children}
-        </div>
-        <Footer/>
+        <LaunchGate>
+            <Header/>
+            <WelcomeOffer/>
+            <div className="flex-grow">
+                {children}
+            </div>
+            <Footer/>
+        </LaunchGate>
     </Providers>
     </body>
     </html>

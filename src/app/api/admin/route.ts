@@ -4,12 +4,19 @@ export async function POST(req: NextRequest) {
     try {
         const {username, password} = await req.json()
 
-        const validUsername = process.env.ADMIN_USERNAME || 'admin'
-        const validPassword = process.env.ADMIN_PASSWORD || ''
+        const validUsername = process.env.ADMIN_USERNAME
+        const validPassword = process.env.ADMIN_PASSWORD
+
+        if (!validUsername || !validPassword) {
+            return NextResponse.json({error: 'Admin credentials not configured'}, {status: 500})
+        }
 
         if (username === validUsername && password === validPassword) {
             // Return the admin token that the existing API routes expect
-            const token = process.env.ADMIN_TOKEN || ''
+            const token = process.env.ADMIN_TOKEN
+            if (!token) {
+                return NextResponse.json({error: 'Admin token not configured'}, {status: 500})
+            }
             return NextResponse.json({token, success: true})
         } else {
             return NextResponse.json({error: 'Invalid credentials'}, {status: 401})

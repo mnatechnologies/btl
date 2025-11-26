@@ -58,7 +58,7 @@ function ThreeItemGridItem({
         <Link
           className="relative block aspect-square h-full w-full  "
           href={`/product/${item.handle}?color=${item.color}`}
-          prefetch={true}
+          prefetch={false}
         >
           {content}
         </Link>
