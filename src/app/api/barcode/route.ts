@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+ // @ts-expect-error - bwip-js has no types
 import bwipjs from 'bwip-js'
 
 // GET - Generate barcode image for a SKU
