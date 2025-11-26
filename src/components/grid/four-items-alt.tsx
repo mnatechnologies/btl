@@ -117,42 +117,25 @@ export function FourItemGridAlt({ onProductClick }: { onProductClick?: (p: Produ
     );
   }
 
-  // Create grid items - first 4 from products, then placeholders
-  const gridItems: ProductItem[] = [];
+  // Use second product (index 1) and get all its color variants
+  const product = products[1];
+  if (!product) return null;
   
-  for (const product of products) {
-    if (gridItems.length >= 4) break;
+  const uniqueColors = [...new Set(product.variants.map(v => v.color))];
+  
+  const gridItems: ProductItem[] = uniqueColors.slice(0, 4).map(color => {
+    const variantWithColor = product.variants.find(v => v.color === color);
+    // Use first image (index 0) for consistent perspective
+    const image = variantWithColor?.images?.[0] || product.images?.[0] || '/images/btl-logo-white.jpg';
     
-    // Get unique colors from variants
-    const uniqueColors = [...new Set(product.variants.map(v => v.color))];
-    
-    for (const color of uniqueColors) {
-      if (gridItems.length >= 4) break;
-      
-      // Get the first variant of this color to use its image
-      const variantWithColor = product.variants.find(v => v.color === color);
-      const image = variantWithColor?.images?.[0] || product.images?.[0] || '/images/btl-logo-white.jpg';
-      
-      gridItems.push({
-        handle: product.name.toLowerCase().replace(/\s+/g, '-'),
-        title: `${product.name} – ${color}`,
-        image,
-        price: variantWithColor?.price || product.basePrice,
-        color
-      });
-    }
-  }
-
-  // Add placeholder items
-  while (gridItems.length < 4) {
-    gridItems.push({
-      handle: `d${gridItems.length}`,
-      title: `D${gridItems.length}`,
-      image: '/images/btl-logo-white.jpg',
-      price: 0,
-      color: 'default'
-    });
-  }
+    return {
+      handle: product.name.toLowerCase().replace(/\s+/g, '-'),
+      title: `${product.name} – ${color}`,
+      image,
+      price: variantWithColor?.price || product.basePrice,
+      color
+    };
+  });
 
   const [firstProduct, secondProduct, thirdProduct, fourthProduct] = gridItems;
 
@@ -161,7 +144,7 @@ export function FourItemGridAlt({ onProductClick }: { onProductClick?: (p: Produ
       {/* Heading */}
       <div className="py-6 text-left">
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-white">
-          New Arrivals
+          {product.name}
         </h2>
       </div>
       

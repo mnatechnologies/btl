@@ -118,51 +118,23 @@ export function FourItemGrid({ onProductClick }: { onProductClick?: (p: ProductC
     );
   }
 
-  // Create grid items - first 3 from products, then placeholder
-  const gridItems: ProductItem[] = [];
+  // Use first product (index 0) and get all its color variants
+  const product = products[0];
+  const uniqueColors = [...new Set(product.variants.map(v => v.color))];
   
-  for (const product of products) {
-    if (gridItems.length >= 4) break;
+  const gridItems: ProductItem[] = uniqueColors.slice(0, 4).map(color => {
+    const variantWithColor = product.variants.find(v => v.color === color);
+    // Use first image (index 0) for consistent perspective
+    const image = variantWithColor?.images?.[0] || product.images?.[0] || '/images/btl-logo-white.jpg';
     
-    // Get unique colors from variants
-    const uniqueColors = [...new Set(product.variants.map(v => v.color))];
-    
-    for (const color of uniqueColors) {
-      if (gridItems.length >= 4) break;
-      
-      // Get the first variant of this color to use its image
-      const variantWithColor = product.variants.find(v => v.color === color);
-      const image = variantWithColor?.images?.[0] || product.images?.[0] || '/images/btl-logo-white.jpg';
-      
-      gridItems.push({
-        handle: product.name.toLowerCase().replace(/\s+/g, '-'),
-        title: `${product.name} – ${color}`,
-        image,
-        price: variantWithColor?.price || product.basePrice,
-        color
-      });
-    }
-  }
-
-  // Add placeholder items for D2 and D3
-  if (gridItems.length < 4) {
-    gridItems.push({
-      handle: 'd2',
-      title: 'D2',
-      image: '/images/btl-logo-white.jpg',
-      price: 0,
-      color: 'default'
-    });
-  }
-  if (gridItems.length < 4) {
-    gridItems.push({
-      handle: 'd3',
-      title: 'D3',
-      image: '/images/btl-logo-white.jpg',
-      price: 0,
-      color: 'default'
-    });
-  }
+    return {
+      handle: product.name.toLowerCase().replace(/\s+/g, '-'),
+      title: `${product.name} – ${color}`,
+      image,
+      price: variantWithColor?.price || product.basePrice,
+      color
+    };
+  });
 
   const [firstProduct, ...rest] = gridItems;
 
@@ -171,7 +143,7 @@ export function FourItemGrid({ onProductClick }: { onProductClick?: (p: ProductC
       {/* Heading */}
       <div className="py-6 text-left">
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-white">
-          Featured Collection
+          {product.name}
         </h2>
       </div>
       

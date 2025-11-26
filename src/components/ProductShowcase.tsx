@@ -132,6 +132,16 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
     // Get color display values for UI
     const getColorClass = (color: string) => {
         switch (color.toLowerCase()) {
+            // New color names from seed
+            case 'raven': return 'bg-black';
+            case 'alabaster': return 'bg-white border border-border';
+            case 'stone': return 'bg-gray-400';
+            case 'champagne': return 'bg-amber-100 border border-border';
+            case 'royal': return 'bg-blue-400';
+            case 'ivory': return 'bg-amber-50 border border-border';
+            case 'chocolate': return 'bg-amber-800';
+            case 'admiral': return 'bg-blue-900';
+            // Legacy color names (backwards compatibility)
             case 'black': return 'bg-black';
             case 'white': return 'bg-white border border-border';
             case 'grey':

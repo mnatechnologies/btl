@@ -1,6 +1,6 @@
 import ngrok from '@ngrok/ngrok'
 
-const isDev = process.env.NODE_ENV !== 'production';
+// const isDev = process.env.NODE_ENV !== 'production';
 let host = "localhost";
 let port = process.env.PORT || "3000";
 
