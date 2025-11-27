@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server'
-import { Resend } from 'resend'
 import { supabaseAdmin } from '@/lib/supabaseServer'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
+import { sendContactEmail } from '@/lib/ses'
 
 function isValidEmail(email: string) {
   return /.+@.+\..+/.test(email)
@@ -26,26 +24,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Message is too short.' }, { status: 400 })
     }
 
-    // Try to send email via Resend
+    // Send email via SES
     try {
-      if (process.env.RESEND_API_KEY) {
-        await resend.emails.send({
-          from: process.env.RESEND_FROM_EMAIL || 'Built To Last <noreply@yourdomain.com>',
-          to: process.env.CONTACT_EMAIL || 'info@btlclothing.au',
-          subject: `New Contact Form Submission from ${name}`,
-          html: `
-            <h2>New Contact Form Submission</h2>
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Message:</strong></p>
-            <p>${message.replace(/\n/g, '<br>')}</p>
-          `,
-          replyTo: email,
-        })
-      }
+      await sendContactEmail({ name, email, message })
     } catch (emailError) {
-      console.error('Failed to send email:', emailError)
-      
+      console.error('Failed to send email via SES:', emailError)
+      // Continue - we'll still save to DB
     }
 
     // Save to database

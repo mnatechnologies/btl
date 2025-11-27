@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseServer'
 import { createLabelForOrder } from '@/lib/auspost'
+import { sendShippingNotificationEmail } from '@/lib/ses'
 
 export async function POST(req: NextRequest) {
   try {
@@ -52,7 +53,7 @@ export async function POST(req: NextRequest) {
 
     // Format items for AusPost API
     const orderItems = Array.isArray(items) 
-      ? items.map((item: any) => ({
+      ? items.map((item: { title?: string; name?: string; quantity?: number; qty?: number }) => ({
           description: item.title || item.name || 'Product',
           quantity: item.quantity || item.qty || 1
         }))
@@ -106,6 +107,31 @@ export async function POST(req: NextRequest) {
       // Even if update fails, we still return the label
     }
 
+    // Send shipping notification email to customer
+    if (order.customer_email && labelResult.trackingId) {
+      try {
+        await sendShippingNotificationEmail({
+          email: order.customer_email,
+          orderNumber: orderId.toString().padStart(6, '0'),
+          customerName,
+          trackingNumber: labelResult.trackingId,
+          shippingAddress: {
+            name: customerName,
+            line1: shippingAddress.line1,
+            line2: shippingAddress.line2,
+            suburb: shippingAddress.suburb,
+            state: shippingAddress.state,
+            postcode: shippingAddress.postcode,
+            country: shippingAddress.country || 'Australia',
+          },
+        })
+        console.log('📧 Shipping notification email sent to:', order.customer_email)
+      } catch (emailError) {
+        console.error('Failed to send shipping notification email:', emailError)
+        // Don't fail the label generation if email fails
+      }
+    }
+
     return NextResponse.json({
       success: true,
       trackingId: labelResult.trackingId,
@@ -115,10 +141,11 @@ export async function POST(req: NextRequest) {
       order: updatedOrder || order
     })
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { message?: string }
     console.error('Label generation error:', error)
     return NextResponse.json({ 
-      error: error.message || 'Failed to generate label' 
+      error: err.message || 'Failed to generate label' 
     }, { status: 500 })
   }
 }

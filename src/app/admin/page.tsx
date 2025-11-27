@@ -2,7 +2,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import { DatabaseOrder } from '@/app/types/Order'
-import { ScanLine, Package, Truck, Plus, Minus, Barcode, Printer } from 'lucide-react'
+import { ScanLine, Package, Truck, Plus, Minus, Barcode, Printer, Mail } from 'lucide-react'
 
 // Dynamic import for barcode scanner (camera access needs client-side only)
 const BarcodeScanner = dynamic(() => import('@/components/BarcodeScanner'), { ssr: false })
@@ -80,6 +80,25 @@ export default function AdminPage() {
     const data = await res.json()
     if (!res.ok) return alert(data.error || 'Update failed')
     setOrders((prev) => prev.map((o) => (o.id === id ? data.order : o)))
+  }
+
+  const addTrackingAndNotify = async (id: number) => {
+    const tracking = (document.getElementById(`tn-${id}`) as HTMLInputElement)?.value
+    if (!tracking?.trim()) {
+      alert('Please enter a tracking number')
+      return
+    }
+  
+    const res = await fetch('/api/orders/add-tracking', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ orderId: id, trackingNumber: tracking.trim() })
+    })
+    const data = await res.json()
+    if (!res.ok) return alert(data.error || 'Failed to add tracking')
+    
+    setOrders((prev) => prev.map((o) => (o.id === id ? data.order : o)))
+    alert('Tracking added and shipping notification sent!')
   }
 
   // Fetch all variants for barcode tab
@@ -625,7 +644,7 @@ export default function AdminPage() {
                 </div>
               </div>
               
-              <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+              <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3 items-end">
                 <div>
                   <label className="block text-xs text-muted-foreground">Tracking number</label>
                   <input defaultValue={o.tracking_number || ''} id={`tn-${o.id}`} className="w-full border rounded px-2 py-1" />
@@ -640,18 +659,27 @@ export default function AdminPage() {
                     <option value="cancelled">cancelled</option>
                   </select>
                 </div>
-                <div>
-                  <button
-                    onClick={() => {
-                      const tn = (document.getElementById(`tn-${o.id}`) as HTMLInputElement)?.value
-                      const st = (document.getElementById(`st-${o.id}`) as HTMLSelectElement)?.value
-                      updateTracking(o.id, tn, st)
-                    }}
-                    className="w-full rounded bg-black text-white py-2 cursor-pointer"
-                  >
-                    Save
-                  </button>
-                </div>
+              </div>
+
+              <div className="mt-3 flex gap-2">
+                <button
+                  onClick={() => {
+                    const tn = (document.getElementById(`tn-${o.id}`) as HTMLInputElement)?.value
+                    const st = (document.getElementById(`st-${o.id}`) as HTMLSelectElement)?.value
+                    updateTracking(o.id, tn, st)
+                  }}
+                  className="flex-1 rounded bg-black text-white py-2 cursor-pointer"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={() => addTrackingAndNotify(o.id)}
+                  disabled={o.status === 'shipped'}
+                  className="flex-1 rounded bg-green-600 text-white py-2 cursor-pointer hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  <Mail className="w-4 h-4" />
+                  Ship & Notify
+                </button>
               </div>
 
               {/* AusPost Label Generation */}

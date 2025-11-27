@@ -1,9 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { supabaseAdmin } from '@/lib/supabaseServer'
+import { sendOrderConfirmationEmail } from '@/lib/ses'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '')
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || ''
+
+interface OrderItem {
+  id: string
+  title: string
+  price: number
+  quantity: number
+  sku?: string
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -37,7 +46,7 @@ export async function POST(req: NextRequest) {
         // ✅ IMPORTANT: Retrieve the full session with expanded data
         // The webhook event doesn't include customer_details or shipping_details by default
         const session = await stripe.checkout.sessions.retrieve(sessionFromWebhook.id, {
-          expand: ['customer_details', 'line_items']
+          expand: ['customer_details', 'line_items', 'total_details']
         })
 
         console.log('📧 Customer Email:', session.customer_details?.email)
@@ -100,8 +109,73 @@ export async function POST(req: NextRequest) {
 
         console.log('✅ Order updated successfully:', order.id)
 
-        // TODO: Send order confirmation email here
-        // TODO: Trigger any post-payment workflows (inventory updates, etc.)
+        // Send order confirmation email
+        if (customerDetails?.email) {
+          try {
+            // Parse items - may be stored as JSON string or array
+            let items: OrderItem[] = []
+            if (typeof order.items === 'string') {
+              try {
+                items = JSON.parse(order.items)
+              } catch {
+                console.error('Failed to parse order items JSON')
+              }
+            } else if (Array.isArray(order.items)) {
+              items = order.items as OrderItem[]
+            }
+            
+            const customerName = shippingDetails?.name || customerDetails?.name || 'Customer'
+            const shippingAddress = shippingDetails?.address
+            
+            // Calculate totals from session
+            const subtotalCents = session.amount_subtotal || 0
+            const totalCents = session.amount_total || 0
+            const shippingCents = (session.shipping_cost?.amount_total) || 0
+            const discountCents = (session.total_details?.amount_discount) || 0
+
+            await sendOrderConfirmationEmail({
+              email: customerDetails.email,
+              orderNumber: order.id.toString().padStart(6, '0'),
+              orderDate: new Date(order.created_at).toLocaleDateString('en-AU', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              }),
+              customerName,
+              items: items.map((item) => {
+                // Extract size from SKU if present (e.g., "tshirt-black-L" -> "L")
+                const sizePart = item.sku?.split('-').pop()
+                const size = sizePart && ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'].includes(sizePart.toUpperCase())
+                  ? sizePart.toUpperCase()
+                  : undefined
+
+                return {
+                  name: item.title,
+                  size,
+                  quantity: item.quantity,
+                  price_cents: item.price,
+                }
+              }),
+              subtotalCents,
+              shippingCents,
+              discountCents,
+              totalCents,
+              shippingAddress: {
+                name: customerName,
+                line1: shippingAddress?.line1 || '',
+                line2: shippingAddress?.line2 || undefined,
+                suburb: shippingAddress?.city || '',
+                state: shippingAddress?.state || '',
+                postcode: shippingAddress?.postal_code || '',
+                country: shippingAddress?.country || 'Australia',
+              },
+            })
+            console.log('📧 Order confirmation email sent to:', customerDetails.email)
+          } catch (emailError) {
+            console.error('❌ Failed to send order confirmation email:', emailError)
+            // Don't fail the webhook - order is still processed
+          }
+        }
 
         return NextResponse.json({ received: true, orderId: order.id })
       } catch (error) {
