@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import ComingSoon from './ComingSoon'
 
 // Set your launch date via env var or fallback
-const LAUNCH_DATE = new Date(process.env.NEXT_PUBLIC_LAUNCH_DATE || '2025-12-05T00:00:00+11:00')
+const LAUNCH_DATE = new Date(process.env.NEXT_PUBLIC_LAUNCH_DATE || '2025-12-05T10:10:00+11:00')
 
 // Bypass paths - these pages are always accessible
 const BYPASS_PATHS = ['/admin']

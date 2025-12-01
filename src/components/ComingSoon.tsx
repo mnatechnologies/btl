@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 
 // Set your launch date here
-const LAUNCH_DATE = new Date('2025-12-05T00:00:00+11:00') // Launch date: Dec 5, 2025
+const LAUNCH_DATE = new Date('2025-12-05T10:00:00+11:00') // Launch date: Dec 5, 2025
 
 interface TimeLeft {
   days: number
@@ -92,7 +92,7 @@ export default function ComingSoon() {
             src="/images/btl-logo-white.jpg"
             alt="Built To Last"
             width={200}
-            height={60}
+            height={200}
             className="h-16 w-auto"
           />
         </div>
@@ -128,17 +128,22 @@ export default function ComingSoon() {
         </div>
 
         {/* Product Preview Images */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-3xl mb-12">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-3xl mb-12 w-full">
           {photos.map((photo, index) => (
-            <div 
-              key={index} 
-              className="aspect-square relative overflow-hidden rounded-lg bg-white/5 border border-white/10"
+            <div
+              key={index}
+              className="relative overflow-hidden rounded-lg bg-white/5 border border-white/10 w-full"
+              style={{ paddingBottom: '100%' }}
             >
               <Image
                 src={photo}
                 alt={`Preview ${index + 1}`}
+                sizes="(max-width: 640px) 50vw, 25vw"
                 fill
-                className="object-cover opacity-80 hover:opacity-100 hover:scale-105 transition-all duration-500"
+                className="absolute inset-0 object-cover opacity-80 hover:opacity-100 hover:scale-105 transition-all duration-500"
+                onError={(e) => {
+                  console.error(`Failed to load image: ${photo}`)
+                }}
               />
             </div>
           ))}

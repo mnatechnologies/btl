@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import { DatabaseOrder } from '@/app/types/Order'
+import Link from "next/link";
 
 export default function AccountPage() {
   const [email, setEmail] = useState('')
@@ -121,7 +122,7 @@ export default function AccountPage() {
                       <div className="text-right">
                         <div className="font-medium capitalize">{o.status}</div>
                         {o.tracking_number && (
-                          <a className="text-sm underline" href={`https://track.global/?code=${o.tracking_number}`} target="_blank" rel="noreferrer">Track shipment</a>
+                          <Link className="text-sm underline" href={`https://auspost.com.au/mypost/track/#/details/${o.tracking_number}`} target="_blank" rel="noreferrer">Track shipment</Link>
                         )}
                       </div>
                     </div>
