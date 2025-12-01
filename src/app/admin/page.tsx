@@ -16,6 +16,28 @@ interface ProductVariant {
   inventory: number
   products?: { name: string }
 }
+interface ShippingLabelData {
+  orderId: string
+  orderDate: string
+  senderName: string
+  senderLine1: string
+  senderLine2: string
+  senderSuburb: string
+  senderState: string
+  senderPostcode: string
+  senderPhone: string
+  senderEmail: string
+  recipientName: string
+  recipientLine1: string
+  recipientLine2: string
+  recipientSuburb: string
+  recipientState: string
+  recipientPostcode: string
+  recipientPhone: string
+  recipientEmail: string
+  itemDescription: string
+  weight: string
+}
 
 export default function AdminPage() {
     const [username, setUsername] = useState('')
@@ -26,7 +48,7 @@ export default function AdminPage() {
     const [loading, setLoading] = useState(false)
   const [generatingLabel, setGeneratingLabel] = useState<number | null>(null)
   const [showAddressForm, setShowAddressForm] = useState<number | null>(null)
-  
+
   // Inventory management state
   const [activeTab, setActiveTab] = useState<'orders' | 'inventory' | 'barcodes'>('orders')
   const [showScanner, setShowScanner] = useState(false)
@@ -254,7 +276,7 @@ export default function AdminPage() {
     }
   }
 
-  const generateLabel = async (orderId: number) => {
+  const generateLabel = (orderId: number) => {
     const customerName = (document.getElementById(`name-${orderId}`) as HTMLInputElement)?.value
     const line1 = (document.getElementById(`addr1-${orderId}`) as HTMLInputElement)?.value
     const line2 = (document.getElementById(`addr2-${orderId}`) as HTMLInputElement)?.value
@@ -263,53 +285,320 @@ export default function AdminPage() {
     const postcode = (document.getElementById(`postcode-${orderId}`) as HTMLInputElement)?.value
     const country = (document.getElementById(`country-${orderId}`) as HTMLInputElement)?.value || 'AU'
     const phone = (document.getElementById(`phone-${orderId}`) as HTMLInputElement)?.value
+    const email = (document.getElementById(`email-${orderId}`) as HTMLInputElement)?.value
+    const weight = (document.getElementById(`weight-${orderId}`) as HTMLInputElement)?.value || '0.5'
 
     if (!customerName || !line1 || !suburb || !state || !postcode) {
       alert('Please fill in all required address fields (Name, Address, Suburb, State, Postcode)')
       return
     }
 
-    setGeneratingLabel(orderId)
-    try {
-      const res = await fetch('/api/orders/generate-label', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({
-          orderId,
-          customerName,
-          customerPhone: phone,
-          shippingAddress: { line1, line2, suburb, state, postcode, country }
-        })
-      })
-      const data = await res.json()
-      if (!res.ok) {
-        alert(data.error || 'Failed to generate label')
-        return
-      }
+    // Get order details for item description
+    const order = orders.find(o => o.id === orderId)
+    const itemDescription = order ? 'Clothing Items' : 'General Merchandise'
 
-      // Update order in state
-      if (data.order) {
-        setOrders((prev) => prev.map((o) => (o.id === orderId ? data.order : o)))
-      }
-
-      // Download the label PDF
-      const linkSource = `data:application/pdf;base64,${data.labelPdf}`
-      const downloadLink = document.createElement('a')
-      downloadLink.href = linkSource
-      downloadLink.download = `auspost-label-${orderId}.pdf`
-      downloadLink.click()
-
-      alert(`Label generated successfully! Tracking: ${data.trackingId}`)
-      setShowAddressForm(null)
-    } catch (error) {
-      console.error('Label generation error:', error)
-      alert('Failed to generate label')
-    } finally {
-      setGeneratingLabel(null)
+    // Prepare label data
+    const data: ShippingLabelData = {
+      orderId: orderId.toString().padStart(6, '0'),
+      orderDate: new Date().toISOString().split('T')[0],
+      // Sender details - update these with your business details
+      senderName: 'Built To Last',
+      senderLine1: 'PLEASE UPDATE',
+      senderLine2: '',
+      senderSuburb: 'PLEASE UPDATE',
+      senderState: 'PLEASE UPDATE',
+      senderPostcode: 'PLEASE UPDATE',
+      senderPhone: 'PLEASE UPDATE',
+      senderEmail: 'PLEASE UPDATE',
+      // Recipient details
+      recipientName: customerName,
+      recipientLine1: line1,
+      recipientLine2: line2 || '',
+      recipientSuburb: suburb,
+      recipientState: state,
+      recipientPostcode: postcode,
+      recipientPhone: phone || '',
+      recipientEmail: email || order?.customer_email || '',
+      itemDescription: itemDescription,
+      weight: weight
     }
+
+    setShowAddressForm(null)
+    printLabel(data)
   }
 
-    if (!authed) {
+  const printLabel = (data: ShippingLabelData)  => {
+
+
+    const printWindow = window.open('', '_blank')
+    if (!printWindow) {
+      alert('Please allow pop-ups to print the label')
+      return
+    }
+
+    const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Shipping Label - Order #${data.orderId}</title>
+        <style>
+          @page { 
+            size: A4;
+            margin: 10mm;
+          }
+          body { 
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 10px;
+          }
+          .label-container {
+            width: 794px;
+            height: 1123px;
+            margin: 0 auto;
+            border: 2px solid #ccc;
+            padding: 40px;
+            box-sizing: border-box;
+          }
+          .header {
+            border-bottom: 4px solid #2563eb;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+          }
+          .header h1 {
+            margin: 0;
+            font-size: 36px;
+            color: #1f2937;
+          }
+          .header p {
+            margin: 5px 0 0 0;
+            color: #6b7280;
+            font-size: 14px;
+          }
+          .address-box {
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+          }
+          .address-box.recipient {
+            border: 4px solid #1f2937;
+            padding: 35px;
+          }
+          .address-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+            font-weight: bold;
+          }
+          .address-label.sender {
+            font-size: 18px;
+            color: #1f2937;
+          }
+          .address-label.recipient {
+            font-size: 24px;
+            color: #1f2937;
+          }
+          .address-content {
+            line-height: 1.6;
+          }
+          .sender .address-content {
+            font-size: 16px;
+          }
+          .recipient .address-content {
+            font-size: 20px;
+          }
+          .recipient .name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 8px;
+          }
+          .recipient .address-line {
+            font-weight: 600;
+          }
+          .recipient .locality {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 12px;
+            text-transform: uppercase;
+          }
+          .contact-info {
+            font-size: 14px;
+            color: #4b5563;
+            margin-top: 10px;
+          }
+          .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+          }
+          .detail-box {
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 15px;
+          }
+          .detail-label {
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 600;
+            margin-bottom: 5px;
+          }
+          .detail-value {
+            font-size: 18px;
+            font-weight: 600;
+          }
+          .barcode-area {
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 20px;
+          }
+          .barcode-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 10px;
+          }
+          .barcode-value {
+            font-family: monospace;
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 3px;
+          }
+          .barcode-visual {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 2px;
+          }
+          .bar {
+            width: 3px;
+            height: 60px;
+            background: #000;
+          }
+          .bar.wide {
+            width: 6px;
+          }
+          .footer {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #d1d5db;
+            font-size: 11px;
+            color: #6b7280;
+          }
+          @media print {
+            body {
+              padding: 0;
+            }
+            .label-container {
+              border: none;
+            }
+            .no-print {
+              display: none;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <script>
+          window.onload = function() {
+            window.print();
+          }
+        </script>
+        
+        <div class="label-container">
+          <!-- Header -->
+          <div class="header">
+            <h1>SHIPPING LABEL</h1>
+            <p>Order #${data.orderId} • ${data.orderDate}</p>
+          </div>
+
+          <!-- From Section -->
+          <div class="address-box sender">
+            <div class="address-label sender">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              FROM (SENDER)
+            </div>
+            <div class="address-content">
+              <div style="font-weight: 600; font-size: 18px;">${data.senderName}</div>
+              <div>${data.senderLine1}</div>
+              ${data.senderLine2 ? `<div>${data.senderLine2}</div>` : ''}
+              <div style="font-weight: 600; margin-top: 8px;">
+                ${data.senderSuburb} ${data.senderState} ${data.senderPostcode}
+              </div>
+              <div class="contact-info">
+                Ph: ${data.senderPhone}
+              </div>
+              ${data.senderEmail ? `<div class="contact-info">Email: ${data.senderEmail}</div>` : ''}
+            </div>
+          </div>
+
+          <!-- To Section -->
+          <div class="address-box recipient">
+            <div class="address-label recipient">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+              </svg>
+              TO (RECIPIENT)
+            </div>
+            <div class="address-content">
+              <div class="name">${data.recipientName}</div>
+              <div class="address-line">${data.recipientLine1}</div>
+              ${data.recipientLine2 ? `<div class="address-line">${data.recipientLine2}</div>` : ''}
+              <div class="locality">
+                ${data.recipientSuburb} ${data.recipientState} ${data.recipientPostcode}
+              </div>
+              ${data.recipientPhone ? `<div class="contact-info">Ph: ${data.recipientPhone}</div>` : ''}
+              ${data.recipientEmail ? `<div class="contact-info">Email: ${data.recipientEmail}</div>` : ''}
+            </div>
+          </div>
+
+          <!-- Package Details -->
+          <div class="details-grid">
+            <div class="detail-box">
+              <div class="detail-label">CONTENTS</div>
+              <div class="detail-value">${data.itemDescription}</div>
+            </div>
+            <div class="detail-box">
+              <div class="detail-label">WEIGHT</div>
+              <div class="detail-value">${data.weight} kg</div>
+            </div>
+          </div>
+
+          <!-- Barcode Area -->
+          <div class="barcode-area">
+            <div class="barcode-label">INTERNAL REFERENCE</div>
+            <div class="barcode-value">${data.orderId}</div>
+            <div class="barcode-visual">
+              ${[...Array(30)].map((_, i) =>
+      `<div class="bar ${Math.random() > 0.5 ? 'wide' : ''}"></div>`
+    ).join('')}
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="footer">
+            <p>• This label must be securely attached to the outside of the parcel.</p>
+            <p>• Ensure all address details are clearly visible and not covered by tape.</p>
+            <p>• For delivery issues, contact sender at ${data.senderPhone}</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `
+
+    printWindow.document.write(html)
+    printWindow.document.close()
+  }
+
+
+  if (!authed) {
         return (
             <main className="max-w-md mx-auto px-4 py-8 space-y-4">
                 <h1 className="text-2xl font-semibold">Admin Login</h1>
@@ -718,6 +1007,17 @@ export default function AdminPage() {
                     </div>
 
                     <div>
+                      <label className="block text-xs text-muted-foreground mb-1">Email</label>
+                      <input
+                        id={`email-${o.id}`}
+                        defaultValue={o.customer_email || ''}
+                        placeholder="customer@example.com"
+                        type="email"
+                        className="w-full border rounded px-2 py-1 text-sm"
+                      />
+                    </div>
+
+                    <div>
                       <label className="block text-xs text-muted-foreground mb-1">Address Line 1 *</label>
                       <input
                         id={`addr1-${o.id}`}
@@ -784,12 +1084,24 @@ export default function AdminPage() {
                       </div>
                     </div>
 
+                    <div>
+                      <label className="block text-xs text-muted-foreground mb-1">Weight (kg) *</label>
+                      <input
+                        id={`weight-${o.id}`}
+                        type="number"
+                        step="0.1"
+                        min="0.1"
+                        defaultValue="0.5"
+                        placeholder="0.5"
+                        className="w-full border rounded px-2 py-1 text-sm"
+                      />
+                    </div>
+
                     <button
                       onClick={() => generateLabel(o.id)}
-                      disabled={generatingLabel === o.id}
-                      className="w-full rounded bg-blue-600 text-white py-2 cursor-pointer hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full rounded bg-blue-600 text-white py-2 cursor-pointer hover:bg-blue-700"
                     >
-                      {generatingLabel === o.id ? 'Generating Label...' : 'Generate AusPost Label'}
+                      Generate Shipping Label
                     </button>
                   </div>
                 )}
@@ -800,6 +1112,8 @@ export default function AdminPage() {
       )}
         </>
       )}
+
+
     </main>
   )
 }
