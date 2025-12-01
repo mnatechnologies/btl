@@ -108,7 +108,7 @@ export default function AdminPage() {
     })
   }
 
-  const updateTracking = async (id: number, tracking_number: string | undefined, status?: string | undefined) => {
+  const updateTracking = async (id: number, tracking_number: string | null, status?: string | undefined) => {
     const res = await fetch('/api/orders/update-tracking', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
@@ -984,19 +984,17 @@ export default function AdminPage() {
                       <h4 className="text-sm font-medium mb-2">Order Items:</h4>
                       <div className="space-y-2">
                         {items.map((item: any, idx: number) => (
-                          <div key={idx} className="flex items-center gap-3 text-sm bg-black p-2 ">
+                          <div key={idx} className="flex items-center gap-3 text-sm bg-black p-2 rounded">
                             <div className="flex-1">
                               <div className="font-medium">
-                                {item.title || item.name || 'Product'}
+                                {item.title}
                               </div>
-                              {item.product_variants && (
-                                <div className="text-white text-xs">
-                                  {item.product_variants.color} / {item.product_variants.size}
-                                </div>
-                              )}
+                              <div className="text-gray-600 text-xs">
+                                SKU: {item.sku}
+                              </div>
                             </div>
-                            <div className="text-white">
-                              Qty: {item.quantity || item.qty || 1}
+                            <div className="text-gray-600">
+                              Qty: {item.quantity}
                             </div>
                             <div className="font-medium">
                               ${((item.price || 0) / 100).toFixed(2)}

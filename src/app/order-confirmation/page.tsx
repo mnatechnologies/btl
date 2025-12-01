@@ -101,7 +101,6 @@ function OrderConfirmationContent() {
           </div>
         </div>
 
-        {/* Order Items */}
         {order.items && order.items.length > 0 && (
           <div className="pt-4 border-t border-border">
             <div className="text-sm text-muted-foreground mb-3">Order Items</div>
@@ -110,18 +109,15 @@ function OrderConfirmationContent() {
                 <div key={item.id} className="flex justify-between items-start py-2">
                   <div className="flex-1">
                     <div className="font-medium">
-                      {item.product_variants?.products?.name || 'Product'}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {item.product_variants?.color} / {item.product_variants?.size}
+                      {item.title}
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      SKU: {item.product_variants?.sku}
+                      SKU: {item.sku}
                     </div>
                   </div>
                   <div className="text-right">
                     <div className="font-medium">
-                      ${(item.price_cents / 100).toFixed(2)}
+                      ${(item.price / 100).toFixed(2)}
                     </div>
                     <div className="text-sm text-muted-foreground">
                       Qty: {item.quantity}

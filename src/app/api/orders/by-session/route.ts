@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
       console.error('Order not found:', error)
       return NextResponse.json({ error: 'Order not found' }, { status: 404 })
     }
-
+    console.log(order)
     return NextResponse.json({ order })
   } catch (error) {
     console.error('Error fetching order:', error)

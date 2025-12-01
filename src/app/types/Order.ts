@@ -1,3 +1,12 @@
+export interface CartOrderItem {
+  id: string
+  sku: string
+  image: string
+  price: number
+  title: string
+  quantity: number
+}
+
 export interface OrderItem {
   id: number
   order_id: number
@@ -21,19 +30,21 @@ export interface OrderItem {
 export interface DatabaseOrder {
   id: number
   stripe_session_id: string | null
-  customer_email: string | null
+  status: 'created' | 'paid' | 'fulfilled' | 'shipped' | 'cancelled'
   total_cents: number
-  status: string
-  tracking_number: string | ''
+  customer_email: string | null
+  tracking_number: string | null
+  items: CartOrderItem[] // Changed from unknown to CartOrderItem[]
+  created_at: string
+  updated_at: string
   shipping_name: string | null
+  shipping_phone: string | null
   shipping_address_line1: string | null
   shipping_address_line2: string | null
   shipping_suburb: string | null
   shipping_state: string | null
   shipping_postcode: string | null
   shipping_country: string | null
-  shipping_phone: string | null
-  created_at: string
-  updated_at: string
-  items?: OrderItem[]
+  auspost_shipment_id: string | null
+  auspost_consignment_id: string | null
 }
