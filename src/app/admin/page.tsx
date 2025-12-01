@@ -2,7 +2,9 @@
 import { useEffect, useState, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import { DatabaseOrder } from '@/app/types/Order'
-import { ScanLine, Package, Truck, Plus, Minus, Barcode, Printer, Mail } from 'lucide-react'
+import { ScanLine, Package, Truck, Plus, Minus, Barcode, Printer, Mail, ChevronDown, ChevronUp } from 'lucide-react'
+
+
 
 // Dynamic import for barcode scanner (camera access needs client-side only)
 const BarcodeScanner = dynamic(() => import('@/components/BarcodeScanner'), { ssr: false })
@@ -48,6 +50,7 @@ export default function AdminPage() {
     const [loading, setLoading] = useState(false)
   const [generatingLabel, setGeneratingLabel] = useState<number | null>(null)
   const [showAddressForm, setShowAddressForm] = useState<number | null>(null)
+  const [expandedOrders, setExpandedOrders] = useState<Set<number>>(new Set())
 
   // Inventory management state
   const [activeTab, setActiveTab] = useState<'orders' | 'inventory' | 'barcodes'>('orders')
@@ -92,6 +95,18 @@ export default function AdminPage() {
       }
     })()
   }, [authed, token])
+
+  const toggleOrderExpansion = (orderId: number) => {
+    setExpandedOrders(prev => {
+      const next = new Set(prev)
+      if (next.has(orderId)) {
+        next.delete(orderId)
+      } else {
+        next.add(orderId)
+      }
+      return next
+    })
+  }
 
   const updateTracking = async (id: number, tracking_number: string | undefined, status?: string | undefined) => {
     const res = await fetch('/api/orders/update-tracking', {
@@ -322,7 +337,7 @@ export default function AdminPage() {
       itemDescription: itemDescription,
       weight: weight
     }
-
+    console.log(data)
     setShowAddressForm(null)
     printLabel(data)
   }
@@ -914,203 +929,224 @@ export default function AdminPage() {
 
       {/* Orders Tab */}
       {activeTab === 'orders' && (
-        <>
-      {loading ? (
-        <p>Loading…</p>
-      ) : orders.length === 0 ? (
-        <p>No orders.</p>
-      ) : (
         <div className="space-y-4">
-          {orders.map((o) => (
-            <div key={o.id} className="p-4 border rounded">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="font-medium">Order #{o.id.toString().padStart(6, '0')}</div>                  <div className="text-sm text-muted-foreground">{o.customer_email || 'No email'} • ${(o.total_cents/100).toFixed(2)}</div>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm">{new Date(o.created_at).toLocaleString()}</div>
-                  <div className="font-medium capitalize">{o.status}</div>
-                </div>
-              </div>
-              
-              <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3 items-end">
-                <div>
-                  <label className="block text-xs text-muted-foreground">Tracking number</label>
-                  <input defaultValue={o.tracking_number || ''} id={`tn-${o.id}`} className="w-full border rounded px-2 py-1" />
-                </div>
-                <div>
-                  <label className="block text-xs text-muted-foreground">Status</label>
-                  <select defaultValue={o.status || 'created'} id={`st-${o.id}`} className="w-full border rounded px-2 py-1 bg-black text-white">
-                    <option value="created">created</option>
-                    <option value="paid">paid</option>
-                    <option value="fulfilled">fulfilled</option>
-                    <option value="shipped">shipped</option>
-                    <option value="cancelled">cancelled</option>
-                  </select>
-                </div>
-              </div>
+          {loading ? (
+            <p>Loading orders...</p>
+          ) : orders.length === 0 ? (
+            <p>No orders found</p>
+          ) : (
+            orders.map((order) => {
+              const isExpanded = expandedOrders.has(order.id)
+              let items = order.items
+              if (typeof items === 'string') {
+                try {
+                  items = JSON.parse(items)
+                } catch {
+                  items = []
+                }
+              }
 
-              <div className="mt-3 flex gap-2">
-                <button
-                  onClick={() => {
-                    const tn = (document.getElementById(`tn-${o.id}`) as HTMLInputElement)?.value
-                    const st = (document.getElementById(`st-${o.id}`) as HTMLSelectElement)?.value
-                    updateTracking(o.id, tn, st)
-                  }}
-                  className="flex-1 rounded bg-black text-white py-2 cursor-pointer"
-                >
-                  Save
-                </button>
-                <button
-                  onClick={() => addTrackingAndNotify(o.id)}
-                  disabled={o.status === 'shipped'}
-                  className="flex-1 rounded bg-green-600 text-white py-2 cursor-pointer hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                  <Mail className="w-4 h-4" />
-                  Ship & Notify
-                </button>
-              </div>
-
-              {/* AusPost Label Generation */}
-              <div className="mt-4 pt-4 border-t">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-sm font-medium">Australia Post Label</h3>
-                  <button
-                    onClick={() => setShowAddressForm(showAddressForm === o.id ? null : o.id)}
-                    className="text-sm text-blue-600 hover:underline"
-                  >
-                    {showAddressForm === o.id ? 'Hide Form' : 'Generate Label'}
-                  </button>
-                </div>
-
-                {showAddressForm === o.id && (
-                  <div className="mt-3 space-y-3 p-3 bg-gray-50 dark:bg-gray-900 rounded">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              return (
+                <div key={order.id} className="border rounded-lg p-4 space-y-3">
+                  {/* Order Header */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <button
+                        onClick={() => toggleOrderExpansion(order.id)}
+                        className="p-1 hover:bg-gray-100 rounded transition-colors"
+                      >
+                        {isExpanded ? (
+                          <ChevronUp className="w-5 h-5" />
+                        ) : (
+                          <ChevronDown className="w-5 h-5" />
+                        )}
+                      </button>
                       <div>
-                        <label className="block text-xs text-muted-foreground mb-1">Customer Name *</label>
-                        <input
-                          id={`name-${o.id}`}
-                          defaultValue={o.shipping_name || ''}
-                          placeholder="John Smith"
-                          className="w-full border rounded px-2 py-1 text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs text-muted-foreground mb-1">Phone</label>
-                        <input
-                          id={`phone-${o.id}`}
-                          defaultValue={o.shipping_phone || ''}
-                          placeholder="0400000000"
-                          className="w-full border rounded px-2 py-1 text-sm"
-                        />
+                        <div className="font-medium">Order #{order.id}</div>
+                        <div className="text-sm text-gray-600">
+                          {order.customer_email}
+                        </div>
                       </div>
                     </div>
-
-                    <div>
-                      <label className="block text-xs text-muted-foreground mb-1">Email</label>
-                      <input
-                        id={`email-${o.id}`}
-                        defaultValue={o.customer_email || ''}
-                        placeholder="customer@example.com"
-                        type="email"
-                        className="w-full border rounded px-2 py-1 text-sm"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs text-muted-foreground mb-1">Address Line 1 *</label>
-                      <input
-                        id={`addr1-${o.id}`}
-                        defaultValue={o.shipping_address_line1 || ''}
-                        placeholder="123 Main Street"
-                        className="w-full border rounded px-2 py-1 text-sm"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs text-muted-foreground mb-1">Address Line 2</label>
-                      <input
-                        id={`addr2-${o.id}`}
-                        defaultValue={o.shipping_address_line2 || ''}
-                        placeholder="Apt 4B"
-                        className="w-full border rounded px-2 py-1 text-sm"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                      <div>
-                        <label className="block text-xs text-muted-foreground mb-1">Suburb *</label>
-                        <input
-                          id={`suburb-${o.id}`}
-                          defaultValue={o.shipping_suburb || ''}
-                          placeholder="Sydney"
-                          className="w-full border rounded px-2 py-1 text-sm"
-                        />
+                    <div className="text-right">
+                      <div className="font-medium">
+                        ${((order.total_cents || 0) / 100).toFixed(2)}
                       </div>
-                      <div>
-                        <label className="block text-xs text-muted-foreground mb-1">State *</label>
-                        <select
-                          id={`state-${o.id}`}
-                          defaultValue={o.shipping_state || ''}
-                          className="w-full border rounded px-2 py-1 text-sm bg-white dark:bg-black"
-                        >
-                          <option value="">Select</option>
-                          <option value="NSW">NSW</option>
-                          <option value="VIC">VIC</option>
-                          <option value="QLD">QLD</option>
-                          <option value="SA">SA</option>
-                          <option value="WA">WA</option>
-                          <option value="TAS">TAS</option>
-                          <option value="NT">NT</option>
-                          <option value="ACT">ACT</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-xs text-muted-foreground mb-1">Postcode *</label>
-                        <input
-                          id={`postcode-${o.id}`}
-                          defaultValue={o.shipping_postcode || ''}
-                          placeholder="2000"
-                          className="w-full border rounded px-2 py-1 text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs text-muted-foreground mb-1">Country</label>
-                        <input
-                          id={`country-${o.id}`}
-                          defaultValue={o.shipping_country || 'AU'}
-                          className="w-full border rounded px-2 py-1 text-sm"
-                        />
+                      <div className="text-sm text-gray-600">
+                        {new Date(order.created_at).toLocaleDateString()}
                       </div>
                     </div>
+                  </div>
 
-                    <div>
-                      <label className="block text-xs text-muted-foreground mb-1">Weight (kg) *</label>
-                      <input
-                        id={`weight-${o.id}`}
-                        type="number"
-                        step="0.1"
-                        min="0.1"
-                        defaultValue="0.5"
-                        placeholder="0.5"
-                        className="w-full border rounded px-2 py-1 text-sm"
-                      />
+                  {/* Expanded Items Section */}
+                  {isExpanded && Array.isArray(items) && items.length > 0 && (
+                    <div className="mt-3 pt-3 border-t">
+                      <h4 className="text-sm font-medium mb-2">Order Items:</h4>
+                      <div className="space-y-2">
+                        {items.map((item: any, idx: number) => (
+                          <div key={idx} className="flex items-center gap-3 text-sm bg-black p-2 ">
+                            <div className="flex-1">
+                              <div className="font-medium">
+                                {item.title || item.name || 'Product'}
+                              </div>
+                              {item.product_variants && (
+                                <div className="text-white text-xs">
+                                  {item.product_variants.color} / {item.product_variants.size}
+                                </div>
+                              )}
+                            </div>
+                            <div className="text-white">
+                              Qty: {item.quantity || item.qty || 1}
+                            </div>
+                            <div className="font-medium">
+                              ${((item.price || 0) / 100).toFixed(2)}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
+                  )}
 
-                    <button
-                      onClick={() => generateLabel(o.id)}
-                      className="w-full rounded bg-blue-600 text-white py-2 cursor-pointer hover:bg-blue-700"
+                  {/* Status and Tracking Section */}
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-medium">Status:</span>
+                    <select
+                      value={order.status || 'pending'}
+                      onChange={(e) => updateTracking(order.id, order.tracking_number, e.target.value)}
+                      className="border rounded px-2 py-1 text-sm"
                     >
-                      Generate Shipping Label
+                      <option value="pending">Pending</option>
+                      <option value="processing">Processing</option>
+                      <option value="shipped">Shipped</option>
+                      <option value="fulfilled">Fulfilled</option>
+                    </select>
+                  </div>
+
+                  {/* Tracking Number Section */}
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-medium">Tracking:</span>
+                    <input
+                      id={`tn-${order.id}`}
+                      type="text"
+                      defaultValue={order.tracking_number || ''}
+                      placeholder="Enter tracking number"
+                      className="flex-1 border rounded px-3 py-1 text-sm"
+                    />
+                    <button
+                      onClick={() => addTrackingAndNotify(order.id)}
+                      className="flex items-center gap-2 px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 transition-colors"
+                    >
+                      <Mail className="w-4 h-4" />
+                      Add & Notify
                     </button>
                   </div>
-                )}
-              </div>
-            </div>
-          ))}
+
+                  {/* Generate Label Button */}
+                  <button
+                    onClick={() => setShowAddressForm(order.id)}
+                    className="flex items-center gap-2 px-3 py-1 bg-black text-white rounded text-sm hover:bg-gray-800 transition-colors"
+                  >
+                    <Printer className="w-4 h-4" />
+                    Generate Shipping Label
+                  </button>
+
+                  {/* Address Form (shown when Generate Label is clicked) */}
+                  {showAddressForm === order.id && (
+                    <div className="mt-3 p-4 border rounded-lg bg-black space-y-3">
+                      <h4 className="font-medium">Shipping Address</h4>
+                      <div className="grid grid-cols-2 gap-3">
+                        <input
+                          id={`name-${order.id}`}
+                          type="text"
+                          placeholder="Customer Name *"
+                          defaultValue={order.shipping_name || ''}
+                          className="border rounded px-3 py-2 text-sm"
+                        />
+                        <input
+                          id={`phone-${order.id}`}
+                          type="text"
+                          placeholder="Phone"
+                          defaultValue={order.shipping_phone || ''}
+                          className="border rounded px-3 py-2 text-sm"
+                        />
+                        <input
+                          id={`addr1-${order.id}`}
+                          type="text"
+                          placeholder="Address Line 1 *"
+                          defaultValue={order.shipping_address_line1 || ''}
+                          className="col-span-2 border rounded px-3 py-2 text-sm"
+                        />
+                        <input
+                          id={`addr2-${order.id}`}
+                          type="text"
+                          placeholder="Address Line 2"
+                          defaultValue={order.shipping_address_line2 || ''}
+                          className="col-span-2 border rounded px-3 py-2 text-sm"
+                        />
+                        <input
+                          id={`suburb-${order.id}`}
+                          type="text"
+                          placeholder="Suburb *"
+                          defaultValue={order.shipping_suburb || ''}
+                          className="border rounded px-3 py-2 text-sm"
+                        />
+                        <input
+                          id={`state-${order.id}`}
+                          type="text"
+                          placeholder="State *"
+                          defaultValue={order.shipping_state || ''}
+                          className="border rounded px-3 py-2 text-sm"
+                        />
+                        <input
+                          id={`postcode-${order.id}`}
+                          type="text"
+                          placeholder="Postcode *"
+                          defaultValue={order.shipping_postcode || ''}
+                          className="border rounded px-3 py-2 text-sm"
+                        />
+                        <input
+                          id={`country-${order.id}`}
+                          type="text"
+                          placeholder="Country"
+                          defaultValue={order.shipping_country || 'AU'}
+                          className="border rounded px-3 py-2 text-sm"
+                        />
+                        <input
+                          id={`email-${order.id}`}
+                          type="email"
+                          placeholder="Email"
+                          defaultValue={order.customer_email || ''}
+                          className="border rounded px-3 py-2 text-sm"
+                        />
+                        <input
+                          id={`weight-${order.id}`}
+                          type="text"
+                          placeholder="Weight (kg)"
+                          defaultValue="0.5"
+                          className="border rounded px-3 py-2 text-sm"
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => generateLabel(order.id)}
+                          className="px-4 py-2 bg-black text-white rounded text-sm hover:bg-gray-800 transition-colors"
+                        >
+                          Print Label
+                        </button>
+                        <button
+                          onClick={() => setShowAddressForm(null)}
+                          className="px-4 py-2 border rounded text-sm hover:bg-gray-100 transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )
+            })
+          )}
         </div>
-      )}
-        </>
       )}
 
 

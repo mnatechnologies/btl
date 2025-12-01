@@ -101,6 +101,38 @@ function OrderConfirmationContent() {
           </div>
         </div>
 
+        {/* Order Items */}
+        {order.items && order.items.length > 0 && (
+          <div className="pt-4 border-t border-border">
+            <div className="text-sm text-muted-foreground mb-3">Order Items</div>
+            <div className="space-y-3">
+              {order.items.map((item) => (
+                <div key={item.id} className="flex justify-between items-start py-2">
+                  <div className="flex-1">
+                    <div className="font-medium">
+                      {item.product_variants?.products?.name || 'Product'}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {item.product_variants?.color} / {item.product_variants?.size}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      SKU: {item.product_variants?.sku}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-medium">
+                      ${(item.price_cents / 100).toFixed(2)}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Qty: {item.quantity}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {order.customer_email && (
           <div>
             <div className="text-sm text-muted-foreground mb-1">Email</div>
