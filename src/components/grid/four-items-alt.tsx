@@ -49,6 +49,7 @@ function AltGridItem({
       sizes={size === 'large' ? '(min-width: 768px) 100vw, 100vw' : '(min-width: 768px) 33vw, 100vw'}
       priority={false}
       alt={item.title}
+      showPrice={size === 'large'}
       label={{
         position: 'bottom',
         title: item.title as string,
