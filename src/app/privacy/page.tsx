@@ -32,6 +32,14 @@ Please read this Privacy Policy carefully. By using and accessing any of the Ser
         </section>
 
         <section>
+          <h2>Cookie Management</h2>
+          <p>
+            You can manage your cookie preferences at any time by clicking the "Cookie Settings"
+            link in our footer or by clearing your browser's local storage.
+          </p>
+        </section>
+
+        <section>
           <h2 className="text-2xl font-semibold text-white">Personal Information Sources</h2>
           <ul className="mt-3 list-disc list-inside space-y-2 text-white/80">
             <li>Directly from you when you create an account, use the Services, or communicate with us.</li>

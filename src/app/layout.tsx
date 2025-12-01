@@ -6,16 +6,7 @@ import Footer from "../components/Footer";
 import WelcomeOffer from "../components/WelcomeOffer";
 import LaunchGate from "../components/LaunchGate";
 import Providers from "./providers";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import CookieConsent from "@/components/CookieConsent";
 
 export const metadata: Metadata = {
   title: 'Built To Last | Premium Quality Essentials',
@@ -64,6 +55,7 @@ export default function RootLayout({
                 {children}
             </div>
             <Footer/>
+            <CookieConsent />
         </LaunchGate>
     </Providers>
     </body>

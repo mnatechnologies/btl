@@ -5,6 +5,7 @@ import {useCart} from "@/context/CartContext";
 import {useRouter} from "next/navigation";
 import {Product, ProductVariant} from "@/types/Product";
 import SizeChart from "./SizeChart";
+import TrustBadges from "@/components/TrustBadges";
 
 interface ProductShowcaseProps {
     product: Product;
@@ -43,7 +44,16 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
 
     // Get available colors and sizes from product variants
     const availableColors = [...new Set(product.variants.map(v => v.color))];
-    const availableSizes = [...new Set(product.variants.filter(v => v.color === selectedColor).map(v => v.size))];
+
+    const SIZE_ORDER = ["XXS", "XS", "S", "M", "L", "XL", "XXL"];
+
+    const availableSizes = [
+        ...new Set(
+          product.variants
+            .filter(v => v.color === selectedColor)
+            .map(v => v.size)
+        )
+    ].sort((a, b) => SIZE_ORDER.indexOf(a) - SIZE_ORDER.indexOf(b));
     
     // Get images for selected color
     const getProductImages = () => {
@@ -135,12 +145,12 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
             // New color names from seed
             case 'raven': return 'bg-black';
             case 'alabaster': return 'bg-white border border-border';
-            case 'stone': return 'bg-gray-400';
-            case 'champagne': return 'bg-amber-100 border border-border';
-            case 'royal': return 'bg-blue-400';
+            case 'stone': return 'bg-amber-100 border border-border';
+            case 'champagne': return 'bg-stone-600 border border-border';
+            case 'royal': return 'bg-blue-300';
             case 'ivory': return 'bg-amber-50 border border-border';
             case 'chocolate': return 'bg-amber-800';
-            case 'admiral': return 'bg-blue-900';
+            case 'admiral': return 'bg-stone-900 border border-border';
             // Legacy color names (backwards compatibility)
             case 'black': return 'bg-black';
             case 'white': return 'bg-white border border-border';
@@ -153,7 +163,14 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
 
     return (
         <section id="shop" className="py-12  ">
+
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <button
+                  onClick={() => router.push('/store')}
+                  className="cursor-pointer  py-1 px-3 mb-4 border border-white text-white hover:bg-brand-charcoal hover:text-white transition-colors"
+                >
+                    ← Return to Store
+                </button>
                 <div className="grid lg:grid-cols-2 gap-8">
                     {/* Product Images */}
                     <div className="space-y-4">
@@ -283,6 +300,7 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
                             </div>
                         </div>
 
+                        <TrustBadges variant="product" className="mb-6" />
                         {/* Add to Cart */}
                         <div className="space-y-4 pt-4">
                             <button

@@ -1,6 +1,8 @@
+'use client'
 import Image from "next/image";
 import Link from "next/link";
 import {SiTiktok, SiInstagram, SiFacebook } from "@icons-pack/react-simple-icons";
+import TrustBadges from './TrustBadges'
 
 const Footer = () => {
   return (
@@ -51,16 +53,30 @@ const Footer = () => {
                       <SiFacebook className="h-6 w-6" />
                   </Link>
               </div>
+
             </div>
+
           </div>
+
         </div>
 
         {/* Bottom: legal row */}
+        <TrustBadges variant="footer" className="py-6" />
+
         <div className="mt-8 border-t border-primary-foreground/20 pt-6 flex flex-col md:flex-row gap-4 md:gap-6 justify-between items-center text-sm text-primary-foreground/60">
           <p className="order-2 md:order-1">&copy; {new Date().getFullYear()} Built To Last. All rights reserved.</p>
           <div className="order-1 md:order-2 flex gap-6">
-            <a href="/privacy" className="hover:text-primary-foreground transition-colors">Privacy</a>
-            <a href="/terms" className="hover:text-primary-foreground transition-colors">Terms</a>
+            <Link href="/privacy" className="hover:text-primary-foreground transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-primary-foreground transition-colors">Terms</Link>
+            <button
+              onClick={() => {
+                localStorage.removeItem('btl_cookie_consent')
+                window.location.reload()
+              }}
+              className="hover:text-primary-foreground transition-colors cursor-pointer"
+            >
+              Cookie Settings
+            </button>
           </div>
         </div>
       </div>
