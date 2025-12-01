@@ -337,7 +337,7 @@ export default function AdminPage() {
       itemDescription: itemDescription,
       weight: weight
     }
-    console.log(data)
+
     setShowAddressForm(null)
     printLabel(data)
   }
@@ -930,11 +930,11 @@ export default function AdminPage() {
       {/* Orders Tab */}
       {activeTab === 'orders' && (
         <div className="space-y-4">
-          {loading ? (
+      {loading ? (
             <p>Loading orders...</p>
-          ) : orders.length === 0 ? (
+      ) : orders.length === 0 ? (
             <p>No orders found</p>
-          ) : (
+      ) : (
             orders.map((order) => {
               const isExpanded = expandedOrders.has(order.id)
               let items = order.items
@@ -949,7 +949,7 @@ export default function AdminPage() {
               return (
                 <div key={order.id} className="border rounded-lg p-4 space-y-3">
                   {/* Order Header */}
-                  <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <button
                         onClick={() => toggleOrderExpansion(order.id)}
@@ -961,22 +961,22 @@ export default function AdminPage() {
                           <ChevronDown className="w-5 h-5" />
                         )}
                       </button>
-                      <div>
+                <div>
                         <div className="font-medium">Order #{order.id}</div>
                         <div className="text-sm text-gray-600">
                           {order.customer_email}
                         </div>
                       </div>
-                    </div>
-                    <div className="text-right">
+                </div>
+                <div className="text-right">
                       <div className="font-medium">
                         ${((order.total_cents || 0) / 100).toFixed(2)}
                       </div>
                       <div className="text-sm text-gray-600">
                         {new Date(order.created_at).toLocaleDateString()}
                       </div>
-                    </div>
-                  </div>
+                </div>
+              </div>
 
                   {/* Expanded Items Section */}
                   {isExpanded && Array.isArray(items) && items.length > 0 && (
@@ -985,40 +985,41 @@ export default function AdminPage() {
                       <div className="space-y-2">
                         {items.map((item: any, idx: number) => (
                           <div key={idx} className="flex items-center gap-3 text-sm bg-black p-2 rounded">
-                            <div className="flex-1">
-                              <div className="font-medium">
-                                {item.title}
-                              </div>
+                        <div className="flex-1">
+                          <div className="font-medium">
+                            {item.title}
+                          </div>
                               <div className="text-gray-600 text-xs">
-                                SKU: {item.sku}
-                              </div>
-                            </div>
+                            SKU: {item.sku}
+                          </div>
+                        </div>
                             <div className="text-gray-600">
-                              Qty: {item.quantity}
-                            </div>
+                            Qty: {item.quantity}
+                          </div>
                             <div className="font-medium">
                               ${((item.price || 0) / 100).toFixed(2)}
-                            </div>
-                          </div>
-                        ))}
                       </div>
-                    </div>
+                  </div>
+                        ))}
+                </div>
+                </div>
                   )}
 
                   {/* Status and Tracking Section */}
                   <div className="flex items-center gap-3">
                     <span className="text-sm font-medium">Status:</span>
                     <select
-                      value={order.status || 'pending'}
+                      value={order.status || 'pending'} id={`st-${order.id}`}
                       onChange={(e) => updateTracking(order.id, order.tracking_number, e.target.value)}
                       className="border rounded px-2 py-1 text-sm"
                     >
+                      <option value="paid">Paid</option>
                       <option value="pending">Pending</option>
                       <option value="processing">Processing</option>
                       <option value="shipped">Shipped</option>
                       <option value="fulfilled">Fulfilled</option>
-                    </select>
-                  </div>
+                  </select>
+                </div>
 
                   {/* Tracking Number Section */}
                   <div className="flex items-center gap-3">
@@ -1030,14 +1031,14 @@ export default function AdminPage() {
                       placeholder="Enter tracking number"
                       className="flex-1 border rounded px-3 py-1 text-sm"
                     />
-                    <button
+                <button
                       onClick={() => addTrackingAndNotify(order.id)}
                       className="flex items-center gap-2 px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 transition-colors"
-                    >
-                      <Mail className="w-4 h-4" />
+                >
+                  <Mail className="w-4 h-4" />
                       Add & Notify
-                    </button>
-                  </div>
+                </button>
+              </div>
 
                   {/* Generate Label Button */}
                   <button
@@ -1074,27 +1075,27 @@ export default function AdminPage() {
                           defaultValue={order.shipping_address_line1 || ''}
                           className="col-span-2 border rounded px-3 py-2 text-sm"
                         />
-                        <input
+                      <input
                           id={`addr2-${order.id}`}
                           type="text"
                           placeholder="Address Line 2"
                           defaultValue={order.shipping_address_line2 || ''}
                           className="col-span-2 border rounded px-3 py-2 text-sm"
-                        />
-                        <input
+                      />
+                      <input
                           id={`suburb-${order.id}`}
                           type="text"
                           placeholder="Suburb *"
                           defaultValue={order.shipping_suburb || ''}
                           className="border rounded px-3 py-2 text-sm"
-                        />
-                        <input
+                      />
+                      <input
                           id={`state-${order.id}`}
                           type="text"
                           placeholder="State *"
                           defaultValue={order.shipping_state || ''}
                           className="border rounded px-3 py-2 text-sm"
-                        />
+                      />
                         <input
                           id={`postcode-${order.id}`}
                           type="text"
@@ -1116,19 +1117,19 @@ export default function AdminPage() {
                           defaultValue={order.customer_email || ''}
                           className="border rounded px-3 py-2 text-sm"
                         />
-                        <input
+                      <input
                           id={`weight-${order.id}`}
                           type="text"
                           placeholder="Weight (kg)"
-                          defaultValue="0.5"
+                        defaultValue="0.5"
                           className="border rounded px-3 py-2 text-sm"
-                        />
-                      </div>
+                      />
+                    </div>
                       <div className="flex gap-2">
-                        <button
+                    <button
                           onClick={() => generateLabel(order.id)}
                           className="px-4 py-2 bg-black text-white rounded text-sm hover:bg-gray-800 transition-colors"
-                        >
+                    >
                           Print Label
                         </button>
                         <button
@@ -1136,11 +1137,11 @@ export default function AdminPage() {
                           className="px-4 py-2 border rounded text-sm hover:bg-gray-100 transition-colors"
                         >
                           Cancel
-                        </button>
-                      </div>
-                    </div>
+                    </button>
+                  </div>
+              </div>
                   )}
-                </div>
+            </div>
               )
             })
           )}

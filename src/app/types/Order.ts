@@ -1,3 +1,4 @@
+
 export interface CartOrderItem {
   id: string
   sku: string
@@ -34,7 +35,7 @@ export interface DatabaseOrder {
   total_cents: number
   customer_email: string | null
   tracking_number: string | null
-  items: CartOrderItem[] // Changed from unknown to CartOrderItem[]
+  items: CartOrderItem[]
   created_at: string
   updated_at: string
   shipping_name: string | null
