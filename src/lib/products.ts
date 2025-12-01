@@ -1,5 +1,5 @@
 import { supabase } from './supabaseClient';
-import { Product, ProductVariant } from '@/app/types/Product';
+import { Product, ProductVariant } from '@/types/Product';
 
 // Database types (matching snake_case from Supabase)
 interface ProductRow {

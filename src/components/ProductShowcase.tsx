@@ -3,7 +3,7 @@ import {useState, useEffect, useRef, startTransition} from "react";
 import Image from "next/image";
 import {useCart} from "@/context/CartContext";
 import {useRouter} from "next/navigation";
-import {Product, ProductVariant} from "@/app/types/Product";
+import {Product, ProductVariant} from "@/types/Product";
 import SizeChart from "./SizeChart";
 
 interface ProductShowcaseProps {

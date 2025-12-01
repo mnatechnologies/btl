@@ -50,6 +50,30 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 })
     }
 
+    if (supabaseAdmin) {
+      for (const item of items) {
+        const { data: variant, error } = await supabaseAdmin
+          .from('product_variants')
+          .select('inventory, sku')
+          .eq('sku', item.sku)
+          .single()
+
+        if (error || !variant) {
+          return NextResponse.json(
+            { error: `Product ${item.sku} not found` },
+            { status: 400 }
+          )
+        }
+
+        if (variant.inventory < item.quantity) {
+          return NextResponse.json(
+            { error: `Insufficient stock for ${item.sku}. Only ${variant.inventory} available.` },
+            { status: 400 }
+          )
+        }
+      }
+    }
+
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 
     const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = items.map((i) => ({
@@ -89,7 +113,7 @@ export async function POST(req: NextRequest) {
         enabled: true,
       },
       metadata: {
-        items: JSON.stringify(items.map((i) => ({ id: i.id, qty: i.quantity, price: i.price }))),
+        items: JSON.stringify(items.map((i) => ({ id: i.id, sku:i.sku, qty: i.quantity, price: i.price }))),
         customer_name: name || '',
         customer_phone: phone || '',
         promo_code: promoCode || '',
@@ -102,6 +126,7 @@ export async function POST(req: NextRequest) {
     }
 
     const session = await stripe.checkout.sessions.create(sessionParams)
+
 
     // Insert provisional order (optional, requires service role and table)
     try {

@@ -42,6 +42,40 @@ export async function POST(req: NextRequest) {
     if (event.type === 'checkout.session.completed') {
       const sessionFromWebhook = event.data.object as Stripe.Checkout.Session
 
+      let items: { id: string; sku: string; qty: number; price: number }[] = []
+      try {
+        if (sessionFromWebhook.metadata?.items) {
+          items = JSON.parse(sessionFromWebhook.metadata.items)
+        }
+      } catch (e) {
+        console.error('Failed to parse items from metadata:', e)
+      }
+
+      // Deduct inventory
+      if (supabaseAdmin && items.length > 0) {
+        for (const item of items) {
+          // First get current inventory
+          const { data: variant } = await supabaseAdmin
+            .from('product_variants')
+            .select('inventory')
+            .eq('sku', item.sku)
+            .single()
+
+          if (variant) {
+            const newInventory = Math.max(0, variant.inventory - item.qty)
+
+            const { error: updateError } = await supabaseAdmin
+              .from('product_variants')
+              .update({ inventory: newInventory })
+              .eq('sku', item.sku)
+
+            if (updateError) {
+              console.error('Failed to deduct inventory for', item.sku, updateError)
+            }
+          }
+        }
+      }
+
       try {
         // ✅ IMPORTANT: Retrieve the full session with expanded data
         // The webhook event doesn't include customer_details or shipping_details by default

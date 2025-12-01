@@ -4,7 +4,7 @@ import { GridTileImage } from '@/components/grid/tile';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { getFeaturedProducts } from '@/lib/products';
-import { Product } from '@/app/types/Product';
+import { Product } from '@/types/Product';
 import QuickView from '@/components/QuickView';
 import { Plus } from 'lucide-react';
 

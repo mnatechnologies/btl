@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
-import { DatabaseOrder } from '@/app/types/Order'
+import { DatabaseOrder } from '@/types/Order'
 import Link from "next/link";
 
 export default function AccountPage() {
@@ -127,6 +127,18 @@ export default function AccountPage() {
                       </div>
                     </div>
                     <div className="mt-2 text-sm">Total: ${(o.total_cents/100).toFixed(2)}</div>
+                    {o.items && Array.isArray(o.items) && o.items.length > 0 && (
+                      <div className="mt-3 pt-3 border-t">
+                        <div className="text-sm font-medium mb-2">Items:</div>
+                        <ul className="space-y-1 text-sm text-muted-foreground">
+                          {o.items.map((item: any, idx: number) => (
+                            <li key={idx}>
+                              {item.quantity}x {item.title} ({item.sku})
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>

@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { DatabaseOrder } from '@/app/types/Order'
+import { DatabaseOrder } from '@/types/Order'
 import Link from 'next/link'
 import Image from 'next/image'
 

@@ -1,13 +1,12 @@
 'use client'
-import { useEffect, useState, useCallback } from 'react'
+import {useEffect, useState, useCallback} from 'react'
 import dynamic from 'next/dynamic'
-import { DatabaseOrder } from '@/app/types/Order'
-import { ScanLine, Package, Truck, Plus, Minus, Barcode, Printer, Mail, ChevronDown, ChevronUp } from 'lucide-react'
-
+import {DatabaseOrder, CartOrderItem} from '@/types/Order'
+import {ScanLine, Package, Truck, Plus, Minus, Barcode, Printer, Mail, ChevronDown, ChevronUp} from 'lucide-react'
 
 
 // Dynamic import for barcode scanner (camera access needs client-side only)
-const BarcodeScanner = dynamic(() => import('@/components/BarcodeScanner'), { ssr: false })
+const BarcodeScanner = dynamic(() => import('@/components/BarcodeScanner'), {ssr: false})
 
 interface ProductVariant {
   id: string
@@ -18,6 +17,7 @@ interface ProductVariant {
   inventory: number
   products?: { name: string }
 }
+
 interface ShippingLabelData {
   orderId: string
   orderDate: string
@@ -42,13 +42,12 @@ interface ShippingLabelData {
 }
 
 export default function AdminPage() {
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
-    const [token, setToken] = useState('')
-    const [authed, setAuthed] = useState(false)
-    const [orders, setOrders] = useState<DatabaseOrder[]>([])
-    const [loading, setLoading] = useState(false)
-  const [generatingLabel, setGeneratingLabel] = useState<number | null>(null)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [token, setToken] = useState('')
+  const [authed, setAuthed] = useState(false)
+  const [orders, setOrders] = useState<DatabaseOrder[]>([])
+  const [loading, setLoading] = useState(false)
   const [showAddressForm, setShowAddressForm] = useState<number | null>(null)
   const [expandedOrders, setExpandedOrders] = useState<Set<number>>(new Set())
 
@@ -59,34 +58,35 @@ export default function AdminPage() {
   const [scannedVariant, setScannedVariant] = useState<ProductVariant | null>(null)
   const [inventoryLoading, setInventoryLoading] = useState(false)
   const [adjustmentAmount, setAdjustmentAmount] = useState(0)
-  
+
   // Barcode management state
   const [allVariants, setAllVariants] = useState<ProductVariant[]>([])
   const [barcodesLoading, setBarcodesLoading] = useState(false)
   const [selectedSkus, setSelectedSkus] = useState<Set<string>>(new Set())
 
 
-    const authenticate = async () => {
-        const res = await fetch('/api/admin', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
-        })
-        const data = await res.json()
-        if (res.ok) {
-            setToken(data.token)
-            setAuthed(true)
-        } else {
-            alert(data.error || 'Authentication failed')
-        }
+  const authenticate = async () => {
+    const res = await fetch('/api/admin', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({username, password})
+    })
+    const data = await res.json()
+    if (res.ok) {
+      setToken(data.token)
+      setAuthed(true)
+    } else {
+      alert(data.error || 'Authentication failed')
     }
+  }
 
   useEffect(() => {
     if (!authed) return
-    ;(async () => {
+      ;
+    (async () => {
       setLoading(true)
       try {
-        const res = await fetch('/api/orders/list', { headers: { Authorization: `Bearer ${token}` } })
+        const res = await fetch('/api/orders/list', {headers: {Authorization: `Bearer ${token}`}})
         const data = await res.json()
         if (res.ok) setOrders(data.orders || [])
         else alert(data.error || 'Failed to fetch orders')
@@ -111,8 +111,8 @@ export default function AdminPage() {
   const updateTracking = async (id: number, tracking_number: string | null, status?: string | undefined) => {
     const res = await fetch('/api/orders/update-tracking', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ id, tracking_number, status })
+      headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`},
+      body: JSON.stringify({id, tracking_number, status})
     })
     const data = await res.json()
     if (!res.ok) return alert(data.error || 'Update failed')
@@ -125,15 +125,15 @@ export default function AdminPage() {
       alert('Please enter a tracking number')
       return
     }
-  
+
     const res = await fetch('/api/orders/add-tracking', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ orderId: id, trackingNumber: tracking.trim() })
+      headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`},
+      body: JSON.stringify({orderId: id, trackingNumber: tracking.trim()})
     })
     const data = await res.json()
     if (!res.ok) return alert(data.error || 'Failed to add tracking')
-    
+
     setOrders((prev) => prev.map((o) => (o.id === id ? data.order : o)))
     alert('Tracking added and shipping notification sent!')
   }
@@ -143,7 +143,7 @@ export default function AdminPage() {
     setBarcodesLoading(true)
     try {
       const res = await fetch('/api/inventory', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: {Authorization: `Bearer ${token}`}
       })
       const data = await res.json()
       if (res.ok && data.variants) {
@@ -238,7 +238,7 @@ export default function AdminPage() {
     setScannedVariant(null)
     try {
       const res = await fetch(`/api/inventory?sku=${encodeURIComponent(sku)}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: {Authorization: `Bearer ${token}`}
       })
       const data = await res.json()
       if (res.ok && data.variant) {
@@ -264,15 +264,15 @@ export default function AdminPage() {
     if (!scannedVariant) return
     setInventoryLoading(true)
     try {
-      const body = mode === 'set' 
-        ? { sku: scannedVariant.sku, inventory: value }
-        : { sku: scannedVariant.sku, adjustment: value }
-      
+      const body = mode === 'set'
+        ? {sku: scannedVariant.sku, inventory: value}
+        : {sku: scannedVariant.sku, adjustment: value}
+
       const res = await fetch('/api/inventory', {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}` 
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(body)
       })
@@ -342,7 +342,7 @@ export default function AdminPage() {
     printLabel(data)
   }
 
-  const printLabel = (data: ShippingLabelData)  => {
+  const printLabel = (data: ShippingLabelData) => {
 
 
     const printWindow = window.open('', '_blank')
@@ -614,35 +614,35 @@ export default function AdminPage() {
 
 
   if (!authed) {
-        return (
-            <main className="max-w-md mx-auto px-4 py-8 space-y-4">
-                <h1 className="text-2xl font-semibold">Admin Login</h1>
-                <div className="space-y-3">
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Username</label>
-                        <input
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            className="w-full border rounded px-3 py-2"
-                            placeholder="Enter username"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Password</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="w-full border rounded px-3 py-2"
-                            placeholder="Enter password"
-                            onKeyDown={(e) => e.key === 'Enter' && authenticate()}
-                        />
-                    </div>
-                </div>
-                <button onClick={authenticate} className="w-full rounded bg-black text-white px-4 py-2">Login</button>
-            </main>
-        )
-    }
+    return (
+      <main className="max-w-md mx-auto px-4 py-8 space-y-4">
+        <h1 className="text-2xl font-semibold">Admin Login</h1>
+        <div className="space-y-3">
+          <div>
+            <label className="block text-sm font-medium mb-1">Username</label>
+            <input
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full border rounded px-3 py-2"
+              placeholder="Enter username"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full border rounded px-3 py-2"
+              placeholder="Enter password"
+              onKeyDown={(e) => e.key === 'Enter' && authenticate()}
+            />
+          </div>
+        </div>
+        <button onClick={authenticate} className="w-full rounded bg-black text-white px-4 py-2">Login</button>
+      </main>
+    )
+  }
 
   return (
     <main className="max-w-5xl mx-auto px-4 py-8">
@@ -657,34 +657,34 @@ export default function AdminPage() {
         <button
           onClick={() => setActiveTab('orders')}
           className={`flex items-center gap-2 px-4 py-2 font-medium transition-colors ${
-            activeTab === 'orders' 
-              ? 'border-b-2 border-black text-black' 
+            activeTab === 'orders'
+              ? 'border-b-2 border-black text-black'
               : 'text-gray-500 hover:text-gray-700'
           }`}
         >
-          <Truck className="w-4 h-4" />
+          <Truck className="w-4 h-4"/>
           Orders
         </button>
         <button
           onClick={() => setActiveTab('inventory')}
           className={`flex items-center gap-2 px-4 py-2 font-medium transition-colors ${
-            activeTab === 'inventory' 
-              ? 'border-b-2 border-black text-black' 
+            activeTab === 'inventory'
+              ? 'border-b-2 border-black text-black'
               : 'text-gray-500 hover:text-gray-700'
           }`}
         >
-          <Package className="w-4 h-4" />
+          <Package className="w-4 h-4"/>
           Inventory
         </button>
         <button
           onClick={() => setActiveTab('barcodes')}
           className={`flex items-center gap-2 px-4 py-2 font-medium transition-colors ${
-            activeTab === 'barcodes' 
-              ? 'border-b-2 border-black text-black' 
+            activeTab === 'barcodes'
+              ? 'border-b-2 border-black text-black'
               : 'text-gray-500 hover:text-gray-700'
           }`}
         >
-          <Barcode className="w-4 h-4" />
+          <Barcode className="w-4 h-4"/>
           Barcodes
         </button>
       </div>
@@ -708,7 +708,7 @@ export default function AdminPage() {
                 onClick={() => setShowScanner(true)}
                 className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
               >
-                <ScanLine className="w-5 h-5" />
+                <ScanLine className="w-5 h-5"/>
                 Scan Barcode
               </button>
               <div className="flex-1 flex gap-2">
@@ -754,7 +754,7 @@ export default function AdminPage() {
                     onClick={() => updateInventory('adjust', -1)}
                     className="flex items-center gap-1 px-3 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200"
                   >
-                    <Minus className="w-4 h-4" /> 1
+                    <Minus className="w-4 h-4"/> 1
                   </button>
                   <button
                     onClick={() => updateInventory('adjust', -5)}
@@ -768,12 +768,12 @@ export default function AdminPage() {
                   >
                     -10
                   </button>
-                  <div className="w-px bg-gray-300 mx-2" />
+                  <div className="w-px bg-gray-300 mx-2"/>
                   <button
                     onClick={() => updateInventory('adjust', 1)}
                     className="flex items-center gap-1 px-3 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200"
                   >
-                    <Plus className="w-4 h-4" /> 1
+                    <Plus className="w-4 h-4"/> 1
                   </button>
                   <button
                     onClick={() => updateInventory('adjust', 5)}
@@ -851,14 +851,14 @@ export default function AdminPage() {
                 disabled={selectedSkus.size === 0}
                 className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Printer className="w-4 h-4" />
+                <Printer className="w-4 h-4"/>
                 Print Selected ({selectedSkus.size})
               </button>
               <button
                 onClick={() => printBarcodes(allVariants.map(v => v.sku))}
                 className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
               >
-                <Printer className="w-4 h-4" />
+                <Printer className="w-4 h-4"/>
                 Print All
               </button>
             </div>
@@ -875,8 +875,8 @@ export default function AdminPage() {
                 <div
                   key={variant.sku}
                   className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                    selectedSkus.has(variant.sku) 
-                      ? 'border-black bg-gray-50 dark:bg-gray-900' 
+                    selectedSkus.has(variant.sku)
+                      ? 'border-black bg-gray-50 dark:bg-gray-900'
                       : 'hover:border-gray-400'
                   }`}
                   onClick={() => toggleSkuSelection(variant.sku)}
@@ -894,7 +894,7 @@ export default function AdminPage() {
                       onClick={(e) => e.stopPropagation()}
                     />
                   </div>
-                  
+
                   {/* Barcode Preview */}
                   <div className="bg-white p-3 rounded border">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -904,7 +904,7 @@ export default function AdminPage() {
                       className="w-full h-auto"
                     />
                   </div>
-                  
+
                   <div className="mt-2 flex items-center justify-between">
                     <code className="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
                       {variant.sku}
@@ -917,7 +917,7 @@ export default function AdminPage() {
                       className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
                       title="Print this barcode"
                     >
-                      <Printer className="w-4 h-4" />
+                      <Printer className="w-4 h-4"/>
                     </button>
                   </div>
                 </div>
@@ -930,11 +930,11 @@ export default function AdminPage() {
       {/* Orders Tab */}
       {activeTab === 'orders' && (
         <div className="space-y-4">
-      {loading ? (
+          {loading ? (
             <p>Loading orders...</p>
-      ) : orders.length === 0 ? (
+          ) : orders.length === 0 ? (
             <p>No orders found</p>
-      ) : (
+          ) : (
             orders.map((order) => {
               const isExpanded = expandedOrders.has(order.id)
               let items = order.items
@@ -949,60 +949,60 @@ export default function AdminPage() {
               return (
                 <div key={order.id} className="border rounded-lg p-4 space-y-3">
                   {/* Order Header */}
-              <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <button
                         onClick={() => toggleOrderExpansion(order.id)}
                         className="p-1 hover:bg-gray-100 rounded transition-colors"
                       >
                         {isExpanded ? (
-                          <ChevronUp className="w-5 h-5" />
+                          <ChevronUp className="w-5 h-5"/>
                         ) : (
-                          <ChevronDown className="w-5 h-5" />
+                          <ChevronDown className="w-5 h-5"/>
                         )}
                       </button>
-                <div>
+                      <div>
                         <div className="font-medium">Order #{order.id}</div>
                         <div className="text-sm text-gray-600">
                           {order.customer_email}
                         </div>
                       </div>
-                </div>
-                <div className="text-right">
+                    </div>
+                    <div className="text-right">
                       <div className="font-medium">
                         ${((order.total_cents || 0) / 100).toFixed(2)}
                       </div>
                       <div className="text-sm text-gray-600">
                         {new Date(order.created_at).toLocaleDateString()}
                       </div>
-                </div>
-              </div>
+                    </div>
+                  </div>
 
                   {/* Expanded Items Section */}
                   {isExpanded && Array.isArray(items) && items.length > 0 && (
                     <div className="mt-3 pt-3 border-t">
                       <h4 className="text-sm font-medium mb-2">Order Items:</h4>
                       <div className="space-y-2">
-                        {items.map((item: any, idx: number) => (
+                        {items.map((item: CartOrderItem, idx: number) => (
                           <div key={idx} className="flex items-center gap-3 text-sm bg-black p-2 rounded">
-                        <div className="flex-1">
-                          <div className="font-medium">
-                            {item.title}
-                          </div>
+                            <div className="flex-1">
+                              <div className="font-medium">
+                                {item.title}
+                              </div>
                               <div className="text-gray-600 text-xs">
-                            SKU: {item.sku}
-                          </div>
-                        </div>
+                                SKU: {item.sku}
+                              </div>
+                            </div>
                             <div className="text-gray-600">
-                            Qty: {item.quantity}
-                          </div>
+                              Qty: {item.quantity}
+                            </div>
                             <div className="font-medium">
                               ${((item.price || 0) / 100).toFixed(2)}
-                      </div>
-                  </div>
+                            </div>
+                          </div>
                         ))}
-                </div>
-                </div>
+                      </div>
+                    </div>
                   )}
 
                   {/* Status and Tracking Section */}
@@ -1018,8 +1018,8 @@ export default function AdminPage() {
                       <option value="processing">Processing</option>
                       <option value="shipped">Shipped</option>
                       <option value="fulfilled">Fulfilled</option>
-                  </select>
-                </div>
+                    </select>
+                  </div>
 
                   {/* Tracking Number Section */}
                   <div className="flex items-center gap-3">
@@ -1031,21 +1031,21 @@ export default function AdminPage() {
                       placeholder="Enter tracking number"
                       className="flex-1 border rounded px-3 py-1 text-sm"
                     />
-                <button
+                    <button
                       onClick={() => addTrackingAndNotify(order.id)}
                       className="flex items-center gap-2 px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 transition-colors"
-                >
-                  <Mail className="w-4 h-4" />
+                    >
+                      <Mail className="w-4 h-4"/>
                       Add & Notify
-                </button>
-              </div>
+                    </button>
+                  </div>
 
                   {/* Generate Label Button */}
                   <button
                     onClick={() => setShowAddressForm(order.id)}
                     className="flex items-center gap-2 px-3 py-1 bg-black text-white rounded text-sm hover:bg-gray-800 transition-colors"
                   >
-                    <Printer className="w-4 h-4" />
+                    <Printer className="w-4 h-4"/>
                     Generate Shipping Label
                   </button>
 
@@ -1075,27 +1075,27 @@ export default function AdminPage() {
                           defaultValue={order.shipping_address_line1 || ''}
                           className="col-span-2 border rounded px-3 py-2 text-sm"
                         />
-                      <input
+                        <input
                           id={`addr2-${order.id}`}
                           type="text"
                           placeholder="Address Line 2"
                           defaultValue={order.shipping_address_line2 || ''}
                           className="col-span-2 border rounded px-3 py-2 text-sm"
-                      />
-                      <input
+                        />
+                        <input
                           id={`suburb-${order.id}`}
                           type="text"
                           placeholder="Suburb *"
                           defaultValue={order.shipping_suburb || ''}
                           className="border rounded px-3 py-2 text-sm"
-                      />
-                      <input
+                        />
+                        <input
                           id={`state-${order.id}`}
                           type="text"
                           placeholder="State *"
                           defaultValue={order.shipping_state || ''}
                           className="border rounded px-3 py-2 text-sm"
-                      />
+                        />
                         <input
                           id={`postcode-${order.id}`}
                           type="text"
@@ -1117,19 +1117,19 @@ export default function AdminPage() {
                           defaultValue={order.customer_email || ''}
                           className="border rounded px-3 py-2 text-sm"
                         />
-                      <input
+                        <input
                           id={`weight-${order.id}`}
                           type="text"
                           placeholder="Weight (kg)"
-                        defaultValue="0.5"
+                          defaultValue="0.5"
                           className="border rounded px-3 py-2 text-sm"
-                      />
-                    </div>
+                        />
+                      </div>
                       <div className="flex gap-2">
-                    <button
+                        <button
                           onClick={() => generateLabel(order.id)}
                           className="px-4 py-2 bg-black text-white rounded text-sm hover:bg-gray-800 transition-colors"
-                    >
+                        >
                           Print Label
                         </button>
                         <button
@@ -1137,11 +1137,11 @@ export default function AdminPage() {
                           className="px-4 py-2 border rounded text-sm hover:bg-gray-100 transition-colors"
                         >
                           Cancel
-                    </button>
-                  </div>
-              </div>
+                        </button>
+                      </div>
+                    </div>
                   )}
-            </div>
+                </div>
               )
             })
           )}

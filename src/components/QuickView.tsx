@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { X, ShoppingBag, Check } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
 import { getProductByHandle } from '@/lib/products'
-import { Product, ProductVariant } from '@/app/types/Product'
+import { Product, ProductVariant } from '@/types/Product'
 
 interface QuickViewProps {
   isOpen: boolean

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { GridTileImage } from '@/components/grid/tile';
 import { useEffect, useState } from 'react';
 import { getAllProducts } from '@/lib/products';
-import { Product } from '@/app/types/Product';
+import { Product } from '@/types/Product';
 
 type ProductClick = { handle: string; title: string; color: string };
 
