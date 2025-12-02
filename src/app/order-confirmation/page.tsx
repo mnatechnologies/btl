@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation'
 import { DatabaseOrder } from '@/types/Order'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useCart } from '@/context/CartContext'
 
 function OrderConfirmationContent() {
   const searchParams = useSearchParams()
@@ -11,6 +12,7 @@ function OrderConfirmationContent() {
   const [order, setOrder] = useState<DatabaseOrder | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { clear } = useCart()
 
   useEffect(() => {
     if (!sessionId) {
@@ -27,6 +29,9 @@ function OrderConfirmationContent() {
         }
         const data = await res.json()
         setOrder(data.order)
+
+        // Clear cart after successful order
+        clear()
       } catch (err) {
         console.error('Error fetching order:', err)
         setError('Unable to load order details. Please check your email for confirmation.')
@@ -36,7 +41,7 @@ function OrderConfirmationContent() {
     }
 
     void fetchOrder()
-  }, [sessionId])
+  }, [sessionId, clear])
 
   if (loading) {
     return (
