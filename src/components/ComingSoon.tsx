@@ -70,8 +70,8 @@ export default function ComingSoon() {
 
   const photos = [
     '/Photos/Products/Legacy/RVN/BTLFlatlayBlackBackground19.jpg',
-    '/Photos/Products/Eternal/RVN/BTLFlatlayBlackBackground22.jpg',
-    '/Photos/Products/Monolith/RVN/BTLFlatlayBlackBackground43.jpg',
+    '/Photos/Products/Monolith/RVN/BTLFlatlayBlackBackground22.jpg',
+    '/Photos/Products/Eternal/RVN/BTLFlatlayBlackBackground43.jpg',
     '/Photos/Products/Legacy/ALB/BTLFlatlayBlackBackground15.jpg',
   ]
 

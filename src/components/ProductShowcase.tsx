@@ -12,7 +12,8 @@ interface ProductShowcaseProps {
     product: Product;
     initialColor?: string;
 }
-
+//TODO
+// FIX PRODUCT SHOWCASE PAGE MODEL IMAGE
 const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
     const {addItem} = useCart();
     const router = useRouter();

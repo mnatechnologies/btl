@@ -187,12 +187,13 @@ export function FourItemGridMirror({
   if (!product) return null;
   
   const uniqueColors = [...new Set(product.variants.map(v => v.color))];
-  
-  const gridItems: ProductItem[] = uniqueColors.slice(0, 4).map(color => {
+
+  const gridItems: ProductItem[] = uniqueColors.slice(0, 4).map((color,index) => {
     const variantWithColor = product.variants.find(v => v.color === color);
+    const imageIndex = index === 0 ? 0 : 1;
     // Use first image (index 0) for consistent perspective
-    const image = variantWithColor?.images?.[0] || product.images?.[0] || '/images/btl-logo-white.jpg';
-    
+    const image = variantWithColor?.images?.[imageIndex] || product.images?.[imageIndex] || variantWithColor?.images?.[0] || product.images?.[0] || '/images/btl-logo-white.jpg';
+
     return {
       handle: product.name.toLowerCase().replace(/\s+/g, '-'),
       title: `${product.name} – ${color}`,
@@ -214,7 +215,7 @@ export function FourItemGridMirror({
       </div>
       
       {/* Grid: 3 small stacked on left, 1 large on right */}
-      <div className="grid gap-4 grid-cols-[1fr_0.5fr_2fr] grid-rows-3 auto-rows-fr">
+      <div className="grid gap-4 grid-cols-[1fr_0.5fr_2fr] grid-rows-3 ">
         {smallProducts.map((item, idx) => (
           <MirrorGridItem key={idx} size="small" item={item} onProductClick={onProductClick} onQuickAdd={openQuickView} />
         ))}

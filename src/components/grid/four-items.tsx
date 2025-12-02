@@ -190,12 +190,13 @@ export function FourItemGrid({
   // Use first product (index 0) and get all its color variants
   const product = products[productIndex];
   const uniqueColors = [...new Set(product.variants.map(v => v.color))];
-  
-  const gridItems: ProductItem[] = uniqueColors.slice(0, 4).map(color => {
+
+  const gridItems: ProductItem[] = uniqueColors.slice(0, 4).map((color,index) => {
     const variantWithColor = product.variants.find(v => v.color === color);
+    const imageIndex = index === 0 ? 0 : 1;
     // Use first image (index 0) for consistent perspective
-    const image = variantWithColor?.images?.[0] || product.images?.[0] || '/images/btl-logo-white.jpg';
-    
+    const image = variantWithColor?.images?.[imageIndex] || product.images?.[imageIndex] || variantWithColor?.images?.[0] || product.images?.[0] || '/images/btl-logo-white.jpg';
+
     return {
       handle: product.name.toLowerCase().replace(/\s+/g, '-'),
       title: `${product.name} – ${color}`,
