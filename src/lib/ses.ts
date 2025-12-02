@@ -8,9 +8,18 @@ const sesClient = new SESClient({
   },
 })
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://btlclothing.au'
-const FROM_EMAIL = process.env.SES_FROM_EMAIL || 'Built To Last <noreply@btlclothing.au>'
-const CONTACT_EMAIL = process.env.CONTACT_EMAIL || 'info@btlclothing.au'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://btlclothing.com'
+const FROM_EMAIL = process.env.SES_FROM_EMAIL!
+const CONTACT_EMAIL = process.env.CONTACT_EMAIL!
+
+if (!FROM_EMAIL) {
+  throw new Error('SES_FROM_EMAIL is required')
+}
+if (!CONTACT_EMAIL) {
+  throw new Error('CONTACT_EMAIL is required')
+}
+
+
 
 interface SendEmailParams {
   to: string | string[]

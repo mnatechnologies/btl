@@ -19,6 +19,11 @@ export async function POST(req: NextRequest) {
     const body = await req.text()
     const signature = req.headers.get('stripe-signature')
 
+    console.log('🔔 Webhook received')
+    console.log('🔑 Webhook secret exists:', !!webhookSecret)
+    console.log('🔑 Webhook secret prefix:', webhookSecret?.substring(0, 10))
+    console.log('🔐 Signature exists:', !!signature)
+
     if (!signature) {
       return NextResponse.json({ error: 'No signature' }, { status: 400 })
     }
@@ -33,9 +38,13 @@ export async function POST(req: NextRequest) {
     try {
       event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
     } catch (err) {
-      const error = err as { message?: string }
-      console.error('Webhook signature verification failed:', error.message)
-      return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
+      const error = err as Error
+      console.error('❌ Webhook signature verification failed')
+      console.error('Error message:', error.message)
+      console.error('Error name:', error.name)
+      console.error('Body length:', body.length)
+      console.error('Signature preview:', signature?.substring(0, 30))
+      return NextResponse.json({ error: 'Invalid signature', details: error.message }, { status: 400 })
     }
 
     // Handle the checkout.session.completed event
