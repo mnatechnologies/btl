@@ -19,14 +19,14 @@ const slides: Slide[] = [
     image: '/Photos/hero1.jpg',
     title: 'Built To Last',
     description: 'Premium quality essentials designed for those who value craftsmanship and timeless style.',
-    objectPosition: 'center 13%'
+    objectPosition: 'center 45%'
   },
   {
     id: 2,
     image: '/Photos/hero2.jpg',
     title: '',
     description: "",
-    objectPosition: 'center '
+    objectPosition: 'center 70%'
   },
 ];
 
@@ -67,7 +67,7 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative w-full h-[45vh] sm:h-[50vh] lg:h-[55vh] overflow-hidden bg-black">
+    <section className="relative w-full aspect-[3/2] max-h-[80vh] overflow-hidden bg-black">
       {/* Slides */}
       {slides.map((slide, index) => (
         <div
@@ -82,7 +82,8 @@ const Hero = () => {
             alt={slide.title}
             fill
             className="object-cover"
-            style={{ objectPosition: 'center center' }}
+            style={{ objectPosition: slide.objectPosition || 'center center' }}
+
             priority={index === 0}
           />
           

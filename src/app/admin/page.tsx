@@ -158,9 +158,9 @@ export default function AdminPage() {
     }
   }, [token])
 
-  // Load variants when switching to barcodes tab
+  // Load variants when switching to barcodes or inventory tab
   useEffect(() => {
-    if (activeTab === 'barcodes' && authed && allVariants.length === 0) {
+    if ((activeTab === 'barcodes' || activeTab === 'inventory') && authed && allVariants.length === 0) {
       fetchAllVariants()
     }
   }, [activeTab, authed, allVariants.length, fetchAllVariants])
@@ -850,27 +850,16 @@ export default function AdminPage() {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-medium">All Inventory</h3>
                 <button
-                  onClick={async () => {
-                    setInventoryLoading(true)
-                    try {
-                      const res = await fetch('/api/inventory', {
-                        headers: { Authorization: `Bearer ${token}` }
-                      })
-                      const data = await res.json()
-                      if (res.ok && data.variants) {
-                        setAllVariants(data.variants)
-                      }
-                    } finally {
-                      setInventoryLoading(false)
-                    }
-                  }}
+                  onClick={fetchAllVariants}
                   className="px-3 py-2 text-sm border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
                 >
-                  {inventoryLoading ? 'Loading...' : 'Refresh List'}
+                  {barcodesLoading ? 'Loading...' : 'Refresh List'}
                 </button>
               </div>
 
-              {allVariants.length === 0 ? (
+              {barcodesLoading ? (
+                <p className="text-center py-8 text-gray-500">Loading inventory...</p>
+              ) : allVariants.length === 0 ? (
                 <p className="text-center py-8 text-gray-500">No inventory data loaded. Click Refresh List.</p>
               ) : (
                 <div className="overflow-x-auto">

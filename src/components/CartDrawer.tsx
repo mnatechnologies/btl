@@ -325,15 +325,23 @@ export default function EnhancedCartDrawer({ isOpen, onClose }: CartDrawerProps)
       return
     }
 
-    // Validate email if provided
-    if (email && !validateEmail(email)) {
+  // Validate email is required
+   if (!email || !email.trim()) {
+      setEmailError('Email is required')
+      showErrorToast('Please enter your email address')
+      return
+    }
+
+   // Validate email format
+    if (!validateEmail(email)) {
       setEmailError('Please enter a valid email address')
       showErrorToast('Please enter a valid email address')
       return
-    }
+  }
     setEmailError('')
 
     setLoading(true)
+
     try {
       const res = await fetch('/api/create-checkout-session', {
         method: 'POST',
@@ -544,7 +552,7 @@ export default function EnhancedCartDrawer({ isOpen, onClose }: CartDrawerProps)
                     value={email}
                     onChange={(e) => {
                       setEmail(e.target.value)
-                      if (emailError) setEmailError('')
+                      if (emailError) setEmailError('Please enter an email1')
                     }}
                     className={`w-full border rounded-lg px-3 py-2 text-sm bg-white dark:bg-neutral-800 ${
                       emailError ? 'border-red-500' : 'border-neutral-300 dark:border-neutral-700'

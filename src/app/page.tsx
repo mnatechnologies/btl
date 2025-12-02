@@ -1,7 +1,5 @@
 import Hero from "@/components/Hero";
-import { FourItemGrid } from "@/components/grid/four-items";
-import { FourItemGridAlt } from "@/components/grid/four-items-alt";
-import { FourItemGridMirror } from "@/components/grid/four-items-mirror";
+import FeaturedProductGrid from "@/components/FeaturedProductGrid";
 
 export default function Home() {
   return (
@@ -12,10 +10,10 @@ export default function Home() {
         </div>
       </section>
       <Hero />
-     
-      <FourItemGrid productIndex={0} />
-      <FourItemGridMirror productIndex={1}/>
-      <FourItemGrid productIndex={2} />
+
+      <FeaturedProductGrid productIndex={0} layout="left-large" />
+      <FeaturedProductGrid productIndex={1} layout="right-large" />
+      <FeaturedProductGrid productIndex={2} layout="left-large" />
     </main>
   );
 }

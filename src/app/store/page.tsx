@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { getAllProducts } from '@/lib/products';
-import StoreGrid from '@/components/StoreGrid';
+import ProductGrid from '@/components/ProductGrid';
 
 export default async function Store() {
   // Fetch all products from Supabase
@@ -9,11 +9,20 @@ export default async function Store() {
   // Group items by product
   const productGroups = products.map(product => {
     const uniqueColors = [...new Set(product.variants.map(v => v.color))];
-    const items = uniqueColors.map(color => {
+    const items = uniqueColors.map((color, index) => {
       const variantWithColor = product.variants.find(v => v.color === color);
-      // Use first image (index 0) for consistent perspective
-      const image = variantWithColor?.images?.[0] || product.images?.[0] || '/images/btl-logo-white.jpg';
-      
+
+      let image: string;
+
+      if (index === 0) {
+        // Large item: try to find image with "-main" in the color name, or use first image
+        const mainImage = variantWithColor?.images?.find(img => img.includes(`${color.toLowerCase()}-main`));
+        image = mainImage || variantWithColor?.images?.[0] || product.images?.[0] || '/images/btl-logo-white.jpg';
+      } else {
+        // Small items: use second image (index 1)
+        image = variantWithColor?.images?.[1] || product.images?.[1] || variantWithColor?.images?.[0] || product.images?.[0] || '/images/btl-logo-white.jpg';
+      }
+
       return {
         handle: product.name.toLowerCase().replace(/\s+/g, '-'),
         title: color,
@@ -52,7 +61,13 @@ export default async function Store() {
         </section>
 
         {/* Product Sections */}
-        <StoreGrid groups={productGroups} />
+        {productGroups.map((group, index) => (
+          <ProductGrid
+            key={group.handle}
+            groups={[group]}
+            layout={index % 2 === 0 ? 'left-large' : 'right-large'}
+          />
+        ))}
       </main>
     </div>
   );
