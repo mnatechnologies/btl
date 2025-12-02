@@ -5,7 +5,7 @@ import { getFeaturedProducts } from '@/lib/products'
 import { Product } from '@/types/Product'
 import ProductGrid from '@/components/ProductGrid'
 
-type GridLayout = 'left-large' | 'right-large' | 'compact'
+type GridLayout = 'left-large' | 'right-large'
 
 type FeaturedProductGridProps = {
   productIndex: number
