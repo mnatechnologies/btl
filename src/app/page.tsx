@@ -13,9 +13,9 @@ export default function Home() {
       </section>
       <Hero />
      
-      <FourItemGrid />
-      <FourItemGridAlt />
-      <FourItemGridMirror />
+      <FourItemGrid productIndex={0} />
+      <FourItemGridMirror productIndex={1}/>
+      <FourItemGrid productIndex={2} />
     </main>
   );
 }

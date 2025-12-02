@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import { X, ShoppingBag, Check } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
-import { getProductByHandle } from '@/lib/products'
+import { getProductByHandle, isProductComingSoon } from '@/lib/products'
 import { Product, ProductVariant } from '@/types/Product'
 
 interface QuickViewProps {
@@ -23,6 +23,8 @@ export default function QuickView({ isOpen, onClose, productHandle, selectedColo
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [added, setAdded] = useState(false)
+  const isComingSoon = product ? isProductComingSoon(product.name) : false;
+
 
   const fetchProduct = useCallback(async () => {
     if (!productHandle) return
@@ -159,29 +161,37 @@ export default function QuickView({ isOpen, onClose, productHandle, selectedColo
 
           {/* Footer */}
           <div className="p-4 border-t border-neutral-200 dark:border-neutral-800">
-            <button
-              onClick={handleAddToCart}
-              disabled={!selectedSize || added}
-              className={`w-full py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                added
-                  ? 'bg-green-600 text-white cursor-pointer'
-                  : selectedSize
-                    ? 'bg-black text-white dark:bg-white dark:text-black hover:opacity-90 cursor-pointer'
-                    : 'bg-neutral-200 dark:bg-neutral-800 text-neutral-400 cursor-not-allowed'
-              }`}
-            >
-              {added ? (
-                <>
-                  <Check className="w-5 h-5" />
-                  Added to Cart
-                </>
-              ) : (
-                <>
-                  <ShoppingBag className="w-5 h-5" />
-                  {selectedSize ? `Add to Cart — $${(selectedVariant?.price || 0).toFixed(2)}` : 'Select a Size'}
-                </>
-              )}
-            </button>
+            {isComingSoon ? (
+              <div className="text-center p-4 bg-yellow-500/10 border border-yellow-500 rounded-lg">
+                <p className="text-sm font-medium text-yellow-600 dark:text-yellow-500">
+                  Coming Soon
+                </p>
+              </div>
+            ) : (
+              <button
+                onClick={handleAddToCart}
+                disabled={!selectedSize || added}
+                className={`w-full py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                  added
+                    ? 'bg-green-600 text-white cursor-pointer'
+                    : selectedSize
+                      ? 'bg-black text-white dark:bg-white dark:text-black hover:opacity-90 cursor-pointer'
+                      : 'bg-neutral-200 dark:bg-neutral-800 text-neutral-400 cursor-not-allowed'
+                }`}
+              >
+                {added ? (
+                  <>
+                    <Check className="w-5 h-5" />
+                    Added to Cart
+                  </>
+                ) : (
+                  <>
+                    <ShoppingBag className="w-5 h-5" />
+                    {selectedSize ? `Add to Cart — $${(selectedVariant?.price || 0).toFixed(2)}` : 'Select a Size'}
+                  </>
+                )}
+              </button>
+            )}
           </div>
         </div>
       </div>

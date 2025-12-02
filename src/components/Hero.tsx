@@ -16,32 +16,18 @@ interface Slide {
 const slides: Slide[] = [
   {
     id: 1,
-    image: '/images/hero.png',
+    image: '/Photos/hero1.jpg',
     title: 'Built To Last',
     description: 'Premium quality essentials designed for those who value craftsmanship and timeless style.',
     objectPosition: 'center 13%'
   },
   {
     id: 2,
-    image: '/images/herosample.jpeg',
+    image: '/Photos/hero2.jpg',
     title: '',
     description: "",
     objectPosition: 'center '
   },
-  {
-    id: 3,
-    image: '/images/V2 edited/Built To Last V2-9_(2).jpg',
-    title: 'PLACEHOLDER',
-    description: 'YOUR TEXT HERE',
-    objectPosition: 'center 13%'
-  },
-  {
-    id: 4,
-    image: '/images/V2 edited/Built To Last V2-1_(2).jpg',
-    title: 'PLACEHOLDER',
-    description: 'YOUR TEXT HERE',
-    objectPosition: 'center 13%'
-  }
 ];
 
 const Hero = () => {
@@ -96,7 +82,7 @@ const Hero = () => {
             alt={slide.title}
             fill
             className="object-cover"
-            style={{ objectPosition: slide.objectPosition || 'center center' }}
+            style={{ objectPosition: 'center center' }}
             priority={index === 0}
           />
           

@@ -111,37 +111,55 @@ export default function AccountPage() {
             ) : orders.length === 0 ? (
               <p>No orders found.</p>
             ) : (
-              <ul className="space-y-3">
-                {orders.map((o) => (
-                  <li key={o.id} className="p-4 border rounded">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="font-medium">Order #{o.id}</div>
-                        <div className="text-sm text-muted-foreground">{new Date(o.created_at).toLocaleString()}</div>
+              <>
+                <ul className="space-y-3">
+                  {orders.map((o) => (
+                    <li key={o.id} className="p-4 border rounded">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-medium">Order #{o.id}</div>
+                          <div className="text-sm text-muted-foreground">{new Date(o.created_at).toLocaleString()}</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-medium capitalize">{o.status}</div>
+                          {o.tracking_number && (
+                            <>
+                              <Link
+                                className="text-sm underline text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                                href={`https://auspost.com.au/mypost/track/#/details/${o.tracking_number}`}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                Track: {o.tracking_number}
+                              </Link>
+                            </>
+                          )}
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <div className="font-medium capitalize">{o.status}</div>
-                        {o.tracking_number && (
-                          <Link className="text-sm underline" href={`https://auspost.com.au/mypost/track/#/details/${o.tracking_number}`} target="_blank" rel="noreferrer">Track shipment</Link>
-                        )}
-                      </div>
-                    </div>
-                    <div className="mt-2 text-sm">Total: ${(o.total_cents/100).toFixed(2)}</div>
-                    {o.items && Array.isArray(o.items) && o.items.length > 0 && (
-                      <div className="mt-3 pt-3 border-t">
-                        <div className="text-sm font-medium mb-2">Items:</div>
-                        <ul className="space-y-1 text-sm text-muted-foreground">
-                          {o.items.map((item: any, idx: number) => (
-                            <li key={idx}>
-                              {item.quantity}x {item.title} ({item.sku})
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </li>
-                ))}
-              </ul>
+                      <div className="mt-2 text-sm">Total: ${(o.total_cents / 100).toFixed(2)}</div>
+                      {o.items && Array.isArray(o.items) && o.items.length > 0 && (
+                        <div className="mt-3 pt-3 border-t">
+                          <div className="text-sm font-medium mb-2">Items:</div>
+                          <ul className="space-y-1 text-sm text-muted-foreground">
+                            {o.items.map((item: any, idx: number) => (
+                              <li key={idx}>
+                                {item.quantity}x {item.title} ({item.sku})
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-800">
+                  <p className="text-xs text-gray-500">
+                    Need to return an item? <Link href="/contact"
+                                                  className="underline hover:text-gray-700 dark:hover:text-gray-300">Contact
+                    us</Link> to arrange a return.
+                  </p>
+                </div>
+              </>
             )}
           </section>
         </div>

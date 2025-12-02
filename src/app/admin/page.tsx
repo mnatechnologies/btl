@@ -51,6 +51,8 @@ export default function AdminPage() {
   const [showAddressForm, setShowAddressForm] = useState<number | null>(null)
   const [expandedOrders, setExpandedOrders] = useState<Set<number>>(new Set())
 
+
+
   // Inventory management state
   const [activeTab, setActiveTab] = useState<'orders' | 'inventory' | 'barcodes'>('orders')
   const [showScanner, setShowScanner] = useState(false)
@@ -734,6 +736,21 @@ export default function AdminPage() {
           {/* Scanned Variant Display */}
           {scannedVariant && (
             <div className="p-4 border rounded-lg">
+              {/* Back Button */}
+              <button
+                onClick={() => {
+                  setScannedVariant(null)
+                  setSkuSearch('')
+                  setAdjustmentAmount(0)
+                }}
+                className="mb-4 flex items-center gap-2 text-sm text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back to Inventory List
+              </button>
+
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h3 className="text-xl font-semibold">{scannedVariant.products?.name}</h3>
@@ -826,8 +843,81 @@ export default function AdminPage() {
               </div>
             </div>
           )}
+
+          {/* All Inventory List - only show when no variant is selected */}
+          {!scannedVariant && (
+            <div className="border-t pt-6 mt-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-medium">All Inventory</h3>
+                <button
+                  onClick={async () => {
+                    setInventoryLoading(true)
+                    try {
+                      const res = await fetch('/api/inventory', {
+                        headers: { Authorization: `Bearer ${token}` }
+                      })
+                      const data = await res.json()
+                      if (res.ok && data.variants) {
+                        setAllVariants(data.variants)
+                      }
+                    } finally {
+                      setInventoryLoading(false)
+                    }
+                  }}
+                  className="px-3 py-2 text-sm border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+                >
+                  {inventoryLoading ? 'Loading...' : 'Refresh List'}
+                </button>
+              </div>
+
+              {allVariants.length === 0 ? (
+                <p className="text-center py-8 text-gray-500">No inventory data loaded. Click Refresh List.</p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse">
+                    <thead>
+                    <tr className="border-b border-gray-300 dark:border-gray-700">
+                      <th className="text-left p-3 text-sm font-medium">Product</th>
+                      <th className="text-left p-3 text-sm font-medium">SKU</th>
+                      <th className="text-left p-3 text-sm font-medium">Color</th>
+                      <th className="text-left p-3 text-sm font-medium">Size</th>
+                      <th className="text-right p-3 text-sm font-medium">Stock</th>
+                      <th className="text-right p-3 text-sm font-medium">Price</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {allVariants.map((variant) => (
+                      <tr
+                        key={variant.sku}
+                        className="border-b border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900 cursor-pointer"
+                        onClick={() => {
+                          setSkuSearch(variant.sku)
+                          lookupSku(variant.sku)
+                        }}
+                      >
+                        <td className="p-3 text-sm">{variant.products?.name || 'Unknown'}</td>
+                        <td className="p-3 text-sm font-mono">{variant.sku}</td>
+                        <td className="p-3 text-sm">{variant.color}</td>
+                        <td className="p-3 text-sm">{variant.size}</td>
+                        <td className={`p-3 text-sm text-right font-medium ${
+                          variant.inventory <= 0 ? 'text-red-600' :
+                            variant.inventory < 10 ? 'text-orange-600' :
+                              'text-green-600'
+                        }`}>
+                          {variant.inventory}
+                        </td>
+                        <td className="p-3 text-sm text-right">${variant.price.toFixed(2)}</td>
+                      </tr>
+                    ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
+
 
       {/* Barcodes Tab */}
       {activeTab === 'barcodes' && (
@@ -1008,17 +1098,19 @@ export default function AdminPage() {
                   {/* Status and Tracking Section */}
                   <div className="flex items-center gap-3">
                     <span className="text-sm font-medium">Status:</span>
-                    <select
-                      value={order.status || 'pending'} id={`st-${order.id}`}
-                      onChange={(e) => updateTracking(order.id, order.tracking_number, e.target.value)}
-                      className="border rounded px-2 py-1 text-sm"
-                    >
-                      <option value="paid">Paid</option>
-                      <option value="pending">Pending</option>
-                      <option value="processing">Processing</option>
-                      <option value="shipped">Shipped</option>
-                      <option value="fulfilled">Fulfilled</option>
-                    </select>
+                    <span className="inline-block px-3 py-1 bg-neutral-100 dark:bg-neutral-800 rounded text-sm font-medium capitalize">
+                      {order.status}
+                    </span>
+
+                    {/* Show Fulfill button only if status is 'paid' */}
+                    {order.status === 'paid' && (
+                      <button
+                        onClick={() => updateTracking(order.id, order.tracking_number, 'fulfilled')}
+                        className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 transition-colors cursor-pointer"
+                      >
+                        Mark as Fulfilled
+                      </button>
+                    )}
                   </div>
 
                   {/* Tracking Number Section */}
@@ -1029,11 +1121,13 @@ export default function AdminPage() {
                       type="text"
                       defaultValue={order.tracking_number || ''}
                       placeholder="Enter tracking number"
-                      className="flex-1 border rounded px-3 py-1 text-sm"
+                      disabled={order.status !== 'fulfilled'}
+                      className="flex-1 border rounded px-3 py-1 text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
                     />
                     <button
                       onClick={() => addTrackingAndNotify(order.id)}
-                      className="flex items-center gap-2 px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 transition-colors"
+                      disabled={order.status !== 'fulfilled'}
+                      className="flex items-center gap-2 px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Mail className="w-4 h-4"/>
                       Add & Notify

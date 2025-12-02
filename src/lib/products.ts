@@ -335,3 +335,10 @@ export async function getProductSizes(productId: string, color: string): Promise
     return [];
   }
 }
+
+export function isProductComingSoon(productName: string): boolean {
+  const comingSoonProducts = ['eternal', 'monolith'];
+  return comingSoonProducts.some(name =>
+    productName.toLowerCase().includes(name)
+  );
+}

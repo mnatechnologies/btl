@@ -6,6 +6,7 @@ import {useRouter} from "next/navigation";
 import {Product, ProductVariant} from "@/types/Product";
 import SizeChart from "./SizeChart";
 import TrustBadges from "@/components/TrustBadges";
+import {isProductComingSoon} from "@/lib/products";
 
 interface ProductShowcaseProps {
     product: Product;
@@ -27,6 +28,7 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isSizeChartOpen, setIsSizeChartOpen] = useState(false);
     const prevInitialColorRef = useRef<string | undefined>(initialColor);
+    const isComingSoon = isProductComingSoon(product.name);
 
     // Ensure that when the incoming initialColor changes (e.g., via client nav), the state syncs once
     useEffect(() => {

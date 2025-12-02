@@ -3,7 +3,7 @@
 import { GridTileImage } from '@/components/grid/tile';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { getFeaturedProducts } from '@/lib/products';
+import { getFeaturedProducts, isProductComingSoon } from '@/lib/products';
 import { Product } from '@/types/Product';
 import QuickView from '@/components/QuickView';
 import { Plus } from 'lucide-react';
@@ -42,6 +42,8 @@ function MirrorGridItem({
   onProductClick?: (p: ProductClick) => void;
   onQuickAdd?: (handle: string, color: string, image: string) => void;
 }) {
+  const isComingSoon = isProductComingSoon(item.title)
+
   const content = (
     <GridTileImage
       src={item.image}
@@ -49,7 +51,7 @@ function MirrorGridItem({
       sizes={size === 'large' ? '(min-width: 768px) 50vw, 100vw' : '(min-width: 768px) 25vw, 100vw'}
       priority={false}
       alt={item.title}
-      showPrice={size === 'large'}
+      showPrice={size === 'large' && !isComingSoon}
       label={{
         position: 'bottom',
         title: item.title as string,
@@ -59,43 +61,68 @@ function MirrorGridItem({
     />
   );
 
-  const spanClass = size === 'large' ? 'col-span-3 row-span-3 col-start-2 row-start-1' : 'col-span-1 row-span-1 col-start-1';
+  const spanClass = size === 'large' ? 'col-span-1 row-span-3 col-start-3 row-start-1' : 'col-span-1 row-span-1 col-start-1';
   const aspectClass = size === 'large' ? 'h-full w-full min-h-full' : 'aspect-square h-full w-full';
 
   return (
     <div className={`${spanClass} ${size === 'large' ? 'min-h-full' : ''} group relative`}>
-      {onProductClick ? (
-        <button
-          type="button"
-          className={`relative block ${aspectClass}`}
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onProductClick({ handle: item.handle, title: item.title, color: item.color }); }}
-          aria-label={`View ${item.title}`}
-        >
+      {isComingSoon ? (
+        // Non-interactive version for coming soon
+        <div className={`relative block ${aspectClass} cursor-not-allowed`}>
           {content}
-        </button>
+          {/* Coming Soon Overlay */}
+          <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-30">
+            <div className="text-center">
+            <span className="inline-block px-4 py-2 bg-yellow-500 text-black text-sm font-bold rounded mb-2">
+              COMING SOON
+            </span>
+              <p className="text-white text-xs">Available Soon</p>
+            </div>
+          </div>
+        </div>
       ) : (
-        <Link
-          className={`relative block ${aspectClass}`}
-          href={`/product/${item.handle}?color=${item.color}`}
-          prefetch={false}
-        >
-          {content}
-        </Link>
-      )}
-      {onQuickAdd && (
-        <QuickAddButton 
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onQuickAdd(item.handle, item.color, item.image);
-          }} 
-        />
+        // Interactive version for available products
+        <>
+          {onProductClick ? (
+            <button
+              type="button"
+              className={`relative block ${aspectClass}`}
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); onProductClick({ handle: item.handle, title: item.title, color: item.color }); }}
+              aria-label={`View ${item.title}`}
+            >
+              {content}
+            </button>
+          ) : (
+            <Link
+              className={`relative block ${aspectClass}`}
+              href={`/product/${item.handle}?color=${item.color}`}
+              prefetch={false}
+            >
+              {content}
+            </Link>
+          )}
+          {onQuickAdd && (
+            <QuickAddButton
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onQuickAdd(item.handle, item.color, item.image);
+              }}
+            />
+          )}
+        </>
       )}
     </div>
   );
 }
 
-export function FourItemGridMirror({ onProductClick }: { onProductClick?: (p: ProductClick) => void }) {
+export function FourItemGridMirror({
+   onProductClick,
+   productIndex = 0
+}: {
+  onProductClick?: (p: ProductClick) => void;
+  productIndex?: number;
+}){
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [quickViewOpen, setQuickViewOpen] = useState(false);
@@ -156,7 +183,7 @@ export function FourItemGridMirror({ onProductClick }: { onProductClick?: (p: Pr
   }
 
   // Use third product (index 2) and get all its color variants
-  const product = products[2];
+  const product = products[productIndex]
   if (!product) return null;
   
   const uniqueColors = [...new Set(product.variants.map(v => v.color))];
@@ -187,10 +214,14 @@ export function FourItemGridMirror({ onProductClick }: { onProductClick?: (p: Pr
       </div>
       
       {/* Grid: 3 small stacked on left, 1 large on right */}
-      <div className="grid gap-4 grid-cols-4 grid-rows-3 auto-rows-fr">
+      <div className="grid gap-4 grid-cols-[1fr_0.5fr_2fr] grid-rows-3 auto-rows-fr">
         {smallProducts.map((item, idx) => (
           <MirrorGridItem key={idx} size="small" item={item} onProductClick={onProductClick} onQuickAdd={openQuickView} />
         ))}
+
+        {/* Empty spacer column */}
+        <div className="row-span-3" />
+
         <MirrorGridItem size="large" item={largeProduct} onProductClick={onProductClick} onQuickAdd={openQuickView} />
       </div>
 

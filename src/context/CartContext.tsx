@@ -1,5 +1,6 @@
 "use client";
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { showSuccessToast } from '@/components/ErrorBoundary';
 
 export type CartItem = {
   id: string;
@@ -46,12 +47,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const next = existing
         ? prev.map((p) => (p.id === item.id ? { ...p, quantity: p.quantity + item.quantity } : p))
         : [...prev, item];
-      // Fire a lightweight client-side event so UI can show feedback (toast)
-      if (typeof window !== 'undefined') {
-        try {
-          window.dispatchEvent(new CustomEvent('cart:add', { detail: { item } }));
-        } catch {}
-      }
+
+      // Show success toast with item details
+      showSuccessToast(`Added ${item.title} to cart`);
+
       return next;
     });
   };
