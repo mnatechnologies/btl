@@ -176,7 +176,7 @@ export default function ComingSoon() {
             </form>
           )}
           <p className="text-xs text-white/40 text-center mt-3">
-            Be the first to know. Get exclusive early access + $10 off your first order.
+            Be the first to know. Subscribe for Releases and Updates.
           </p>
         </div>
       </main>

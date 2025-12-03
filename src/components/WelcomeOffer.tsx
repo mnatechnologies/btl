@@ -98,12 +98,12 @@ export default function WelcomeOffer() {
                       className="mx-auto mb-4" />
               </div>
             <h2 className="text-2xl font-display font-bold mb-2">Welcome to Built To Last</h2>
-            <p className="text-sm text-neutral-600">Get 10% off your first order</p>
+            <p className="text-sm text-neutral-600">Join our mailing list for exclusive updates</p>
           </div>
 
           {submitted ? (
             <div className="text-center py-4">
-              <p className="text-green-600 font-medium">Check your email for your discount code!</p>
+              <p className="text-green-600 font-medium">Thank you for subscribing!</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -121,11 +121,9 @@ export default function WelcomeOffer() {
                 type="submit"
                 className="cursor-pointer w-full bg-black text-white py-2 font-medium hover:bg-neutral-800 transition-colors"
               >
-                Claim Discount
+                Subscribe
               </button>
-              <p className="text-xs text-neutral-500 text-center">
-                Code: <span className="font-semibold">WELCOME10</span>
-              </p>
+
             </form>
           )}
         </div>

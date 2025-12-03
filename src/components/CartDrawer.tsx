@@ -543,7 +543,7 @@ export default function EnhancedCartDrawer({ isOpen, onClose }: CartDrawerProps)
               {/* Email Input */}
               <div className="p-4 space-y-2">
                 <label className="block text-sm text-neutral-600 dark:text-neutral-400">
-                  Email for receipt (optional)
+                  Email for receipt
                 </label>
                 <div className="relative">
                   <input

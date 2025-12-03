@@ -88,41 +88,35 @@ export async function sendContactEmail({
 
 // Newsletter subscription welcome email
 export async function sendWelcomeEmail({
-  email,
-  discountCode,
-}: {
+                                         email,
+                                       }: {
   email: string
-  discountCode: string
 }) {
   return sendEmail({
     to: email,
-    subject: 'Welcome to Built To Last - Your Discount Code',
+    subject: 'Welcome to Built To Last',
     html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #000; color: #fff; padding: 40px;">
-        <div style="text-align: center; margin-bottom: 30px;">
-          <img src="${SITE_URL}/images/btl-logo-black.jpg" alt="Built To Last" style="max-width: 120px;">
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #000; color: #fff; padding: 40px;">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <img src="${SITE_URL}/images/btl-logo-white.jpg" alt="Built To Last" style="max-width: 120px;">
+          </div>
+          <h1 style="text-align: center; font-size: 28px; margin-bottom: 20px;">Welcome to Built To Last!</h1>
+          <p style="font-size: 16px; line-height: 1.6; text-align: center;">
+            Thank you for subscribing to our newsletter. You'll be the first to know about new drops, exclusive offers, and more.
+          </p>
+          <div style="text-align: center; margin-top: 30px;">
+            <a href="${SITE_URL}/store" style="display: inline-block; background: #fff; color: #000; padding: 15px 40px; text-decoration: none; font-weight: bold; border-radius: 4px;">
+              Shop Now
+            </a>
+          </div>
+          <p style="text-align: center; font-size: 12px; color: #888; margin-top: 40px;">
+            Built To Last | Premium Streetwear
+          </p>
         </div>
-        <h1 style="text-align: center; font-size: 28px; margin-bottom: 20px;">Welcome to Built To Last!</h1>
-        <p style="font-size: 16px; line-height: 1.6; text-align: center;">
-          Thank you for subscribing to our newsletter. You'll be the first to know about new drops, exclusive offers, and more.
-        </p>
-        <div style="background: #fff; color: #000; padding: 30px; border-radius: 8px; text-align: center; margin: 30px 0;">
-          <p style="margin: 0 0 10px; font-size: 14px;">Your exclusive discount code:</p>
-          <p style="font-size: 32px; font-weight: bold; letter-spacing: 4px; margin: 0;">${discountCode}</p>
-          <p style="margin: 10px 0 0; font-size: 14px; color: #666;">10% off your first order</p>
-        </div>
-        <div style="text-align: center;">
-          <a href="${SITE_URL}/store" style="display: inline-block; background: #fff; color: #000; padding: 15px 40px; text-decoration: none; font-weight: bold; border-radius: 4px;">
-            Shop Now
-          </a>
-        </div>
-        <p style="text-align: center; font-size: 12px; color: #888; margin-top: 40px;">
-          Built To Last | Premium Streetwear
-        </p>
-      </div>
-    `,
+      `,
   })
 }
+
 
 interface OrderItem {
   name: string

@@ -655,41 +655,42 @@ export default function AdminPage() {
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex gap-2 mb-6 border-b">
+      <div className="flex gap-2 mb-6 border-b-2 border-gray-200">
         <button
           onClick={() => setActiveTab('orders')}
-          className={`flex items-center gap-2 px-4 py-2 font-medium transition-colors ${
+          className={`flex items-center gap-2 px-6 py-3 font-bold transition-all ${
             activeTab === 'orders'
-              ? 'border-b-2 border-black text-black'
-              : 'text-gray-500 hover:text-gray-700'
+              ? 'border-b-4 border-black text-black bg-gray-50 -mb-0.5 text-lg'
+              : 'text-gray-500 hover:text-gray-700 border-b-4 border-transparent -mb-0.5 cursor-pointer'
           }`}
         >
-          <Truck className="w-4 h-4"/>
+          <Truck className={activeTab === 'orders' ? 'w-6 h-6' : 'w-5 h-5'}/>
           Orders
         </button>
         <button
           onClick={() => setActiveTab('inventory')}
-          className={`flex items-center gap-2 px-4 py-2 font-medium transition-colors ${
+          className={`flex items-center gap-2 px-6 py-3 font-bold transition-all ${
             activeTab === 'inventory'
-              ? 'border-b-2 border-black text-black'
-              : 'text-gray-500 hover:text-gray-700'
+              ? 'border-b-4 border-black text-black bg-gray-50 -mb-0.5 text-lg'
+              : 'text-gray-500 hover:text-gray-700 border-b-4 border-transparent -mb-0.5 cursor-pointer'
           }`}
         >
-          <Package className="w-4 h-4"/>
+          <Package className={activeTab === 'inventory' ? 'w-6 h-6' : 'w-5 h-5'}/>
           Inventory
         </button>
         <button
           onClick={() => setActiveTab('barcodes')}
-          className={`flex items-center gap-2 px-4 py-2 font-medium transition-colors ${
+          className={`flex items-center gap-2 px-6 py-3 font-bold transition-all ${
             activeTab === 'barcodes'
-              ? 'border-b-2 border-black text-black'
-              : 'text-gray-500 hover:text-gray-700'
+              ? 'border-b-4 border-black text-black bg-gray-50 -mb-0.5 text-lg'
+              : 'text-gray-500 hover:text-gray-700 border-b-4 border-transparent -mb-0.5 cursor-pointer'
           }`}
         >
-          <Barcode className="w-4 h-4"/>
+          <Barcode className={activeTab === 'barcodes' ? 'w-6 h-6' : 'w-5 h-5'}/>
           Barcodes
         </button>
       </div>
+
 
       {/* Barcode Scanner Modal */}
       {showScanner && (
@@ -1032,7 +1033,7 @@ export default function AdminPage() {
                     <div className="flex items-center gap-4">
                       <button
                         onClick={() => toggleOrderExpansion(order.id)}
-                        className="p-1 hover:bg-gray-100 rounded transition-colors"
+                        className="p-1 hover:bg-gray-100 rounded transition-colors cursor-pointer"
                       >
                         {isExpanded ? (
                           <ChevronUp className="w-5 h-5"/>
@@ -1126,7 +1127,7 @@ export default function AdminPage() {
                   {/* Generate Label Button */}
                   <button
                     onClick={() => setShowAddressForm(order.id)}
-                    className="flex items-center gap-2 px-3 py-1 bg-black text-white rounded text-sm hover:bg-gray-800 transition-colors"
+                    className="flex items-center gap-2 px-3 py-1 bg-black text-white rounded text-sm hover:bg-gray-800 transition-colors cursor-pointer"
                   >
                     <Printer className="w-4 h-4"/>
                     Generate Shipping Label

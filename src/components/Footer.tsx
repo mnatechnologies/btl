@@ -27,7 +27,7 @@ const Footer = () => {
         {/* Middle: Help & Information and Socials */}
 
         <div className="border-t border-primary-foreground/20 pt-8 pb-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-start gap-8">
+          <div className="flex flex-col md:flex-row justify-between items-center md:items-start gap-8">
             {/* Help & Information */}
             <div className="flex-1">
               <h3 className="text-xs font-semibold tracking-wider uppercase text-primary-foreground/80">Help & Information</h3>
@@ -40,7 +40,7 @@ const Footer = () => {
             </div>
 
             {/* Follow us */}
-            <div className="flex-1 flex flex-col items-start md:items-end">
+            <div className="flex-1 flex flex-col items-center md:items-end w-full md:w-auto">
               <h3 className="text-xs font-semibold tracking-wider uppercase text-primary-foreground/80 mb-4">Follow us</h3>
               <div className="flex space-x-6">
                 <Link href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/70 hover:text-primary-foreground transition-colors" aria-label="Instagram">

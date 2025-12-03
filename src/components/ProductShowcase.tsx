@@ -154,8 +154,8 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
             // New color names from seed
             case 'raven': return 'bg-black';
             case 'alabaster': return 'bg-white border border-border';
-            case 'stone': return 'bg-amber-100 border border-border';
-            case 'champagne': return 'bg-stone-600 border border-border';
+            case 'stone': return  'bg-stone-600 border border-border';
+            case 'champagne': return 'bg-amber-100 border border-border';
             case 'royal': return 'bg-blue-300';
             case 'ivory': return 'bg-amber-50 border border-border';
             case 'chocolate': return 'bg-amber-800';

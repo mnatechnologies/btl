@@ -81,9 +81,10 @@ function GridItem({
     spanClass = size === 'large' ? 'col-span-1 row-span-3' : 'col-span-1 row-span-1'
     aspectClass = size === 'large' ? 'h-full w-full' : 'aspect-square h-full w-full'
   } else if (layout === 'right-large') {
-    spanClass = size === 'large' ? 'col-span-1 row-span-3 col-start-3 row-start-1' : 'col-span-1 row-span-1 col-start-1'
+    spanClass = size === 'large' ? 'col-span-1 row-span-3 col-start-2 md:col-start-3 row-start-1' : 'col-span-1 row-span-1 col-start-1'
     aspectClass = size === 'large' ? 'h-full w-full min-h-full' : 'aspect-square h-full w-full'
   }
+
 
   return (
     <div className={`${spanClass} ${size === 'large' && layout === 'right-large' ? 'min-h-full' : ''} group relative`}>
@@ -215,7 +216,7 @@ export default function ProductGrid({ groups, layout = 'left-large', onProductCl
                     />
                   ))}
                   {/* Empty spacer column */}
-                  <div className="row-span-3" />
+                  <div className="hidden md:block row-span-3" />
                   {/* Large item on right */}
                   <GridItem
                     item={firstItem}
@@ -238,7 +239,7 @@ export default function ProductGrid({ groups, layout = 'left-large', onProductCl
                     comingSoon={comingSoon}
                   />
                   {/* Empty spacer column */}
-                  <div className="row-span-3" />
+                  <div className="hidden md:block row-span-3" />
                   {/* Small items on right */}
                   {restItems.map((item) => (
                     <GridItem
