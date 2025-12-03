@@ -159,7 +159,7 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
             case 'royal': return 'bg-blue-300';
             case 'ivory': return 'bg-amber-50 border border-border';
             case 'chocolate': return 'bg-amber-800';
-            case 'admiral': return 'bg-stone-900 border border-border';
+            case 'granite': return 'bg-stone-900 border border-border';
             // Legacy color names (backwards compatibility)
             case 'black': return 'bg-black';
             case 'white': return 'bg-white border border-border';

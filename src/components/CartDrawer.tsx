@@ -586,18 +586,7 @@ export default function EnhancedCartDrawer({ isOpen, onClose }: CartDrawerProps)
 
                 {/* Payment Methods Preview */}
                 <div className="flex items-center justify-center gap-2 mt-3">
-                  <span className="text-xs text-neutral-500">Accepts</span>
-                  <div className="flex gap-1">
-                    <div className="w-8 h-5 bg-neutral-200 dark:bg-neutral-700 rounded flex items-center justify-center">
-                      <span className="text-xs">💳</span>
-                    </div>
-                    <div className="w-8 h-5 bg-neutral-200 dark:bg-neutral-700 rounded flex items-center justify-center">
-                      <span className="text-xs">🍎</span>
-                    </div>
-                    <div className="w-8 h-5 bg-neutral-200 dark:bg-neutral-700 rounded flex items-center justify-center">
-                      <span className="text-xs">G</span>
-                    </div>
-                  </div>
+                  <TrustBadges variant='checkout' />
                 </div>
               </div>
 

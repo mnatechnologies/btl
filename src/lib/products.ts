@@ -81,7 +81,9 @@ export async function getAllProducts(): Promise<Product[]> {
     // Fetch all variants
     const { data: variants, error: variantsError } = await supabase
       .from('product_variants')
-      .select('*');
+      .select('*')
+      .order('created_at', { ascending: false });
+
 
     if (variantsError) {
       console.error('Error fetching variants:', variantsError);
@@ -125,7 +127,8 @@ export async function getFeaturedProducts(): Promise<Product[]> {
     const { data: variants, error: variantsError } = await supabase
       .from('product_variants')
       .select('*')
-      .in('product_id', productIds);
+      .in('product_id', productIds)
+      .order('created_at', { ascending: false });
 
     if (variantsError) {
       console.error('Error fetching variants:', variantsError);

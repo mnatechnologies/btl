@@ -1,12 +1,29 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseServer'
 import { sendContactEmail } from '@/lib/ses'
+import { checkCSRF } from '@/lib/csrf'
 
+/**
+ * ✅ RFC 5322 compliant email validation
+ * Validates proper email format
+ */
 function isValidEmail(email: string) {
-  return /.+@.+\..+/.test(email)
+  // More robust email validation regex
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+
+  return emailRegex.test(email) &&
+         email.length <= 254 && // RFC 5321 limit
+         email.includes('@') &&
+         email.split('@')[1].includes('.')
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+  // ✅ CSRF PROTECTION: Validate request origin
+  const csrfError = checkCSRF(req)
+  if (csrfError) {
+    return NextResponse.json({ error: csrfError.error }, { status: csrfError.status })
+  }
+
   try {
     const body = await req.json().catch(() => null)
     if (!body) {

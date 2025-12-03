@@ -1,4 +1,5 @@
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses'
+import  escapeHtml  from 'escape-html'
 
 if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
   throw new Error('AWS credentials are required: AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY')
@@ -68,17 +69,22 @@ export async function sendContactEmail({
   email: string
   message: string
 }) {
+  // ✅ XSS PROTECTION: Escape all user input
+  const safeName = escapeHtml(name)
+  const safeEmail = escapeHtml(email)
+  const safeMessage = escapeHtml(message)
+
   return sendEmail({
     to: CONTACT_EMAIL,
-    subject: `New Contact Form Submission from ${name}`,
+    subject: `New Contact Form Submission from ${safeName}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #000;">New Contact Form Submission</h2>
         <div style="background: #f5f5f5; padding: 20px; border-radius: 8px;">
-          <p><strong>Name:</strong> ${name}</p>
-          <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
+          <p><strong>Name:</strong> ${safeName}</p>
+          <p><strong>Email:</strong> <a href="mailto:${safeEmail}">${safeEmail}</a></p>
           <p><strong>Message:</strong></p>
-          <p style="white-space: pre-wrap;">${message.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>
+          <p style="white-space: pre-wrap;">${safeMessage}</p>
         </div>
       </div>
     `,
@@ -161,13 +167,18 @@ export async function sendOrderConfirmationEmail({
 }: OrderConfirmationParams) {
   const formatPrice = (cents: number) => `$${(cents / 100).toFixed(2)}`
 
+  // ✅ XSS PROTECTION: Escape all user-provided data
+  const safeCustomerName = escapeHtml(customerName)
+  const safeOrderNumber = escapeHtml(orderNumber)
+  const safeOrderDate = escapeHtml(orderDate)
+
   const itemsHtml = items
     .map(
       (item) => `
         <tr>
           <td style="padding: 15px 0; border-bottom: 1px solid #eee;">
-            <strong>${item.name}</strong>
-            ${item.size ? `<br><span style="color: #666; font-size: 14px;">Size: ${item.size}</span>` : ''}
+            <strong>${escapeHtml(item.name)}</strong>
+            ${item.size ? `<br><span style="color: #666; font-size: 14px;">Size: ${escapeHtml(item.size)}</span>` : ''}
           </td>
           <td style="padding: 15px 0; border-bottom: 1px solid #eee; text-align: center;">${item.quantity}</td>
           <td style="padding: 15px 0; border-bottom: 1px solid #eee; text-align: right;">${formatPrice(item.price_cents * item.quantity)}</td>
@@ -176,9 +187,21 @@ export async function sendOrderConfirmationEmail({
     )
     .join('')
 
+  // Extract first name safely
+  const firstName = escapeHtml(safeCustomerName.split(' ')[0])
+
+  // ✅ XSS PROTECTION: Escape shipping address fields
+  const safeShippingName = escapeHtml(shippingAddress.name)
+  const safeShippingLine1 = escapeHtml(shippingAddress.line1)
+  const safeShippingLine2 = shippingAddress.line2 ? escapeHtml(shippingAddress.line2) : ''
+  const safeShippingSuburb = escapeHtml(shippingAddress.suburb)
+  const safeShippingState = escapeHtml(shippingAddress.state)
+  const safeShippingPostcode = escapeHtml(shippingAddress.postcode)
+  const safeShippingCountry = shippingAddress.country ? escapeHtml(shippingAddress.country) : 'Australia'
+
   return sendEmail({
     to: email,
-    subject: `Order Confirmed - #${orderNumber}`,
+    subject: `Order Confirmed - #${safeOrderNumber}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #fff; color: #000;">
         <!-- Header -->
@@ -186,26 +209,26 @@ export async function sendOrderConfirmationEmail({
           <img src="${SITE_URL}/images/btl-logo-black.jpg" alt="Built To Last" style="max-width: 120px;">
           <h1 style="margin: 0; font-size: 24px;">Order Confirmed!</h1>
         </div>
-        
+
         <!-- Content -->
         <div style="padding: 30px;">
           <p style="font-size: 16px; line-height: 1.6;">
-            Hey ${customerName.split(' ')[0]},
+            Hey ${firstName},
           </p>
           <p style="font-size: 16px; line-height: 1.6;">
             Thanks for your order! We've received it and are getting it ready for you.
           </p>
-          
+
           <!-- Order Details -->
           <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 25px 0;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
               <div>
                 <p style="margin: 0; color: #666; font-size: 14px;">Order Number</p>
-                <p style="margin: 5px 0 0; font-weight: bold; font-size: 18px;">#${orderNumber}</p>
+                <p style="margin: 5px 0 0; font-weight: bold; font-size: 18px;">#${safeOrderNumber}</p>
               </div>
               <div style="text-align: right;">
                 <p style="margin: 0; color: #666; font-size: 14px;">Order Date</p>
-                <p style="margin: 5px 0 0; font-size: 16px;">${orderDate}</p>
+                <p style="margin: 5px 0 0; font-size: 16px;">${safeOrderDate}</p>
               </div>
             </div>
           </div>
@@ -255,11 +278,11 @@ export async function sendOrderConfirmationEmail({
           <div style="margin-top: 30px; padding: 20px; background: #f9f9f9; border-radius: 8px;">
             <h3 style="margin: 0 0 15px;">Shipping To</h3>
             <p style="margin: 0; line-height: 1.6;">
-              ${shippingAddress.name}<br>
-              ${shippingAddress.line1}<br>
-              ${shippingAddress.line2 ? `${shippingAddress.line2}<br>` : ''}
-              ${shippingAddress.suburb}, ${shippingAddress.state} ${shippingAddress.postcode}<br>
-              ${shippingAddress.country || 'Australia'}
+              ${safeShippingName}<br>
+              ${safeShippingLine1}<br>
+              ${safeShippingLine2 ? `${safeShippingLine2}<br>` : ''}
+              ${safeShippingSuburb}, ${safeShippingState} ${safeShippingPostcode}<br>
+              ${safeShippingCountry}
             </p>
           </div>
           

@@ -19,18 +19,14 @@ export async function POST(req: NextRequest) {
     const body = await req.text()
     const signature = req.headers.get('stripe-signature')
 
-    console.log('🔔 Webhook received')
-    console.log('🔑 Webhook secret exists:', !!webhookSecret)
-    console.log('🔑 Webhook secret prefix:', webhookSecret?.substring(0, 10))
-    console.log('🔐 Signature exists:', !!signature)
-
     if (!signature) {
-      return NextResponse.json({ error: 'No signature' }, { status: 400 })
+      return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
     }
 
     if (!webhookSecret) {
-      console.error('STRIPE_WEBHOOK_SECRET is not configured')
-      return NextResponse.json({ error: 'Webhook not configured' }, { status: 500 })
+      // Log internally but don't expose details to client
+      console.error('[WEBHOOK] STRIPE_WEBHOOK_SECRET not configured')
+      return NextResponse.json({ error: 'Configuration error' }, { status: 500 })
     }
 
     let event: Stripe.Event
@@ -38,13 +34,20 @@ export async function POST(req: NextRequest) {
     try {
       event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
     } catch (err) {
-      const error = err as Error
-      console.error('❌ Webhook signature verification failed')
-      console.error('Error message:', error.message)
-      console.error('Error name:', error.name)
-      console.error('Body length:', body.length)
-      console.error('Signature preview:', signature?.substring(0, 30))
-      return NextResponse.json({ error: 'Invalid signature', details: error.message }, { status: 400 })
+      // Don't expose signature validation details to potential attacker
+      return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
+    }
+
+    // ✅ REPLAY PROTECTION: Check if event already processed
+    const { data: existingEvent } = await supabaseAdmin
+      .from('webhook_events')
+      .select('id')
+      .eq('event_id', event.id)
+      .single()
+
+    if (existingEvent) {
+      // Event already processed - prevent replay attack
+      return NextResponse.json({ received: true }, { status: 200 })
     }
 
     // Handle the checkout.session.completed event
@@ -57,30 +60,22 @@ export async function POST(req: NextRequest) {
           items = JSON.parse(sessionFromWebhook.metadata.items)
         }
       } catch (e) {
-        console.error('Failed to parse items from metadata:', e)
+        console.error('[WEBHOOK] Failed to parse items from metadata')
       }
 
-      // Deduct inventory
+      // ✅ ATOMIC INVENTORY DEDUCTION - prevents race conditions
       if (supabaseAdmin && items.length > 0) {
         for (const item of items) {
-          // First get current inventory
-          const { data: variant } = await supabaseAdmin
-            .from('product_variants')
-            .select('inventory')
-            .eq('sku', item.sku)
-            .single()
+          const { data, error } = await supabaseAdmin
+            .rpc('deduct_inventory', {
+              p_sku: item.sku,
+              p_quantity: item.qty
+            })
 
-          if (variant) {
-            const newInventory = Math.max(0, variant.inventory - item.qty)
-
-            const { error: updateError } = await supabaseAdmin
-              .from('product_variants')
-              .update({ inventory: newInventory })
-              .eq('sku', item.sku)
-
-            if (updateError) {
-              console.error('Failed to deduct inventory for', item.sku, updateError)
-            }
+          if (error) {
+            console.error('[WEBHOOK] Failed to deduct inventory for SKU:', item.sku)
+          } else if (data && data.length > 0 && !data[0].success) {
+            console.error('[WEBHOOK] Inventory deduction failed:', data[0].message)
           }
         }
       }
@@ -92,10 +87,6 @@ export async function POST(req: NextRequest) {
           expand: ['customer_details', 'line_items', 'total_details']
         })
 
-        console.log('📧 Customer Email:', session.customer_details?.email)
-        console.log('👤 Customer Name:', session.customer_details?.name)
-        console.log('📱 Customer Phone:', session.customer_details?.phone)
-        console.log('📦 Shipping Details:', session.shipping_details)
 
         // Extract shipping and customer details
         const shippingDetails = session.shipping_details
@@ -135,8 +126,6 @@ export async function POST(req: NextRequest) {
           updateData.shipping_country = addr.country || 'AU'
         }
 
-        console.log('💾 Updating order with data:', updateData)
-
         // Update the order in the database
         const { data: order, error: updateError } = await supabaseAdmin
           .from('orders')
@@ -146,11 +135,9 @@ export async function POST(req: NextRequest) {
           .single()
 
         if (updateError) {
-          console.error('❌ Failed to update order:', updateError)
-          return NextResponse.json({ error: 'Failed to update order' }, { status: 500 })
+          console.error('[WEBHOOK] Failed to update order for session:', session.id)
+          return NextResponse.json({ error: 'Processing error' }, { status: 500 })
         }
-
-        console.log('✅ Order updated successfully:', order.id)
 
         // Send order confirmation email
         if (customerDetails?.email) {
@@ -161,7 +148,7 @@ export async function POST(req: NextRequest) {
               try {
                 items = JSON.parse(order.items)
               } catch {
-                console.error('Failed to parse order items JSON')
+                console.error('[WEBHOOK] Failed to parse order items JSON')
               }
             } else if (Array.isArray(order.items)) {
               items = order.items as OrderItem[]
@@ -213,25 +200,39 @@ export async function POST(req: NextRequest) {
                 country: shippingAddress?.country || 'Australia',
               },
             })
-            console.log('📧 Order confirmation email sent to:', customerDetails.email)
+
           } catch (emailError) {
-            console.error('❌ Failed to send order confirmation email:', emailError)
+            console.error('[WEBHOOK] Failed to send order confirmation email')
             // Don't fail the webhook - order is still processed
           }
         }
 
-        return NextResponse.json({ received: true, orderId: order.id })
+        // ✅ REPLAY PROTECTION: Mark event as processed
+        await supabaseAdmin
+          .from('webhook_events')
+          .insert({
+            event_id: event.id,
+            event_type: event.type,
+          })
+
+        return NextResponse.json({ received: true })
       } catch (error) {
-        console.error('❌ Error processing webhook:', error)
-        return NextResponse.json({ error: 'Processing failed' }, { status: 500 })
+        console.error('[WEBHOOK] Error processing checkout.session.completed')
+        return NextResponse.json({ error: 'Processing error' }, { status: 500 })
       }
     }
 
-    // Handle other event types if needed
-    console.log('Unhandled event type:', event.type)
+    // ✅ REPLAY PROTECTION: Mark other events as processed
+    await supabaseAdmin
+      .from('webhook_events')
+      .insert({
+        event_id: event.id,
+        event_type: event.type,
+      })
+
     return NextResponse.json({ received: true })
   } catch (error) {
-    console.error('Webhook error:', error)
-    return NextResponse.json({ error: 'Webhook handler failed' }, { status: 500 })
+    console.error('[WEBHOOK] Handler error')
+    return NextResponse.json({ error: 'Request error' }, { status: 500 })
   }
 }

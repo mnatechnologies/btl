@@ -41,13 +41,13 @@ export default async function Store() {
     <div className="min-h-screen">
       <main className="min-h-screen pb-8">
         {/* Hero Image */}
-        <section className="relative w-full aspect-[3/2] max-h-[80vh] overflow-hidden bg-black">
+        <section className="relative w-full h-[45vh] sm:h-[50vh] lg:h-[55vh] overflow-hidden bg-black">
           <Image
             src="/images/BTL-66.jpg"
             alt="Built To Last Store"
             fill
             className="object-cover"
-            style={{ objectPosition: 'center center' }}
+            style={{ objectPosition: 'center 60%' }}
             priority
           />
           <div className="absolute inset-0 bg-black/30" />

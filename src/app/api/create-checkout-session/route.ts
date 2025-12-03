@@ -3,6 +3,7 @@ import Stripe from 'stripe'
 import { supabaseAdmin } from '@/lib/supabaseServer'
 import { CartItem } from '@/context/CartContext'
 import { getPromoCode } from '@/lib/promoCodes'
+import { checkCSRF } from '@/lib/csrf'
 
 // Get or create a Stripe coupon for the promo code
 async function getOrCreateCoupon(stripe: Stripe, code: string): Promise<string | null> {
@@ -34,6 +35,12 @@ async function getOrCreateCoupon(stripe: Stripe, code: string): Promise<string |
 }
 
 export async function POST(req: NextRequest) {
+  // ✅ CSRF PROTECTION: Validate request origin
+  const csrfError = checkCSRF(req)
+  if (csrfError) {
+    return NextResponse.json({ error: csrfError.error }, { status: csrfError.status })
+  }
+
   try {
     const { items, email, name, phone, promoCode } = await req.json() as {
       items?: CartItem[]

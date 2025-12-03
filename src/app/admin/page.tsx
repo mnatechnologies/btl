@@ -325,7 +325,7 @@ export default function AdminPage() {
       senderSuburb: 'Bonnyrigg',
       senderState: 'NSW',
       senderPostcode: '2177',
-      senderPhone: 'PLEASE UPDATE',
+      senderPhone: '0490 188 603',
       senderEmail: 'info@btlclothing.com',
       // Recipient details
       recipientName: customerName,

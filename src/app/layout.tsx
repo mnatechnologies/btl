@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   description: 'Premium quality essentials designed for those who value craftsmanship and timeless style. Australian-made clothing built to last.',
   keywords: ['clothing', 'premium', 'Australian', 'quality', 'essentials', 'fashion'],
   icons: {
-    icon: '/images/btl-logo-proper.png',
+    icon: '/images/favicon.ico',
   },
   openGraph: {
     title: 'Built To Last',
