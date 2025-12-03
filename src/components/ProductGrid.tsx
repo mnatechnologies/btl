@@ -93,10 +93,11 @@ function GridItem({
           {content}
           <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-30">
             <div className="text-center">
-              <span className="inline-block px-4 py-2 bg-yellow-500 text-black text-sm font-bold rounded mb-2">
-                COMING SOON
-              </span>
-              <p className="text-white text-xs">Available Soon</p>
+             <span className="inline-block px-2 py-1 sm:px-4 sm:py-2 bg-yellow-500 text-black text-xs sm:text-sm font-bold rounded mb-1 sm:mb-2">
+              COMING SOON
+            </span>
+
+              <p className="text-white text-[10px] sm:text-xs">Available Soon</p>
             </div>
           </div>
         </div>

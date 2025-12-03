@@ -312,18 +312,18 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
                             <h3 className="text-sm font-medium text-white uppercase tracking-wider">
                                 Size
                             </h3>
-                            <div className="grid grid-cols-6 gap-2">
+                            <div className="grid grid-cols-7 gap-2">
                                 {availableSizes.map((size) => {
                                     const sizeVariant = product.variants.find(v => v.color === selectedColor && v.size === size);
                                     const isOutOfStock = sizeVariant ? sizeVariant.inventory <= 0 : true;
-                                    
+
                                     return (
                                         <button
                                             key={size}
                                             onClick={() => !isOutOfStock && setSelectedSize(size)}
                                             disabled={isOutOfStock}
                                             className={`cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95
-                                                px-4 py-2 border ${
+                                                px-2 py-1.5 text-sm border ${
                                                 selectedSize === size
                                                     ? "bg-brand-charcoal text-white border-brand-charcoal"
                                                     : isOutOfStock

@@ -318,15 +318,15 @@ export default function AdminPage() {
     const data: ShippingLabelData = {
       orderId: orderId.toString().padStart(6, '0'),
       orderDate: new Date().toISOString().split('T')[0],
-      // Sender details - update these with your business details
+
       senderName: 'Built To Last',
-      senderLine1: 'PLEASE UPDATE',
+      senderLine1: 'P.O Box 175',
       senderLine2: '',
-      senderSuburb: 'PLEASE UPDATE',
-      senderState: 'PLEASE UPDATE',
-      senderPostcode: 'PLEASE UPDATE',
+      senderSuburb: 'Bonnyrigg',
+      senderState: 'NSW',
+      senderPostcode: '2177',
       senderPhone: 'PLEASE UPDATE',
-      senderEmail: 'PLEASE UPDATE',
+      senderEmail: 'info@btlclothing.com',
       // Recipient details
       recipientName: customerName,
       recipientLine1: line1,
@@ -538,7 +538,7 @@ export default function AdminPage() {
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                 <polyline points="9 22 9 12 15 12 15 22"></polyline>
               </svg>
-              FROM (SENDER)
+              FROM
             </div>
             <div class="address-content">
               <div style="font-weight: 600; font-size: 18px;">${data.senderName}</div>
