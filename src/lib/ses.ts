@@ -100,7 +100,7 @@ export async function sendWelcomeEmail({
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #000; color: #fff; padding: 40px;">
         <div style="text-align: center; margin-bottom: 30px;">
-          <img src="${SITE_URL}/images/btl-original-white.png" alt="Built To Last" style="max-width: 120px;">
+          <img src="${SITE_URL}/images/btl-logo-black.jpg" alt="Built To Last" style="max-width: 120px;">
         </div>
         <h1 style="text-align: center; font-size: 28px; margin-bottom: 20px;">Welcome to Built To Last!</h1>
         <p style="font-size: 16px; line-height: 1.6; text-align: center;">
@@ -189,7 +189,7 @@ export async function sendOrderConfirmationEmail({
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #fff; color: #000;">
         <!-- Header -->
         <div style="background: #000; color: #fff; padding: 30px; text-align: center;">
-          <img src="${SITE_URL}/images/btl-original-white.png" alt="Built To Last" style="max-width: 100px; margin-bottom: 20px;">
+          <img src="${SITE_URL}/images/btl-logo-black.jpg" alt="Built To Last" style="max-width: 120px;">
           <h1 style="margin: 0; font-size: 24px;">Order Confirmed!</h1>
         </div>
         
@@ -328,7 +328,7 @@ export async function sendShippingNotificationEmail({
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #fff; color: #000;">
         <!-- Header -->
         <div style="background: #000; color: #fff; padding: 30px; text-align: center;">
-          <img src="${SITE_URL}/images/btl-original-white.png" alt="Built To Last" style="max-width: 100px; margin-bottom: 20px;">
+          <img src="${SITE_URL}/images/btl-logo-black.jpg" alt="Built To Last" style="max-width: 120px;">
           <h1 style="margin: 0; font-size: 24px;">Your Order Is On Its Way!</h1>
         </div>
         
