@@ -168,13 +168,15 @@ export default function ProductGrid({ groups, layout = 'left-large', onProductCl
   const getGridClass = () => {
     switch (layout) {
       case 'left-large':
-        return 'grid gap-4 grid-cols-[2fr_0.5fr_1fr] grid-rows-3'
+        // Mobile: no spacer (2 columns), Desktop: with spacer (3 columns)
+        return 'grid gap-2 grid-cols-[2fr_1fr] md:gap-4 md:grid-cols-[2fr_0.5fr_1fr] grid-rows-3'
       case 'right-large':
-        return 'grid gap-4 grid-cols-[1fr_0.5fr_2fr] grid-rows-3'
+        return 'grid gap-2 grid-cols-[1fr_2fr] md:gap-4 md:grid-cols-[1fr_0.5fr_2fr] grid-rows-3'
       default:
-        return 'grid gap-4 grid-cols-[2fr_0.5fr_1fr] grid-rows-3'
+        return 'grid gap-2 grid-cols-[2fr_1fr] md:gap-4 md:grid-cols-[2fr_0.5fr_1fr] grid-rows-3'
     }
   }
+
 
   return (
     <>

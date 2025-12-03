@@ -61,6 +61,17 @@ export default function RootLayout({
     <body
         className='min-h-screen flex flex-col bg-neutral-50 text-black selection:bg-brand dark:bg-neutral-900 dark:text-white dark:selection:bg-brand-grey dark:selection:text-white'
     >
+    {GTM_ID && (
+          <noscript>
+            <iframe
+              src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+              height="0"
+              width="0"
+              style={{ display: 'none', visibility: 'hidden' }}
+              />
+          </noscript>
+       )}
+
     <Providers>
         <LaunchGate>
             <Header/>
