@@ -25,11 +25,17 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
         }
         return availableColors[0] || "Black";
     });
+    const [isLoading, setIsLoading] = useState(true);
     const [selectedSize, setSelectedSize] = useState("M");
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isSizeChartOpen, setIsSizeChartOpen] = useState(false);
     const prevInitialColorRef = useRef<string | undefined>(initialColor);
     const isComingSoon = isProductComingSoon(product.name);
+
+    useEffect(() => {
+        // Simulate initial load
+        setIsLoading(false);
+    }, []);
 
     // Ensure that when the incoming initialColor changes (e.g., via client nav), the state syncs once
     useEffect(() => {
@@ -163,6 +169,35 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
             default: return 'bg-gray-300 border border-border';
         }
     };
+
+    if (isLoading) {
+        return (
+          <div className="grid md:grid-cols-2 gap-8 py-8 animate-pulse">
+              {/* Image Skeleton */}
+              <div className="space-y-4">
+                  <div className="aspect-square bg-neutral-200 dark:bg-neutral-800 rounded-lg"></div>
+                  <div className="grid grid-cols-4 gap-2">
+                      <div className="aspect-square bg-neutral-200 dark:bg-neutral-800 rounded"></div>
+                      <div className="aspect-square bg-neutral-200 dark:bg-neutral-800 rounded"></div>
+                      <div className="aspect-square bg-neutral-200 dark:bg-neutral-800 rounded"></div>
+                      <div className="aspect-square bg-neutral-200 dark:bg-neutral-800 rounded"></div>
+                  </div>
+              </div>
+
+              {/* Details Skeleton */}
+              <div className="space-y-6">
+                  <div className="h-10 bg-neutral-200 dark:bg-neutral-800 rounded w-3/4"></div>
+                  <div className="h-8 bg-neutral-200 dark:bg-neutral-800 rounded w-1/4"></div>
+                  <div className="space-y-2">
+                      <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded"></div>
+                      <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded w-5/6"></div>
+                  </div>
+                  <div className="h-12 bg-neutral-200 dark:bg-neutral-800 rounded"></div>
+                  <div className="h-12 bg-neutral-200 dark:bg-neutral-800 rounded"></div>
+              </div>
+          </div>
+        );
+    }
 
     return (
         <section id="shop" className="py-12  ">

@@ -1,26 +1,24 @@
-import Image from 'next/image';
-import { getAllProducts } from '@/lib/products';
-import ProductGrid from '@/components/ProductGrid';
+import Image from 'next/image'
+import { getAllProducts } from '@/lib/products'
+import ProductGrid from '@/components/ProductGrid'
 
 export default async function Store() {
-  // Fetch all products from Supabase
-  const products = await getAllProducts();
+  // Fetch all products from Supabase (server-side)
+  const products = await getAllProducts()
 
   // Group items by product
   const productGroups = products.map(product => {
-    const uniqueColors = [...new Set(product.variants.map(v => v.color))];
-    const items = uniqueColors.map((color, index) => {
-      const variantWithColor = product.variants.find(v => v.color === color);
+    const uniqueColors: string[] = [...new Set(product.variants.map((v: any) => v.color as string))]
+    const items = uniqueColors.map((color: string, index: number) => {
+      const variantWithColor = product.variants.find((v: any) => v.color === color)
 
-      let image: string;
+      let image: string
 
       if (index === 0) {
-        // Large item: try to find image with "-main" in the color name, or use first image
-        const mainImage = variantWithColor?.images?.find(img => img.includes(`${color.toLowerCase()}-main`));
-        image = mainImage || variantWithColor?.images?.[0] || product.images?.[0] || '/images/btl-logo-white.jpg';
+        const mainImage = variantWithColor?.images?.find((img: string) => img.includes(`${color.toLowerCase()}-main`))
+        image = mainImage || variantWithColor?.images?.[0] || product.images?.[0] || '/images/btl-logo-white.jpg'
       } else {
-        // Small items: use second image (index 1)
-        image = variantWithColor?.images?.[1] || product.images?.[1] || variantWithColor?.images?.[0] || product.images?.[0] || '/images/btl-logo-white.jpg';
+        image = variantWithColor?.images?.[1] || product.images?.[1] || variantWithColor?.images?.[0] || product.images?.[0] || '/images/btl-logo-white.jpg'
       }
 
       return {
@@ -29,21 +27,21 @@ export default async function Store() {
         image,
         price: variantWithColor?.price || product.basePrice,
         color
-      };
-    });
+      }
+    })
 
     return {
       name: product.name,
       handle: product.name.toLowerCase().replace(/\s+/g, '-'),
       items
-    };
-  });
+    }
+  })
 
   return (
     <div className="min-h-screen">
       <main className="min-h-screen pb-8">
         {/* Hero Image */}
-        <section className="relative w-full h-[45vh] sm:h-[50vh] lg:h-[55vh] overflow-hidden bg-black">
+        <section className="relative w-full aspect-[3/2] max-h-[80vh] overflow-hidden bg-black">
           <Image
             src="/images/BTL-66.jpg"
             alt="Built To Last Store"
@@ -70,5 +68,5 @@ export default async function Store() {
         ))}
       </main>
     </div>
-  );
+  )
 }
