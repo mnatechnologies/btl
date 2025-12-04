@@ -38,7 +38,7 @@ export async function sendEmail({ to, subject, html, replyTo }: SendEmailParams)
   const toAddresses = Array.isArray(to) ? to : [to]
 
   const command = new SendEmailCommand({
-    Source: `BTL Clothing <${FROM_EMAIL}>`,
+    Source: `Built to Last <${FROM_EMAIL}>`,
     Destination: {
       ToAddresses: toAddresses,
     },
