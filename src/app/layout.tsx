@@ -8,6 +8,7 @@ import LaunchGate from "../components/LaunchGate";
 import Providers from "./providers";
 import CookieConsent from "@/components/CookieConsent";
 import Script from 'next/script'
+import { Analytics } from '@vercel/analytics/next'
 
 const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
 
@@ -86,6 +87,7 @@ export default function RootLayout({
             <CookieConsent />
         </LaunchGate>
     </Providers>
+    <Analytics />
     </body>
     </html>
   );
