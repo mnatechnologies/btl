@@ -33,6 +33,17 @@ const slides: Slide[] = [
 const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile viewport for responsive image positioning
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640); // Tailwind 'sm' breakpoint
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const nextSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -80,9 +91,12 @@ const Hero = () => {
             src={slide.image}
             alt={slide.title}
             fill
-            className="object-cover"
-            style={{ objectPosition: slide.objectPosition || 'center center' }}
-
+            className={isMobile ? "object-contain" : "object-cover"}
+            style={{
+              objectPosition: isMobile
+                ? 'center center'
+                : (slide.objectPosition || 'center center')
+            }}
             priority={index === 0}
           />
           

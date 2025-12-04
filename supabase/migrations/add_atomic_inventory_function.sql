@@ -26,8 +26,14 @@ BEGIN
     RETURN;
   END IF;
 
-  -- Calculate new inventory (never go below 0)
-  v_new_inventory := GREATEST(0, v_current_inventory - p_quantity);
+  -- Check if sufficient inventory available
+  IF v_current_inventory < p_quantity THEN
+    RETURN QUERY SELECT FALSE, v_current_inventory, 'Insufficient inventory';
+    RETURN;
+  END IF;
+
+  -- Calculate new inventory
+  v_new_inventory := v_current_inventory - p_quantity;
 
   -- Update inventory atomically
   UPDATE product_variants
