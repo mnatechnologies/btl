@@ -282,6 +282,7 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
                             <p className="text-2xl font-medium text-white">
                                 ${(getCurrentVariant()?.price || product.basePrice).toFixed(2)}
                             </p>
+                            <p className="text-sm text-brand-grey">Includes GST</p>
                             <p className="text-brand-grey leading-relaxed">
                                 {product.description}
                             </p>

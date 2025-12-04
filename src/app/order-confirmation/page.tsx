@@ -5,6 +5,7 @@ import { DatabaseOrder } from '@/types/Order'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useCart } from '@/context/CartContext'
+import { calculateGST } from "@/lib/gst";
 
 function OrderConfirmationContent() {
   const searchParams = useSearchParams()
@@ -160,14 +161,23 @@ function OrderConfirmationContent() {
           </div>
         )}
 
-        <div className="pt-4 border-t border-border">
-          <div className="flex justify-between items-center">
-            <div className="text-lg font-semibold">Total Paid</div>
+        <div className="pt-4 border-t border-border space-y-2">
+          <div className="flex justify-between items-center text-sm text-muted-foreground">
+            <div>Subtotal (ex GST)</div>
+            <div>${(calculateGST(order.total_cents).totalExGst / 100).toFixed(2)}</div>
+          </div>
+          <div className="flex justify-between items-center text-sm text-muted-foreground">
+            <div>GST (10%)</div>
+            <div>${(calculateGST(order.total_cents).gstAmount / 100).toFixed(2)}</div>
+          </div>
+          <div className="flex justify-between items-center pt-2 border-t border-border">
+            <div className="text-lg font-semibold">Total (inc GST)</div>
             <div className="text-2xl font-bold">
               ${(order.total_cents / 100).toFixed(2)}
             </div>
           </div>
         </div>
+
       </div>
 
       <div className="mt-8 space-y-4 text-center">

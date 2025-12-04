@@ -1,5 +1,6 @@
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses'
 import  escapeHtml  from 'escape-html'
+import { calculateGST } from './gst'
 
 if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
   throw new Error('AWS credentials are required: AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY')
@@ -167,6 +168,9 @@ export async function sendOrderConfirmationEmail({
 }: OrderConfirmationParams) {
   const formatPrice = (cents: number) => `$${(cents / 100).toFixed(2)}`
 
+  const subtotalGST = calculateGST(subtotalCents)
+  const totalGST = calculateGST(totalCents)
+
   // ✅ XSS PROTECTION: Escape all user-provided data
   const safeCustomerName = escapeHtml(customerName)
   const safeOrderNumber = escapeHtml(orderNumber)
@@ -252,7 +256,15 @@ export async function sendOrderConfirmationEmail({
           <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #000;">
             <table style="width: 100%;">
               <tr>
-                <td style="padding: 5px 0;">Subtotal</td>
+               <td style="padding: 5px 0; color: #666;">Subtotal (ex GST)</td>
+               <td style="text-align: right; padding: 5px 0;">${formatPrice(subtotalGST.totalExGst)}</td>
+              </tr>
+              <tr>
+               <td style="padding: 5px 0; color: #666;">GST (10%)</td>
+               <td style="text-align: right; padding: 5px 0;">${formatPrice(subtotalGST.gstAmount)}</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px 0;">Subtotal (inc GST)</td>
                 <td style="text-align: right; padding: 5px 0;">${formatPrice(subtotalCents)}</td>
               </tr>
               <tr>
@@ -261,18 +273,24 @@ export async function sendOrderConfirmationEmail({
               </tr>
               ${
                 discountCents > 0
-                  ? `<tr>
-                  <td style="padding: 5px 0; color: #16a34a;">Discount</td>
-                  <td style="text-align: right; padding: 5px 0; color: #16a34a;">-${formatPrice(discountCents)}</td>
-                </tr>`
-                  : ''
+                ? `<tr>
+                      <td style="padding: 5px 0; color: #16a34a;">Discount</td>
+                      <td style="text-align: right; padding: 5px 0; color: #16a34a;">-${formatPrice(discountCents)}</td>
+                  </tr>`
+                : ''
               }
-              <tr>
-                <td style="padding: 10px 0; font-weight: bold; font-size: 18px;">Total</td>
-                <td style="text-align: right; padding: 10px 0; font-weight: bold; font-size: 18px;">${formatPrice(totalCents)}</td>
-              </tr>
-            </table>
-          </div>
+                <tr style="border-top: 2px solid #000;">
+                  <td style="padding: 10px 0; font-weight: bold; font-size: 18px;">Total (inc GST)</td>
+                  <td style="text-align: right; padding: 10px 0; font-weight: bold; font-size: 18px;">${formatPrice(totalCents)}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 5px 0; font-size: 12px; color: #666;">Includes GST of</td>
+                  <td style="text-align: right; padding: 5px 0; font-size: 12px; color: #666;">${formatPrice(totalGST.gstAmount)}</td>
+                </tr>
+              </table>
+           </div>
+
+
           
           <!-- Shipping Address -->
           <div style="margin-top: 30px; padding: 20px; background: #f9f9f9; border-radius: 8px;">
