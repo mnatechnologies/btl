@@ -54,7 +54,7 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
     // Get available colors and sizes from product variants
     const availableColors = [...new Set(product.variants.map(v => v.color))];
 
-    const SIZE_ORDER = ["XXS", "XS", "S", "M", "L", "XL", "XXL"];
+    const SIZE_ORDER = ["XXS", "XS", "S", "M", "L", "XL"];
 
     const availableSizes = [
         ...new Set(

@@ -7,15 +7,15 @@ type SizeChartProps = {
 }
 
 const sizeData = [
-  { measurement: 'length', XXS: 67.2, XS: 69.7, S: 72.2, M: 74.7, L: 77.2, XL: 79.7, '2XL': 82.2 },
-  { measurement: 'shoulder', XXS: 48.9, XS: 51.5, S: 54.1, M: 56.7, L: 59.3, XL: 61.9, '2XL': 64.5 },
-  { measurement: 'chest/2', XXS: 48, XS: 52, S: 56, M: 60, L: 64, XL: 68, '2XL': 72 },
-  { measurement: 'hem/2', XXS: 48, XS: 52, S: 56, M: 60, L: 64, XL: 68, '2XL': 72 },
-  { measurement: 'sleeve', XXS: 19.8, XS: 20.4, S: 21, M: 21.6, L: 22.2, XL: 22.8, '2XL': 23.4 },
-  { measurement: 'cuff/2', XXS: 17.7, XS: 18.3, S: 18.9, M: 19.5, L: 20.1, XL: 20.7, '2XL': 21.3 },
+  { measurement: 'length', XXS: 67.2, XS: 69.7, S: 72.2, M: 74.7, L: 77.2, XL: 79.7 },
+  { measurement: 'shoulder', XXS: 48.9, XS: 51.5, S: 54.1, M: 56.7, L: 59.3, XL: 61.9 },
+  { measurement: 'chest/2', XXS: 48, XS: 52, S: 56, M: 60, L: 64, XL: 68 },
+  { measurement: 'hem/2', XXS: 48, XS: 52, S: 56, M: 60, L: 64, XL: 68},
+  { measurement: 'sleeve', XXS: 19.8, XS: 20.4, S: 21, M: 21.6, L: 22.2, XL: 22.8},
+  { measurement: 'cuff/2', XXS: 17.7, XS: 18.3, S: 18.9, M: 19.5, L: 20.1, XL: 20.7 },
 ]
 
-const sizes = ['XXS', 'XS', 'S', 'M', 'L', 'XL', '2XL']
+const sizes = ['XXS', 'XS', 'S', 'M', 'L', 'XL']
 
 export default function SizeChart({ isOpen, onClose }: SizeChartProps) {
   if (!isOpen) return null

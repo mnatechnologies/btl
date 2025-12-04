@@ -175,7 +175,7 @@ export async function POST(req: NextRequest) {
               items: items.map((item) => {
                 // Extract size from SKU if present (e.g., "tshirt-black-L" -> "L")
                 const sizePart = item.sku?.split('-').pop()
-                const size = sizePart && ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'].includes(sizePart.toUpperCase())
+                const size = sizePart && ['XS', 'S', 'M', 'L', 'XL'].includes(sizePart.toUpperCase())
                   ? sizePart.toUpperCase()
                   : undefined
 

@@ -15,7 +15,7 @@ interface QuickViewProps {
   productImage: string
 }
 
-const SIZES = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL']
+const SIZES = ['XXS', 'XS', 'S', 'M', 'L', 'XL']
 
 export default function QuickView({ isOpen, onClose, productHandle, selectedColor, productImage }: QuickViewProps) {
   const { addItem } = useCart()
