@@ -7,44 +7,82 @@ import Image from 'next/image'
 import { useCart } from '@/context/CartContext'
 import { calculateGST } from "@/lib/gst";
 
-function OrderConfirmationContent() {
-  const searchParams = useSearchParams()
-  const sessionId = searchParams.get('session_id')
-  const [order, setOrder] = useState<DatabaseOrder | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const { clear } = useCart()
 
-  useEffect(() => {
-    if (!sessionId) {
-      setError('No session ID provided')
-      setLoading(false)
-      return
-    }
+  function OrderConfirmationContent() {
+    const searchParams = useSearchParams()
+    const sessionId = searchParams.get('session_id')
+    const [order, setOrder] = useState<DatabaseOrder | null>(null)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+    const [isProcessing, setIsProcessing] = useState(false)
+    const { clear } = useCart()
 
-    const fetchOrder = async () => {
-      try {
-        const res = await fetch(`/api/orders/by-session?session_id=${sessionId}`)
-        if (!res.ok) {
-          throw new Error('Failed to fetch order')
-        }
-        const data = await res.json()
-        setOrder(data.order)
-
-        // Clear cart after successful order
-        clear()
-      } catch (err) {
-        console.error('Error fetching order:', err)
-        setError('Unable to load order details. Please check your email for confirmation.')
-      } finally {
+    useEffect(() => {
+      if (!sessionId) {
+        setError('No session ID provided')
         setLoading(false)
+        return
       }
-    }
 
-    void fetchOrder()
-  }, [sessionId, clear])
+      let pollCount = 0
+      const maxPolls = 2.5 // Poll for up to 30 seconds (15 polls x 2 seconds)
+      let pollInterval: NodeJS.Timeout | null = null
 
-  if (loading) {
+      const fetchOrder = async () => {
+        try {
+          const res = await fetch(`/api/orders/by-session?session_id=${sessionId}`)
+          if (!res.ok) {
+            throw new Error('Failed to fetch order')
+          }
+          const data = await res.json()
+          setOrder(data.order)
+
+          // If order is still 'created', poll until it becomes 'paid'
+          if (data.order.status === 'created') {
+            setIsProcessing(true)
+
+            pollInterval = setInterval(async () => {
+              pollCount++
+
+              try {
+                const pollRes = await fetch(`/api/orders/by-session?session_id=${sessionId}`)
+                if (pollRes.ok) {
+                  const pollData = await pollRes.json()
+                  setOrder(pollData.order)
+
+                  // Stop polling if status changed to 'paid' or max polls reached
+                  if (pollData.order.status === 'paid' || pollCount >= maxPolls) {
+                    setIsProcessing(false)
+                    if (pollInterval) clearInterval(pollInterval)
+                  }
+                }
+              } catch (pollErr) {
+                console.error('Polling error:', pollErr)
+              }
+            }, 2000) // Poll every 2 seconds
+          }
+
+          // Clear cart after successful order
+          clear()
+        } catch (err) {
+          console.error('Error fetching order:', err)
+          setError('Unable to load order details. Please check your email for confirmation.')
+        } finally {
+          setLoading(false)
+        }
+      }
+
+      void fetchOrder()
+
+      // Cleanup interval on unmount
+      return () => {
+        if (pollInterval) clearInterval(pollInterval)
+      }
+    }, [sessionId, clear])
+
+
+
+    if (loading) {
     return (
       <main className="max-w-2xl mx-auto px-4 py-12 text-center">
         <div className="animate-pulse">
@@ -72,8 +110,28 @@ function OrderConfirmationContent() {
     )
   }
 
+
+
   return (
     <main className="max-w-2xl mx-auto px-4 py-12">
+      <div>
+        <div className="text-sm text-muted-foreground mb-2">Order Status</div>
+        {isProcessing ? (
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-100 rounded-full text-sm font-medium">
+            <div className="animate-spin h-3 w-3 border-2 border-yellow-600 border-t-transparent rounded-full"></div>
+            Processing Payment...
+          </div>
+        ) : (
+          <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium capitalize ${
+            order.status === 'paid'
+              ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100'
+              : 'bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100'
+          }`}>
+            {order.status}
+          </div>
+        )}
+      </div>
+
       <div className="text-center space-y-4 mb-8">
         <Image
           src='/images/btl-original-white.png'

@@ -7,7 +7,7 @@ import ComingSoon from './ComingSoon'
 const LAUNCH_DATE = new Date(process.env.NEXT_PUBLIC_LAUNCH_DATE || '2025-12-05T10:10:00+11:00')
 
 // Bypass paths - these pages are always accessible
-const BYPASS_PATHS = ['/admin']
+const BYPASS_PATHS = ['/admin', '/order-confirmation']
 
 // Preview secret for testing before launch
 const PREVIEW_SECRET = process.env.NEXT_PUBLIC_PREVIEW_SECRET || 'btl-preview-2025'

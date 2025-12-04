@@ -96,7 +96,7 @@ function GridItem({
              <span className="inline-block px-2 py-1 sm:px-4 sm:py-2 bg-yellow-500 text-black text-xs sm:text-sm font-bold rounded mb-1 sm:mb-2">
               COMING SOON
             </span>
-
+?
               <p className="text-white text-[10px] sm:text-xs">Available Soon</p>
             </div>
           </div>

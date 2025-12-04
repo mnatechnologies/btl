@@ -65,6 +65,8 @@ export default function AdminPage() {
   const [allVariants, setAllVariants] = useState<ProductVariant[]>([])
   const [barcodesLoading, setBarcodesLoading] = useState(false)
   const [selectedSkus, setSelectedSkus] = useState<Set<string>>(new Set())
+  //
+     const [statusFilter, setStatusFilter] = useState<string>('all')
 
 
   const authenticate = async () => {
@@ -97,6 +99,11 @@ export default function AdminPage() {
       }
     })()
   }, [authed, token])
+
+  const filteredOrders = statusFilter === 'all'
+    ? orders
+    : orders.filter(order => order.status === statusFilter)
+
 
   const toggleOrderExpansion = (orderId: number) => {
     setExpandedOrders(prev => {
@@ -1010,12 +1017,79 @@ export default function AdminPage() {
       {/* Orders Tab */}
       {activeTab === 'orders' && (
         <div className="space-y-4">
+          {/* Status Filter */}
+          <div className="flex items-center gap-3 p-4 border rounded-lg bg-black">
+            <span className="text-sm font-medium">Filter by Status:</span>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setStatusFilter('all')}
+                className={`px-3 py-1.5 text-sm rounded-lg transition-colors text-black ${
+                  statusFilter === 'all'
+                    ? 'bg-black text-white'
+                    : 'bg-white border hover:bg-gray-100'
+                }`}
+              >
+                All ({orders.length})
+              </button>
+              <button
+                onClick={() => setStatusFilter('created')}
+                className={`px-3 py-1.5 text-sm rounded-lg transition-colors text-black ${
+                  statusFilter === 'created'
+                    ? 'bg-black text-white'
+                    : 'bg-white border hover:bg-gray-100'
+                }`}
+              >
+                Created ({orders.filter(o => o.status === 'created').length})
+              </button>
+              <button
+                onClick={() => setStatusFilter('paid')}
+                className={`px-3 py-1.5 text-sm rounded-lg transition-colors text-black  ${
+                  statusFilter === 'paid'
+                    ? 'bg-black text-white'
+                    : 'bg-white border hover:bg-gray-100'
+                }`}
+              >
+                Paid ({orders.filter(o => o.status === 'paid').length})
+              </button>
+              <button
+                onClick={() => setStatusFilter('fulfilled')}
+                className={`px-3 py-1.5 text-sm rounded-lg transition-colors text-black  ${
+                  statusFilter === 'fulfilled'
+                    ? 'bg-black text-white'
+                    : 'bg-white border hover:bg-gray-100'
+                }`}
+              >
+                Fulfilled ({orders.filter(o => o.status === 'fulfilled').length})
+              </button>
+              <button
+                onClick={() => setStatusFilter('shipped')}
+                className={`px-3 py-1.5 text-sm rounded-lg transition-colors text-black  ${
+                  statusFilter === 'shipped'
+                    ? 'bg-black text-white'
+                    : 'bg-white border hover:bg-gray-100'
+                }`}
+              >
+                Shipped ({orders.filter(o => o.status === 'shipped').length})
+              </button>
+              <button
+                onClick={() => setStatusFilter('cancelled')}
+                className={`px-3 py-1.5 text-sm rounded-lg transition-colors text-black  ${
+                  statusFilter === 'cancelled'
+                    ? 'bg-black text-white'
+                    : 'bg-white border hover:bg-gray-100'
+                }`}
+              >
+                Cancelled ({orders.filter(o => o.status === 'cancelled').length})
+              </button>
+            </div>
+          </div>
+
           {loading ? (
             <p>Loading orders...</p>
-          ) : orders.length === 0 ? (
+          ) : filteredOrders.length === 0 ? (
             <p>No orders found</p>
           ) : (
-            orders.map((order) => {
+            filteredOrders.map((order) => {
               const isExpanded = expandedOrders.has(order.id)
               let items = order.items
               if (typeof items === 'string') {
@@ -1212,7 +1286,7 @@ export default function AdminPage() {
                       <div className="flex gap-2">
                         <button
                           onClick={() => generateLabel(order.id)}
-                          className="px-4 py-2 bg-black text-white rounded text-sm hover:bg-gray-800 transition-colors"
+                          className="px-4 py-2 bg-black bordertext-white rounded text-sm hover:bg-gray-800 transition-colors"
                         >
                           Print Label
                         </button>

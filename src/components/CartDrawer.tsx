@@ -257,6 +257,7 @@ import { useMemo, useState } from 'react'
 import { X, Tag, Check, Shield, Lock, Loader2 } from 'lucide-react'
 import TrustBadges from './TrustBadges'
 import { showErrorToast, showSuccessToast } from './ErrorBoundary'
+import { calculateGST } from '@/lib/gst'
 
 type CartDrawerProps = {
   isOpen: boolean
@@ -513,10 +514,20 @@ export default function EnhancedCartDrawer({ isOpen, onClose }: CartDrawerProps)
                   )}
                 </div>
 
-                {/* Totals */}
+                {/* Totals with GST Breakdown */}
                 <div className="pt-4 border-t border-neutral-200 dark:border-neutral-800 space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-neutral-600 dark:text-neutral-400">Subtotal</span>
+                    <span className="text-neutral-600 dark:text-neutral-400">Subtotal (ex GST)</span>
+                    <span className="font-medium">${(calculateGST(total).totalExGst / 100).toFixed(2)}</span>
+                  </div>
+
+                  <div className="flex justify-between text-sm">
+                    <span className="text-neutral-600 dark:text-neutral-400">GST (10%)</span>
+                    <span className="font-medium">${(calculateGST(total).gstAmount / 100).toFixed(2)}</span>
+                  </div>
+
+                  <div className="flex justify-between text-sm">
+                    <span className="text-neutral-600 dark:text-neutral-400">Subtotal (inc GST)</span>
                     <span className="font-medium">${totalFormatted}</span>
                   </div>
 
@@ -527,11 +538,12 @@ export default function EnhancedCartDrawer({ isOpen, onClose }: CartDrawerProps)
                     </div>
                   )}
 
-
                   <div className="flex justify-between pt-2 border-t border-neutral-200 dark:border-neutral-800">
-                    <span className="text-lg font-semibold">Total</span>
+                    <span className="text-lg font-semibold">Total (inc GST)</span>
                     <span className="text-lg font-semibold">${discountedTotalFormatted}</span>
                   </div>
+
+
                 </div>
               </div>
             )}
