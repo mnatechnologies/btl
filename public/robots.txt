@@ -1,2 +1,7 @@
-User-agent: *
-Disallow: /
+ User-agent: *
+  Allow: /
+  Disallow: /admin
+  Disallow: /api/
+  Disallow: /account
+
+  Sitemap: https://btlclothing.au/sitemap.xml
