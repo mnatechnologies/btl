@@ -41,7 +41,7 @@ function getLaunchEmailHTML(): string {
           Thank you for being part of our journey from the very beginning.
         </p>
         <p style="font-size: 16px; line-height: 1.8; margin: 0 0 20px;">
-          Today marks the official launch of Built To Last - premium streetwear designed to transcend trends and stand the test of time.
+          Today marks the official launch of Built To Last - Luxury Comfortwear designed to transcend trends and stand the test of time.
         </p>
         <p style="font-size: 16px; line-height: 1.8; margin: 0 0 30px;">
           Our debut collection is now available, featuring three signature pieces:
@@ -55,23 +55,17 @@ function getLaunchEmailHTML(): string {
               <p style="margin: 5px 0 0; color: #ccc; font-size: 14px;">A timeless essential crafted with premium materials</p>
             </li>
             <li style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #333;">
-              <strong style="font-size: 18px;">Monolith Tee</strong>
+              <strong style="font-size: 18px;">Monolith Tee (Coming Soon)</strong>
               <p style="margin: 5px 0 0; color: #ccc; font-size: 14px;">Designed to transcend trends with enduring quality</p>
             </li>
             <li style="margin-bottom: 0;">
-              <strong style="font-size: 18px;">Eternal Tee</strong>
+              <strong style="font-size: 18px;">Eternal Tee (Coming Soon)</strong>
               <p style="margin: 5px 0 0; color: #ccc; font-size: 14px;">Bold, iconic, and built to make a statement</p>
             </li>
           </ul>
         </div>
 
-        <!-- Launch Offer -->
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 8px; text-align: center; margin-bottom: 30px;">
-          <p style="font-size: 14px; margin: 0 0 10px; text-transform: uppercase; letter-spacing: 2px; color: #fff;">Launch Special</p>
-          <p style="font-size: 28px; margin: 0 0 10px; font-weight: bold;">10% OFF</p>
-          <p style="font-size: 16px; margin: 0 0 15px;">Use code: <strong style="font-size: 20px; letter-spacing: 2px;">LAUNCH10</strong></p>
-          <p style="font-size: 12px; margin: 0; color: #eee;">Valid for the first 48 hours only</p>
-        </div>
+       
 
         <!-- CTA Button -->
         <div style="text-align: center; margin: 40px 0;">
@@ -131,7 +125,43 @@ export async function POST(request: Request) {
       )
     }
 
-    // Fetch all newsletter subscribers
+    // Check for test mode
+    let testEmail: string | null = null
+    try {
+      const body = await request.json()
+      testEmail = body.testEmail || null
+    } catch {
+      // No body provided, production mode
+    }
+
+    // If test mode, send only to test email
+    if (testEmail) {
+      console.log(`🧪 Test mode: Sending to ${testEmail} only`)
+      try {
+        await sendEmail({
+          to: testEmail,
+          subject: "🚀 We're Live! Built To Last Official Launch [TEST]",
+          html: getLaunchEmailHTML(),
+        })
+        return NextResponse.json(
+          {
+            message: 'Test email sent successfully',
+            mode: 'test',
+            sent: 1,
+            testEmail,
+          },
+          { status: 200 }
+        )
+      } catch (error) {
+        console.error('Test email failed:', error)
+        return NextResponse.json(
+          { error: 'Failed to send test email' },
+          { status: 500 }
+        )
+      }
+    }
+
+    // Production mode: Fetch all newsletter subscribers
     const { data: subscribers, error: fetchError } = await supabaseAdmin
       .from('newsletter_subscriptions')
       .select('email')
@@ -168,7 +198,7 @@ export async function POST(request: Request) {
       try {
         await sendEmail({
           to: subscriber.email,
-          subject: "🚀 We're Live! Built To Last Official Launch + 10% OFF",
+          subject: "🚀 We're Live! Built To Last Official Launch",
           html: getLaunchEmailHTML(),
         })
         successCount++
