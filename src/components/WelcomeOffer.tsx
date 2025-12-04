@@ -78,7 +78,7 @@ export default function WelcomeOffer() {
       />
       
       {/* Modal */}
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white text-black rounded-lg shadow-2xl z-50 w-full max-w-md mx-4 p-8">
+      <div className="fixed inset-x-4 top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 bg-white text-black rounded-lg shadow-2xl z-50 w-[calc(100%-2rem)] max-w-md p-8 sm:inset-x-0 sm:w-full">
         <button
           onClick={handleClose}
           className=" cursor-pointer absolute top-4 right-4 h-6 w-6 flex items-center justify-center hover:bg-neutral-100 rounded transition-colors"

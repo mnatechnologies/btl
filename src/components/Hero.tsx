@@ -92,9 +92,9 @@ const Hero = () => {
       ))}
       
       {/* Content Container */}
-      <div className="relative h-full w-full">
+      <div className="relative h-full w-full z-10">
         {/* Text - Bottom Left */}
-        <div className="absolute bottom-24 sm:bottom-32 lg:bottom-40 left-4 sm:left-6 lg:left-8 space-y-3 sm:space-y-4 max-w-md lg:max-w-2xl">
+        <div className="absolute bottom-24 sm:bottom-32 lg:bottom-40 left-4 sm:left-6 lg:left-8 space-y-3 sm:space-y-4 max-w-md lg:max-w-2xl z-20">
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold leading-tight text-white transition-all duration-500">
             {slides[currentSlide].title}
           </h1>
@@ -107,7 +107,7 @@ const Hero = () => {
         {/* Navigation Buttons */}
         <button
           onClick={() => handleNavigation('prev')}
-          className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-all duration-300 backdrop-blur-sm"
+          className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-all duration-300 backdrop-blur-sm z-20"
           aria-label="Previous slide"
         >
           <ChevronLeft className="w-6 h-6" />
@@ -115,14 +115,14 @@ const Hero = () => {
 
         <button
           onClick={() => handleNavigation('next')}
-          className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-all duration-300 backdrop-blur-sm"
+          className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-all duration-300 backdrop-blur-sm z-20"
           aria-label="Next slide"
         >
           <ChevronRight className="w-6 h-6" />
         </button>
 
         {/* Slide Indicators */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
           {slides.map((_, index) => (
             <button
               key={index}
