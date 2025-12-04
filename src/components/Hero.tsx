@@ -94,7 +94,7 @@ const Hero = () => {
       {/* Content Container */}
       <div className="relative h-full w-full z-10">
         {/* Text - Bottom Left */}
-        <div className="absolute bottom-24 sm:bottom-32 lg:bottom-40 left-4 sm:left-6 lg:left-8 space-y-3 sm:space-y-4 max-w-md lg:max-w-2xl z-20">
+        <div className="absolute bottom-16 sm:bottom-20 lg:bottom-24 left-4 sm:left-6 lg:left-8 space-y-3 sm:space-y-4 max-w-md lg:max-w-2xl z-20">
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold leading-tight text-white transition-all duration-500">
             {slides[currentSlide].title}
           </h1>
