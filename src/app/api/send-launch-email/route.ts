@@ -100,7 +100,7 @@ function getLaunchEmailHTML(): string {
 
       <!-- Footer -->
       <div style="background: #0a0a0a; padding: 30px; text-align: center; border-top: 1px solid #222;">
-        <p style="margin: 0; font-size: 14px; color: #888;">Built To Last | Premium Streetwear</p>
+        <p style="margin: 0; font-size: 14px; color: #888;">Built To Last | Luxury Comfortwear</p>
         <p style="margin: 10px 0 0; font-size: 12px; color: #666;">
           <a href="${SITE_URL}" style="color: #666; text-decoration: none;">${SITE_URL.replace('https://', '')}</a>
         </p>
