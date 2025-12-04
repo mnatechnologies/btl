@@ -95,8 +95,8 @@ export async function sendContactEmail({
 
 // Newsletter subscription welcome email
 export async function sendWelcomeEmail({
-                                         email,
-                                       }: {
+ email,
+ }: {
   email: string
 }) {
   return sendEmail({
@@ -105,7 +105,7 @@ export async function sendWelcomeEmail({
     html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #000; color: #fff; padding: 40px;">
           <div style="text-align: center; margin-bottom: 30px;">
-            <img src="${SITE_URL}/images/btl-logo-white.jpg" alt="Built To Last" style="max-width: 120px;">
+            <img src="${SITE_URL}/images/btl-logo-white-email.jpg" alt="Built To Last" style="max-width: 120px;">
           </div>
           <h1 style="text-align: center; font-size: 28px; margin-bottom: 20px;">Welcome to Built To Last!</h1>
           <p style="font-size: 16px; line-height: 1.6; text-align: center;">
@@ -210,7 +210,7 @@ export async function sendOrderConfirmationEmail({
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #fff; color: #000;">
         <!-- Header -->
         <div style="background: #000; color: #fff; padding: 30px; text-align: center;">
-          <img src="${SITE_URL}/images/btl-logo-black.jpg" alt="Built To Last" style="max-width: 120px;">
+          <img src="${SITE_URL}/images/btl-logo-white-email.jpg" alt="Built To Last" style="max-width: 120px;">
           <h1 style="margin: 0; font-size: 24px;">Order Confirmed!</h1>
         </div>
 
@@ -220,21 +220,24 @@ export async function sendOrderConfirmationEmail({
             Hey ${firstName},
           </p>
           <p style="font-size: 16px; line-height: 1.6;">
-            Thanks for your order! We've received it and are getting it ready for you.
+            Thank you for supporting us! We have received your order and are getting ready for you
           </p>
 
           <!-- Order Details -->
           <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 25px 0;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
-              <div>
-                <p style="margin: 0; color: #666; font-size: 14px;">Order Number</p>
-                <p style="margin: 5px 0 0; font-weight: bold; font-size: 18px;">#${safeOrderNumber}</p>
-              </div>
-              <div style="text-align: right;">
-                <p style="margin: 0; color: #666; font-size: 14px;">Order Date</p>
-                <p style="margin: 5px 0 0; font-size: 16px;">${safeOrderDate}</p>
-              </div>
-            </div>
+             <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                  <td style="width: 50%; vertical-align: top;">
+                    <p style="margin: 0; color: #666; font-size: 14px;">Order Number</p>
+                    <p style="margin: 5px 0 0; font-weight: bold; font-size: 18px;">#${safeOrderNumber}</p>
+                  </td>
+                  <td style="width: 50%; text-align: right; vertical-align: top;">
+                    <p style="margin: 0; color: #666; font-size: 14px;">Order Date</p>
+                    <p style="margin: 5px 0 0; font-size: 16px;">${safeOrderDate}</p>
+                  </td>
+                </tr>
+          </table>
+
           </div>
           
           <!-- Items -->
@@ -320,7 +323,7 @@ export async function sendOrderConfirmationEmail({
         
         <!-- Footer -->
         <div style="background: #000; color: #fff; padding: 25px; text-align: center;">
-          <p style="margin: 0; font-size: 14px;">Built To Last | Premium Streetwear</p>
+          <p style="margin: 0; font-size: 14px;">Built To Last | Luxury Comfortwear</p>
           <p style="margin: 10px 0 0; font-size: 12px; color: #888;">
             <a href="${SITE_URL}" style="color: #888;">${SITE_URL.replace('https://', '')}</a>
           </p>
@@ -363,7 +366,7 @@ export async function sendShippingNotificationEmail({
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #fff; color: #000;">
         <!-- Header -->
         <div style="background: #000; color: #fff; padding: 30px; text-align: center;">
-          <img src="${SITE_URL}/images/btl-logo-black.jpg" alt="Built To Last" style="max-width: 120px;">
+          <img src="${SITE_URL}/images/btl-logo-white-email.jpg" alt="Built To Last" style="max-width: 120px;">
           <h1 style="margin: 0; font-size: 24px;">Your Order Is On Its Way!</h1>
         </div>
         
@@ -414,7 +417,7 @@ export async function sendShippingNotificationEmail({
         
         <!-- Footer -->
         <div style="background: #000; color: #fff; padding: 25px; text-align: center;">
-          <p style="margin: 0; font-size: 14px;">Built To Last | Premium Streetwear</p>
+          <p style="margin: 0; font-size: 14px;">Built To Last | Luxury Comfortwear</p>
           <p style="margin: 10px 0 0; font-size: 12px; color: #888;">
             <a href="${SITE_URL}" style="color: #888;">${SITE_URL.replace('https://', '')}</a>
           </p>
