@@ -74,7 +74,7 @@ export default function TrustBadges({ variant = 'checkout', className = '' }: Tr
         </div>
         <div className="flex items-center gap-2 text-sm">
           <Truck className="w-4 h-4 text-blue-600" />
-          <span className="text-neutral-700 dark:text-neutral-300">Free Shipping Over $100</span>
+          <span className="text-neutral-700 dark:text-neutral-300">Free Shipping </span>
         </div>
         <div className="flex items-center gap-2 text-sm">
           <RefreshCcw className="w-4 h-4 text-orange-600" />

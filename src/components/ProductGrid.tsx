@@ -6,6 +6,7 @@ import { useState } from 'react'
 import QuickView from '@/components/QuickView'
 import { Plus } from 'lucide-react'
 import { isProductComingSoon } from '@/lib/products'
+import ComingSoonOverlay from '@/components/ComingSoonOverlay'
 
 type ProductItem = {
   handle: string
@@ -29,14 +30,20 @@ type ProductGridProps = {
   onProductClick?: (p: Pick<ProductItem, 'handle' | 'title' | 'color'>) => void
 }
 
-function QuickAddButton({ onClick }: { onClick: (e: React.MouseEvent) => void }) {
+function QuickAddButton({ onClick, size }: { onClick: (e: React.MouseEvent) => void; size: 'large' | 'small' }) {
+  const bottomClass = size === 'large'
+    ? 'bottom-[15%] sm:bottom-[13%] md:bottom-[11%]'
+    : 'bottom-[1%]';
+
+  const rightClass = size === 'large' ? 'right-3' : 'right-2';
+
   return (
     <button
       onClick={onClick}
-      className="cursor-pointer absolute bottom-14 right-3 z-20 bg-black/80 hover:bg-black text-white rounded-full font-medium flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 hover:scale-105 p-2 md:px-3 md:py-1.5"
+      className={`cursor-pointer absolute ${bottomClass} ${rightClass} z-20 bg-black/80 hover:bg-black text-white rounded-full font-medium flex items-center gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-300 hover:scale-105 p-2 lg:px-3 lg:py-1.5`}
     >
-      <Plus className="w-3 h-3" />
-      <span className="hidden md:inline text-xs">Quick Add</span>
+      <Plus className="w-2 h-2" />
+      <span className="hidden lg:inline text-xs">Quick Add</span>
     </button>
   )
 }
@@ -65,6 +72,7 @@ function GridItem({
       priority={false}
       alt={item.title}
       showPrice={size === 'large' && !comingSoon}
+      size={size}
       label={{
         position: 'bottom',
         title: item.title,
@@ -92,15 +100,7 @@ function GridItem({
       {comingSoon ? (
         <div className={`relative block ${aspectClass} cursor-not-allowed`}>
           {content}
-          <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-30">
-            <div className="text-center">
-             <span className="inline-block px-2 py-1 sm:px-4 sm:py-2 bg-yellow-500 text-black text-xs sm:text-sm font-bold rounded mb-1 sm:mb-2">
-              COMING SOON
-            </span>
-?
-              <p className="text-white text-[10px] sm:text-xs">Available Soon</p>
-            </div>
-          </div>
+          <ComingSoonOverlay size={size} />
         </div>
       ) : (
         <>
@@ -132,6 +132,7 @@ function GridItem({
           )}
           {onQuickAdd && (
             <QuickAddButton
+              size={size}
               onClick={(e) => {
                 e.preventDefault()
                 e.stopPropagation()

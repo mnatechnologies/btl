@@ -84,7 +84,7 @@ export default function FeaturedProductGrid({
 
     return {
       handle: product.name.toLowerCase().replace(/\s+/g, '-'),
-      title: `${product.name} – ${color}`,
+      title: index === 0 ? `${product.name} – ${color}` : color,
       image,
       price: variantWithColor?.price || product.basePrice,
       color

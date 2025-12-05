@@ -42,6 +42,7 @@ export function GridTileImage({
   active,
   label,
   showPrice,
+  size = 'large',
   ...props
 }: {
   isInteractive?: boolean;
@@ -53,6 +54,7 @@ export function GridTileImage({
     position?: 'bottom' | 'center';
   };
   showPrice?: boolean;
+  size?: 'large' | 'small';
 } & React.ComponentProps<typeof Image>) {
   return (
     <div
@@ -79,6 +81,7 @@ export function GridTileImage({
           amount={showPrice ? label.amount : ''}
           currencyCode={label.currencyCode}
           position={label.position}
+          size={size}
         />
       ) : null}
     </div>
