@@ -108,12 +108,12 @@ const Hero = () => {
       {/* Content Container */}
       <div className="relative h-full w-full z-10">
         {/* Text - Bottom Left */}
-        <div className="absolute bottom-16 sm:bottom-20 lg:bottom-24 left-4 sm:left-6 lg:left-8 space-y-3 sm:space-y-4 max-w-md lg:max-w-2xl z-20">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold leading-tight text-white transition-all duration-500">
+        <div className="absolute bottom-3 sm:bottom-5 md:bottom-6 lg:bottom-6 left-4 sm:left-6 lg:left-8 space-y-0.5 sm:space-y-2 md:space-y-3 lg:space-y-4 max-w-[85%] sm:max-w-md lg:max-w-xl z-20">
+          <h1 className="text-lg sm:text-3xl md:text-4xl lg:text-4xl xl:text-6xl font-display font-bold leading-tight text-white transition-all duration-500">
             {slides[currentSlide].title}
           </h1>
-          
-          <p className="text-base sm:text-lg md:text-xl text-white/90 leading-relaxed transition-all duration-500">
+
+          <p className="text-xs sm:text-sm md:text-sm lg:text-xl text-white/90 leading-snug sm:leading-relaxed line-clamp-2 sm:line-clamp-none transition-all duration-500">
             {slides[currentSlide].description}
           </p>
         </div>
@@ -121,22 +121,22 @@ const Hero = () => {
         {/* Navigation Buttons */}
         <button
           onClick={() => handleNavigation('prev')}
-          className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-all duration-300 backdrop-blur-sm z-20"
+          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-1.5 sm:p-2 md:p-2.5 rounded-full transition-all duration-300 backdrop-blur-sm z-20"
           aria-label="Previous slide"
         >
-          <ChevronLeft className="w-6 h-6" />
+          <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
         </button>
 
         <button
           onClick={() => handleNavigation('next')}
-          className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-all duration-300 backdrop-blur-sm z-20"
+          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-1.5 sm:p-2 md:p-2.5 rounded-full transition-all duration-300 backdrop-blur-sm z-20"
           aria-label="Next slide"
         >
-          <ChevronRight className="w-6 h-6" />
+          <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
         </button>
 
         {/* Slide Indicators */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+        <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 flex gap-1 z-20">
           {slides.map((_, index) => (
             <button
               key={index}
