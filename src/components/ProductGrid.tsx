@@ -32,10 +32,10 @@ type ProductGridProps = {
 
 function QuickAddButton({ onClick, size }: { onClick: (e: React.MouseEvent) => void; size: 'large' | 'small' }) {
   const bottomClass = size === 'large'
-    ? 'bottom-[15%] sm:bottom-[13%] md:bottom-[11%]'
+    ? 'bottom-[6%] sm:bottom-[13%] md:bottom-[1%]'
     : 'bottom-[1%]';
 
-  const rightClass = size === 'large' ? 'right-3' : 'right-2';
+  const rightClass = size === 'large' ? 'right-3' : 'right-1';
 
   return (
     <button
