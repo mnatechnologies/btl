@@ -41,8 +41,8 @@ export default async function Store() {
     <div className="min-h-screen">
       <main className="min-h-screen pb-8">
         {/* Hero Image */}
-        <section className="relative w-full h-[45vh] sm:h-[50vh] lg:h-[55vh] overflow-hidden bg-black">
-          <Image
+        <section className="relative w-full h-[20vh] sm:h-[30vh] lg:h-[45vh] overflow-hidden bg-transparent">
+        <Image
             src="/images/BTL-66.jpg"
             alt="Built To Last Store"
             fill

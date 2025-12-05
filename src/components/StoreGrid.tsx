@@ -26,13 +26,14 @@ function QuickAddButton({ onClick }: { onClick: (e: React.MouseEvent) => void })
   return (
     <button
       onClick={onClick}
-      className="cursor-pointer absolute bottom-14 right-3 z-20 bg-black/80 hover:bg-black text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-105"
+      className="cursor-pointer absolute bottom-14 right-3 z-20 bg-black/80 hover:bg-black text-white rounded-full font-medium flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 hover:scale-105 p-2 md:px-3 md:py-1.5"
     >
       <Plus className="w-3 h-3" />
-      Quick Add
+      <span className="hidden md:inline text-xs">Quick Add</span>
     </button>
   )
 }
+
 
 export default function StoreGrid({ groups }: { groups: ProductGroup[] }) {
   const [quickViewOpen, setQuickViewOpen] = useState(false)
