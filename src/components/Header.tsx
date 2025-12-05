@@ -6,12 +6,14 @@ import { Menu, X, UserRound, } from "lucide-react";
 import CartButton from "./CartButton";
 import CartDrawer from "./CartDrawer";
 import { supabase } from '@/lib/supabaseClient';
+import {useCart} from "@/context/CartContext";
 
 const Navigation = () => {
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const { count } = useCart();
 
     // Determine auth state to set dynamic hover text for account icon
     useEffect(() => {
@@ -74,13 +76,17 @@ const Navigation = () => {
                     </div>
 
                     {/* Mobile menu button */}
-                    <div className="md:hidden ">
+                    <div className="md:hidden flex items-center space-x-5">
+                        <CartButton onClick={() => setIsCartOpen(true)} />
                         <button
-                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                          onClick={() => setIsMenuOpen(!isMenuOpen)}
+                          className="cursor-pointer"
                         >
-                            {isMenuOpen ? <X className="h-5 w-5 cursor-pointer" /> : <Menu className="h-5 w-5 cursor-pointer" />}
+                            {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
                         </button>
                     </div>
+
+
                 </div>
 
                 {/* Mobile Navigation */}
@@ -99,12 +105,6 @@ const Navigation = () => {
                             <Link href="/account" className="block px-3 py-2 text-white hover:text-brand-grey font-medium text-2xl">
                                 Account
                             </Link>
-                            <button 
-                                onClick={() => setIsCartOpen(true)}
-                                className="block w-full text-left px-3 py-2 text-white hover:text-brand-grey font-medium text-2xl"
-                            >
-                                Cart
-                            </button>
                         </div>
                     </div>
                 )}
