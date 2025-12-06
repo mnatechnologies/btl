@@ -192,7 +192,7 @@ export default function ProductGrid({ groups, layout = 'left-large', onProductCl
           <section key={group.handle} className="mx-auto mt-4 max-w-none w-[95vw] sm:w-[90vw] lg:w-[85vw] xl:w-[80vw] 2xl:w-[75vw] px-4 pb-4">
             {/* Product Name */}
             <div className="py-6 text-left">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-white">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-black dark:text-white">
                 {group.name}
               </h2>
               {comingSoon && (
