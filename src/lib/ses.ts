@@ -381,8 +381,6 @@ export async function sendShippingNotificationEmail({
           
           <!-- Tracking Info -->
           <div style="background: #f9f9f9; padding: 25px; border-radius: 8px; margin: 25px 0; text-align: center;">
-            <p style="margin: 0 0 10px; color: #666; font-size: 14px;">Your Tracking Number</p>
-            <p style="font-size: 24px; font-weight: bold; letter-spacing: 2px; margin: 0 0 20px;">${trackingNumber}</p>
             <a href="${trackingUrl}" style="display: inline-block; background: #000; color: #fff; padding: 15px 40px; text-decoration: none; font-weight: bold; border-radius: 4px;">
               Track Package
             </a>
