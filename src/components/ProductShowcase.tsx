@@ -205,7 +205,7 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <button
                   onClick={() => router.push('/store')}
-                  className="cursor-pointer  py-1 px-3 mb-4 border border-white text-white hover:bg-brand-charcoal hover:text-white transition-colors"
+                  className="cursor-pointer  py-1 px-3 mb-4 border border-black dark:border-white text-black dark:text-white hover:bg-brand-charcoal hover:text-white transition-colors"
                 >
                     ← Return to Store
                 </button>
@@ -267,30 +267,30 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
                         <div className="space-y-4">
                             {product.featured && (
                                 <div className="inline-flex">
-                                    <span className="px-4 py-1.5 border border-white  text-white text-xs font-semibold uppercase tracking-wider transition-colors hover:bg-brand-charcoal hover:text-white">
+                                    <span className="px-4 py-1.5 border border-black dark:border-white text-black  dark:text-white text-xs font-semibold uppercase tracking-wider transition-colors hover:bg-brand-charcoal hover:text-white">
                                         New Release
                                     </span>
                                 </div>
                             )}
 
-                            <h2 className="text-4xl font-display font-bold text-white">
+                            <h2 className="text-4xl font-display font-bold text-black dark:text-white">
                                 {product.name}
                             </h2>
-                            <h4 className="text-xs font-display font-medium text-white">
+                            <h4 className="text-xs font-display font-medium text-black dark:text-white ">
                                 {getCurrentVariant()?.sku}
                             </h4>
-                            <p className="text-2xl font-medium text-white">
+                            <p className="text-2xl font-medium text-black dark:text-white ">
                                 ${(getCurrentVariant()?.price || product.basePrice).toFixed(2)}
                             </p>
                             <p className="text-sm text-brand-grey">Includes GST</p>
-                            <p className="text-brand-grey leading-relaxed">
+                            <p className="text-black dark:text-brand-grey leading-relaxed">
                                 {product.description}
                             </p>
                         </div>
 
                         {/* Color Selection */}
                         <div className="space-y-4">
-                            <h3 className="text-sm font-medium text-white uppercase tracking-wider">
+                            <h3 className="text-sm font-medium text-black dark:text-white  uppercase tracking-wider">
                                 Color
                             </h3>
                             <div className="flex gap-3">
@@ -310,7 +310,7 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
 
                         {/* Size Selection */}
                         <div className="space-y-4">
-                            <h3 className="text-sm font-medium text-white uppercase tracking-wider">
+                            <h3 className="text-sm font-medium text-black dark:text-white  uppercase tracking-wider">
                                 Size
                             </h3>
                             <div className="grid grid-cols-7 gap-2">
@@ -326,10 +326,10 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
                                             className={`cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95
                                                 px-2 py-1.5 text-sm border ${
                                                 selectedSize === size
-                                                    ? "bg-brand-charcoal text-white border-brand-charcoal"
+                                                    ? "bg-brand-charcoal text-white dark:text-white  border-brand-charcoal"
                                                     : isOutOfStock
                                                         ? "bg-transparent text-gray-600 border-gray-700 cursor-not-allowed"
-                                                        : "bg-transparent text-white border-border hover:border-brand-charcoal"
+                                                        : "bg-transparent text-black dark:text-white  border-border hover:border-brand-charcoal"
                                             }`}
                                         >
                                             {size}
@@ -343,24 +343,24 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
                         {/* Add to Cart */}
                         <div className="space-y-4 pt-4">
                             <button
-                                className=" cursor-pointer w-full py-3 px-6 bg-brand-charcoal border border-white text-white hover:bg-opacity-90 transition-colors hover-lift"
+                                className=" cursor-pointer w-full py-3 px-6 bg-brand-charcoal border border-white text-white  hover:bg-opacity-90 transition-colors hover-lift"
                                 onClick={handleAddToCart}
                             >
                                 Add to Cart - ${(getCurrentVariant()?.price || product.basePrice).toFixed(2)}
                             </button>
                             <button
                                 onClick={() => setIsSizeChartOpen(true)}
-                                className="cursor-pointer w-full py-3 px-6 border border-white text-white hover:bg-brand-charcoal hover:text-white transition-colors">
+                                className="cursor-pointer w-full py-3 px-6 border border-black dark:border-white text-black  hover:bg-brand-charcoal hover:text-black dark:text-white  transition-colors">
                                 Size Guide
                             </button>
                         </div>
 
                         {/* Product Features */}
                         <div className="space-y-4 pt-8 border-t border-border">
-                            <h3 className="text-sm font-medium text-brand-grey uppercase tracking-wider">
+                            <h3 className="text-sm font-medium text-black dark:text-brand-grey uppercase tracking-wider">
                                 Features
                             </h3>
-                            <ul className="space-y-2 text-brand-grey">
+                            <ul className="space-y-2 text-black dark:text-brand-grey">
                                 <li className="flex items-center gap-2">
                                     <div className="w-1.5 h-1.5 bg-brand-charcoal rounded-full"></div>
                                     100% Organic Cotton

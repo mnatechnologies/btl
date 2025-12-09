@@ -11,7 +11,7 @@ async function getOrCreateCoupon(stripe: Stripe, code: string): Promise<string |
   if (!promo) return null
 
   const couponId = `PROMO_${code.toUpperCase()}`
-  
+
   try {
     // Try to retrieve existing coupon
     await stripe.coupons.retrieve(couponId)
@@ -19,13 +19,22 @@ async function getOrCreateCoupon(stripe: Stripe, code: string): Promise<string |
   } catch {
     // Coupon doesn't exist, create it
     try {
-      await stripe.coupons.create({
+      const couponParams: Stripe.CouponCreateParams = {
         id: couponId,
-        amount_off: promo.discount,
-        currency: promo.currency,
         duration: 'once',
         name: `${code} - ${promo.description}`,
-      })
+      }
+
+      if (promo.type === 'percentage') {
+        // Percentage-based discount
+        couponParams.percent_off = promo.discount
+      } else {
+        // Fixed amount discount
+        couponParams.amount_off = promo.discount
+        couponParams.currency = promo.currency
+      }
+
+      await stripe.coupons.create(couponParams)
       return couponId
     } catch (createError) {
       console.error('Failed to create coupon:', createError)

@@ -35,12 +35,12 @@ export default function ContactPage() {
   return (
     <main className="bg-black">
         <div className="max-w-2xl py-4 py-10 mx-auto">
-          <h1 className="text-3xl font-semibold mb-6">Contact Us</h1>
-          <p className="text-muted-foreground mb-8">Have a question about an order or our products? Send us a message and we'll get back to you.</p>
+          <h1 className="text-3xl font-semibold mb-6 text-white dark:text-black">Contact Us</h1>
+          <p className="text-muted-foreground mb-8">Have a question about an order or our products? Send us a message and we&#39;ll get back to you.</p>
 
           <form onSubmit={onSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm mb-1">Name</label>
+              <label className="block text-sm text-white mb-1">Name</label>
               <input
                 type="text"
                 required
@@ -51,7 +51,7 @@ export default function ContactPage() {
               />
             </div>
             <div>
-              <label className="block text-sm mb-1">Email</label>
+              <label className="block text-white text-sm mb-1">Email</label>
               <input
                 type="email"
                 required
@@ -62,7 +62,7 @@ export default function ContactPage() {
               />
             </div>
             <div>
-              <label className="block text-sm mb-1">Message</label>
+              <label className="block text-sm text-white mb-1">Message</label>
               <textarea
                 required
                 value={message}
