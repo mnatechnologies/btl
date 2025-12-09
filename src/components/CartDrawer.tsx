@@ -253,7 +253,7 @@
 
 'use client'
 import { useCart } from '@/context/CartContext'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { X, Tag, Check, Shield, Lock, Loader2 } from 'lucide-react'
 import TrustBadges from './TrustBadges'
 import { showErrorToast, showSuccessToast } from './ErrorBoundary'
@@ -283,6 +283,30 @@ export default function EnhancedCartDrawer({ isOpen, onClose }: CartDrawerProps)
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     return emailRegex.test(email)
   }
+
+  // Recalculate promo discount when cart total changes
+  useEffect(() => {
+    if (promoStatus === 'valid' && promoCode) {
+      // Re-validate the promo code with the new total
+      const recalculateDiscount = async () => {
+        try {
+          const res = await fetch('/api/validate-promo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code: promoCode, totalCents: total })
+          })
+          const data = await res.json()
+          if (data.valid) {
+            setPromoDiscount(data.discount)
+            setPromoDescription(data.description)
+          }
+        } catch (error) {
+          console.error('Failed to recalculate promo discount:', error)
+        }
+      }
+      recalculateDiscount()
+    }
+  }, [total, promoStatus, promoCode])
 
   const validatePromoCode = async () => {
     if (!promoCode.trim()) return

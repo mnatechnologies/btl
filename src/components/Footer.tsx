@@ -43,10 +43,10 @@ const Footer = () => {
             <div className="flex-1 flex flex-col items-center md:items-end w-full md:w-auto">
               <h3 className="text-xs font-semibold tracking-wider uppercase text-primary-foreground/80 mb-4">Follow us</h3>
               <div className="flex space-x-6">
-                <Link href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/70 hover:text-primary-foreground transition-colors" aria-label="Instagram">
+                <Link href="https://instagram.com/builtolastclothing" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/70 hover:text-primary-foreground transition-colors" aria-label="Instagram">
                   <SiInstagram className="h-6 w-6" />
                 </Link>
-                <Link href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/70 hover:text-primary-foreground transition-colors" aria-label="TikTok">
+                <Link href="https://tiktok.com/@builttolastclothing" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/70 hover:text-primary-foreground transition-colors" aria-label="TikTok">
                   <SiTiktok className="h-6 w-6" />
                 </Link>
                   <Link href="https://www.facebook.com/btlclothing" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/70 hover:text-primary-foreground transition-colors" aria-label="TikTok">
