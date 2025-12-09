@@ -550,11 +550,6 @@ export default function EnhancedCartDrawer({ isOpen, onClose }: CartDrawerProps)
                     <span className="font-medium">${(calculateGST(total).gstAmount / 100).toFixed(2)}</span>
                   </div>
 
-                  <div className="flex justify-between text-sm">
-                    <span className="text-neutral-600 dark:text-neutral-400">Subtotal (inc GST)</span>
-                    <span className="font-medium">${totalFormatted}</span>
-                  </div>
-
                   {promoDiscount > 0 && (
                     <div className="flex justify-between text-sm text-green-600">
                       <span>Discount</span>
