@@ -22,7 +22,7 @@ const TopBanner = () => {
       <div className="relative z-10 flex items-center justify-center h-full px-4">
         <div className="text-center">
           <p className="text-primary-foreground/80 text-s mt-1">
-            Get $15 off your order with Promo Code: BTL15
+            Get 15% off your order with Promo Code: BTL15
           </p>
         </div>
 
