@@ -3,14 +3,14 @@ import Link from "next/link";
 
 const About = () => {
     return (
-        <section id="about" className="py-10 bg-black mx-auto">
+        <section id="about" className="py-10 bg-white dark:bg-black mx-auto">
             <div className=" max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <div className="space-y-12  fade-up">
                     <div className="space-y-6">
-                        <h2 className="text-4xl sm:text-5xl font-display font-bold text-white">
+                        <h2 className="text-4xl sm:text-5xl font-display font-bold text-black dark:text-white">
                             Our Philosophy
                         </h2>
-                        <p className="text-xl text-white  leading-relaxed max-w-3xl mx-auto">
+                        <p className="text-xl text-black dark:text-white  leading-relaxed max-w-3xl mx-auto">
                             In a world of fast fashion and disposable clothing, we believe in creating
                             pieces that stand the test of time. Every BTL garment is meticulously crafted
                             with premium materials and timeless design.
@@ -22,9 +22,9 @@ const About = () => {
                             {/*<div className="w-16 h-16 bg-brand-charcoal mx-auto flex items-center justify-center transition-all duration-300 hover:scale-110 hover:rotate-12 hover:shadow-xl cursor-pointer">*/}
                             {/*    <div className="w-8 h-8 border-2 border-white"></div>*/}
                             {/*</div>*/}
-                            <Spool className="w-16 h-16 mx-auto text-white"/>
-                            <h3 className="text-lg font-medium text-white">Quality</h3>
-                            <p className="text-white text-sm leading-relaxed">
+                            <Spool className="w-16 h-16 mx-auto text-black dark:text-white"/>
+                            <h3 className="text-lg font-medium text-black dark:text-white">Quality</h3>
+                            <p className="text-black/80 dark:text-white text-sm leading-relaxed">
                                 Premium organic cotton and reinforced construction ensure longevity.
                             </p>
                         {/*    For future reference, in case needed*/}
@@ -37,9 +37,9 @@ const About = () => {
                             {/*<div className="w-16 h-16 bg-brand-charcoal mx-auto flex items-center justify-center transition-all duration-300 hover:scale-110 hover:rotate-12 hover:shadow-xl cursor-pointer">*/}
                             {/*    <div className="w-8 h-8 bg-white"></div>*/}
                             {/*</div>*/}
-                            <Shirt className="w-16 h-16 mx-auto text-white"/>
-                            <h3 className="text-lg font-medium text-white">Minimalism</h3>
-                            <p className="text-white text-sm leading-relaxed">
+                            <Shirt className="w-16 h-16 mx-auto text-black dark:text-white"/>
+                            <h3 className="text-lg font-medium text-black dark:text-white">Minimalism</h3>
+                            <p className="text-black/80 dark:text-white text-sm leading-relaxed">
                                 Clean lines and timeless design that transcends seasonal trends.
                             </p>
                             {/*    For future reference, in case needed*/}
@@ -53,9 +53,9 @@ const About = () => {
                             {/*transition-all duration-300 hover:scale-110 hover:rotate-12 hover:shadow-xl cursor-pointer">*/}
                             {/*    <div className="w-8 h-8 border border-white bg-transparent"></div>*/}
                             {/*</div>*/}
-                            <Leaf className="w-16 h-16 mx-auto text-white"/>
-                            <h3 className="text-lg font-medium text-white">Sustainability</h3>
-                            <p className="text-white text-sm leading-relaxed">
+                            <Leaf className="w-16 h-16 mx-auto text-black dark:text-white"/>
+                            <h3 className="text-lg font-medium text-black dark:text-white">Sustainability</h3>
+                            <p className="text-black/80 dark:text-white text-sm leading-relaxed">
                                 Ethically sourced materials and responsible manufacturing practices.
                             </p>
                             {/*    For future reference, in case needed*/}

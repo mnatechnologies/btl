@@ -33,55 +33,55 @@ export default function ContactPage() {
   }
 
   return (
-    <main className="bg-black">
-        <div className="max-w-2xl py-4 mx-auto">
-          <h1 className="text-3xl font-semibold mb-6 text-white">Contact Us</h1>
-          <p className="text-muted-foreground mb-8">Have a question about an order or our products? Send us a message and we&#39;ll get back to you.</p>
+    <main className="bg-white dark:bg-black">
+        <div className="max-w-2xl py-4 mx-auto px-4">
+          <h1 className="text-3xl font-semibold mb-6 text-black dark:text-white">Contact Us</h1>
+          <p className="text-black/70 dark:text-white/80 mb-8">Have a question about an order or our products? Send us a message and we&#39;ll get back to you.</p>
 
           <form onSubmit={onSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm text-white mb-1">Name</label>
+              <label className="block text-sm text-black dark:text-white mb-1">Name</label>
               <input
                 type="text"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full font-display text-black bg-white border border-black px-3 py-2"
+                className="w-full font-display text-black dark:text-white bg-white dark:bg-neutral-800 border border-black dark:border-neutral-700 px-3 py-2 rounded"
                 placeholder="Your name"
               />
             </div>
             <div>
-              <label className="block text-white text-sm mb-1">Email</label>
+              <label className="block text-black dark:text-white text-sm mb-1">Email</label>
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full font-display text-black bg-white border border-black px-3 py-2"
+                className="w-full font-display text-black dark:text-white bg-white dark:bg-neutral-800 border border-black dark:border-neutral-700 px-3 py-2 rounded"
                 placeholder="you@example.com"
               />
             </div>
             <div>
-              <label className="block text-sm text-white mb-1">Message</label>
+              <label className="block text-sm text-black dark:text-white mb-1">Message</label>
               <textarea
                 required
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                className="w-full bg-white text-black font-display border border-black px-3 py-2 min-h-[140px]"
+                className="w-full bg-white dark:bg-neutral-800 text-black dark:text-white font-display border border-black dark:border-neutral-700 px-3 py-2 min-h-[140px] rounded"
                 placeholder="How can we help?"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="cursor-pointer border  rounded bg-black text-white px-4 py-2 disabled:opacity-60"
+              className="cursor-pointer border border-black dark:border-white rounded bg-black dark:bg-white text-white dark:text-black px-4 py-2 disabled:opacity-60 hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors"
             >
               {loading ? "Sending…" : "Send message"}
             </button>
           </form>
 
           {status && (
-            <div className={`mt-4 text-sm ${status.ok ? "text-green-600" : "text-red-600"}`}>
+            <div className={`mt-4 text-sm ${status.ok ? "text-green-600 dark:text-green-500" : "text-red-600 dark:text-red-500"}`}>
               {status.msg}
             </div>
           )}

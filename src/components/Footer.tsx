@@ -34,7 +34,7 @@ const Footer = () => {
               <ul className="mt-4 space-y-3 text-sm text-primary-foreground/70">
                 <li><Link href="/account" className="hover:text-primary-foreground transition-colors">Track order</Link></li>
                 <li><Link href="/returns" className="hover:text-primary-foreground transition-colors">Returns and Exchanges</Link></li>
-                <li><Link href="/contact" className="hover:text-primary-foreground transition-colors">Shipping</Link></li>
+                <li><Link href="/shipping" className="hover:text-primary-foreground transition-colors">Shipping</Link></li>
                 <li><Link href="/contact" className="hover:text-primary-foreground transition-colors">Contact us</Link></li>
               </ul>
             </div>

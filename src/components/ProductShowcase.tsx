@@ -7,6 +7,7 @@ import {Product, ProductVariant} from "@/types/Product";
 import SizeChart from "./SizeChart";
 import TrustBadges from "@/components/TrustBadges";
 import {isProductComingSoon} from "@/lib/products";
+import {showErrorToast, showSuccessToast} from "./ErrorBoundary";
 
 interface ProductShowcaseProps {
     product: Product;
@@ -17,6 +18,9 @@ interface ProductShowcaseProps {
 const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
     const {addItem} = useCart();
     const router = useRouter();
+
+    const SIZE_ORDER = ["XXS", "XS", "S", "M", "L", "XL"];
+
     const [selectedColor, setSelectedColor] = useState(() => {
         // Initialize selected color from initialColor or first available color
         const availableColors = [...new Set(product.variants.map(v => v.color))];
@@ -25,8 +29,26 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
         }
         return availableColors[0] || "Black";
     });
+
     const [isLoading, setIsLoading] = useState(true);
-    const [selectedSize, setSelectedSize] = useState("M");
+
+    // Initialize with first available size for the selected color
+    const [selectedSize, setSelectedSize] = useState(() => {
+        const initialColorValue = initialColor && [...new Set(product.variants.map(v => v.color))].includes(initialColor)
+            ? initialColor
+            : [...new Set(product.variants.map(v => v.color))][0] || "Black";
+
+        const sizes = [
+            ...new Set(
+                product.variants
+                    .filter(v => v.color === initialColorValue)
+                    .map(v => v.size)
+            )
+        ].sort((a, b) => SIZE_ORDER.indexOf(a) - SIZE_ORDER.indexOf(b));
+
+        return sizes[0] || "M";
+    });
+
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isSizeChartOpen, setIsSizeChartOpen] = useState(false);
     const prevInitialColorRef = useRef<string | undefined>(initialColor);
@@ -53,8 +75,6 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
 
     // Get available colors and sizes from product variants
     const availableColors = [...new Set(product.variants.map(v => v.color))];
-
-    const SIZE_ORDER = ["XXS", "XS", "S", "M", "L", "XL"];
 
     const availableSizes = [
         ...new Set(
@@ -95,6 +115,19 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
         setSelectedColor(colorName);
         setCurrentImageIndex(0);
 
+        // Auto-select first available size for the new color
+        const sizes = [
+            ...new Set(
+                product.variants
+                    .filter(v => v.color === colorName)
+                    .map(v => v.size)
+            )
+        ].sort((a, b) => SIZE_ORDER.indexOf(a) - SIZE_ORDER.indexOf(b));
+
+        if (sizes.length > 0) {
+            setSelectedSize(sizes[0]);
+        }
+
         const currentUrl = new URL(window.location.href);
         currentUrl.searchParams.set('color', colorName);
         router.replace(currentUrl.pathname + currentUrl.search);
@@ -102,32 +135,20 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
 
     const handleAddToCart = () => {
         if (!selectedSize) {
-            console.log({
-                title: "Please select a size",
-                description: "You need to choose a size before adding to cart.",
-                variant: "destructive",
-            });
+            showErrorToast("Please select a size before adding to cart");
             return;
         }
 
         const variant = getCurrentVariant();
-        
+
         if (!variant) {
-            console.log({
-                title: "Variant not available",
-                description: "This size/color combination is not available.",
-                variant: "destructive",
-            });
+            showErrorToast("This size/color combination is not available");
             return;
         }
 
         // Check inventory
         if (variant.inventory <= 0) {
-            console.log({
-                title: "Out of stock",
-                description: "This item is currently out of stock.",
-                variant: "destructive",
-            });
+            showErrorToast("This item is currently out of stock");
             return;
         }
 
@@ -141,11 +162,7 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
             sku: variant.sku,
         });
 
-        console.log(
-            "Added to cart:",
-            `${product.name} — ${selectedColor} / ${selectedSize}`,
-            variant.sku
-        );
+        showSuccessToast(`Added ${product.name} to cart`);
     };
 
     // Get color display values for UI
@@ -326,7 +343,7 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
                                             className={`cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95
                                                 px-2 py-1.5 text-sm border ${
                                                 selectedSize === size
-                                                    ? "bg-brand-charcoal text-white dark:text-white  border-brand-charcoal"
+                                                    ? "bg-black text-white dark:bg-white dark:text-black  border-brand-charcoal"
                                                     : isOutOfStock
                                                         ? "bg-transparent text-gray-600 border-gray-700 cursor-not-allowed"
                                                         : "bg-transparent text-black dark:text-white  border-border hover:border-brand-charcoal"
@@ -343,7 +360,7 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
                         {/* Add to Cart */}
                         <div className="space-y-4 pt-4">
                             <button
-                                className=" cursor-pointer w-full py-3 px-6 bg-brand-charcoal border border-white text-white  hover:bg-opacity-90 transition-colors hover-lift"
+                                className=" cursor-pointer w-full py-3 px-6 bg-brand-charcoal border border-white text-white  hover:text-black hover:bg-opacity-90 transition-colors hover-lift"
                                 onClick={handleAddToCart}
                             >
                                 Add to Cart - ${(getCurrentVariant()?.price || product.basePrice).toFixed(2)}
