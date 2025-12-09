@@ -34,8 +34,8 @@ export default function ContactPage() {
 
   return (
     <main className="bg-black">
-        <div className="max-w-2xl py-4 py-10 mx-auto">
-          <h1 className="text-3xl font-semibold mb-6 text-white dark:text-black">Contact Us</h1>
+        <div className="max-w-2xl py-4 mx-auto">
+          <h1 className="text-3xl font-semibold mb-6 text-white">Contact Us</h1>
           <p className="text-muted-foreground mb-8">Have a question about an order or our products? Send us a message and we&#39;ll get back to you.</p>
 
           <form onSubmit={onSubmit} className="space-y-4">
