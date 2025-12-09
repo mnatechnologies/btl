@@ -7,6 +7,7 @@ import WelcomeOffer from "../components/WelcomeOffer";
 import LaunchGate from "../components/LaunchGate";
 import Providers from "./providers";
 import CookieConsent from "@/components/CookieConsent";
+import TopBanner from "@/components/TopBanner";
 import Script from 'next/script'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Analytics } from '@vercel/analytics/next'
@@ -80,6 +81,7 @@ export default function RootLayout({
     <Providers>
         <LaunchGate>
             <Header/>
+          <TopBanner />
             <WelcomeOffer/>
             <div className="flex-grow">
                 {children}
