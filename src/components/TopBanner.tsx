@@ -20,16 +20,17 @@ const TopBanner = () => {
 
       {/* Content */}
       <div className="relative z-10 flex items-center justify-center h-full px-4">
-        <div className="text-center">
-          <p className="text-primary-foreground/80 text-s mt-1">
-            Get 15% off your order with Promo Code: BTL15
+        <div className="text-center pr-8">
+          <p className="text-primary-foreground/80 text-xs sm:text-sm">
+            <span className="hidden sm:inline">Get 15% off your order with Promo Code: BTL15</span>
+            <span className="sm:hidden">15% off with code: BTL15</span>
           </p>
         </div>
 
         {/* Close Button */}
         <button
           onClick={() => setIsVisible(false)}
-          className="absolute right-4 top-1/2 -translate-y-1/2 text-primary-foreground/60 hover:text-primary-foreground transition-colors"
+          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 text-primary-foreground/60 hover:text-primary-foreground transition-colors"
           aria-label="Close banner"
         >
           <X className="h-4 w-4" />

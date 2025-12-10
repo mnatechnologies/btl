@@ -561,8 +561,11 @@ export default function EnhancedCartDrawer({ isOpen, onClose }: CartDrawerProps)
                     <span className="text-lg font-semibold">Total (inc GST)</span>
                     <span className="text-lg font-semibold">${discountedTotalFormatted}</span>
                   </div>
+                </div>
 
-
+                {/* Trust Badges - Now in scrollable area */}
+                <div className="pt-4 border-t border-neutral-200 dark:border-neutral-800">
+                  <TrustBadges variant='checkout' />
                 </div>
               </div>
             )}
@@ -614,11 +617,6 @@ export default function EnhancedCartDrawer({ isOpen, onClose }: CartDrawerProps)
                     </>
                   )}
                 </button>
-
-                {/* Payment Methods Preview */}
-                <div className="flex items-center justify-center gap-2 mt-3">
-                  <TrustBadges variant='checkout' />
-                </div>
               </div>
 
               {/* Clear Cart Link */}

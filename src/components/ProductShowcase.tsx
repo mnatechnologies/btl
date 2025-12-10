@@ -153,6 +153,7 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
         }
 
         // Add to cart (price in cents)
+        // Note: Success toast is shown by CartContext.addItem
         addItem({
             id: variant.id,
             title: `${product.name} — ${selectedColor} / ${selectedSize}`,
@@ -161,8 +162,6 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
             quantity: 1,
             sku: variant.sku,
         });
-
-        showSuccessToast(`Added ${product.name} to cart`);
     };
 
     // Get color display values for UI
@@ -341,7 +340,7 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
                                             onClick={() => !isOutOfStock && setSelectedSize(size)}
                                             disabled={isOutOfStock}
                                             className={`cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95
-                                                px-2 py-1.5 text-sm border ${
+                                                px-2 py-1.5 text-sm border text-center flex items-center justify-center ${
                                                 selectedSize === size
                                                     ? "bg-black text-white dark:bg-white dark:text-black  border-brand-charcoal"
                                                     : isOutOfStock
