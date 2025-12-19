@@ -340,7 +340,7 @@ export async function getProductSizes(productId: string, color: string): Promise
 }
 
 export function isProductComingSoon(productName: string): boolean {
-  const comingSoonProducts = ['monolith'];
+  const comingSoonProducts: string[] = [];
   return comingSoonProducts.some(name =>
     productName.toLowerCase().includes(name)
   );
