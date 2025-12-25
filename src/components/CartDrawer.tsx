@@ -258,6 +258,8 @@ import { X, Tag, Check, Shield, Lock, Loader2 } from 'lucide-react'
 import TrustBadges from './TrustBadges'
 import { showErrorToast, showSuccessToast } from './ErrorBoundary'
 import { calculateGST } from '@/lib/gst'
+import { isSaleActive, getSalePrice, getDiscountPercent } from '@/lib/saleConfig'
+
 
 type CartDrawerProps = {
   isOpen: boolean
@@ -274,9 +276,18 @@ export default function EnhancedCartDrawer({ isOpen, onClose }: CartDrawerProps)
   const [promoDescription, setPromoDescription] = useState('')
   const [emailError, setEmailError] = useState('')
   const hasItems = items.length > 0
+  const saleActive = isSaleActive()
+  const discountPercent = getDiscountPercent()
 
-  const totalFormatted = useMemo(() => (total / 100).toFixed(2), [total])
-  const discountedTotal = useMemo(() => Math.max(0, total - promoDiscount), [total, promoDiscount])
+  const saleTotal = useMemo(() => {
+    if (!saleActive) return total
+    return items.reduce((sum, i) => sum + getSalePrice(i.price) * i.quantity, 0)
+  }, [items, total, saleActive])
+
+  const totalFormatted = useMemo(() => (total / 100).toFixed(2), [total]) // original
+  const saleTotalFormatted = useMemo(() => (saleTotal / 100).toFixed(2), [saleTotal]) // discounted
+
+  const discountedTotal = useMemo(() => Math.max(0, saleTotal - promoDiscount), [saleTotal, promoDiscount])
   const discountedTotalFormatted = useMemo(() => (discountedTotal / 100).toFixed(2), [discountedTotal])
 
   const validateEmail = (email: string): boolean => {
@@ -460,8 +471,21 @@ export default function EnhancedCartDrawer({ isOpen, onClose }: CartDrawerProps)
                       )}
                       <div className="flex-1 min-w-0">
                         <div className="font-medium truncate text-sm">{item.title}</div>
-                        <div className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
-                          ${(item.price / 100).toFixed(2)}
+                        <div className="text-sm mt-1">
+                          {saleActive ? (
+                            <div className="flex items-center gap-2">
+                              <span className="text-neutral-400 font-medium">
+                                ${(getSalePrice(item.price) / 100).toFixed(2)}
+                              </span>
+                              <span className="text-neutral-400 line-through text-xs">
+                                ${(item.price / 100).toFixed(2)}
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-neutral-500 dark:text-neutral-400">
+                              ${(item.price / 100).toFixed(2)}
+                            </span>
+                          )}
                         </div>
                       </div>
                       <div className="flex flex-col items-end gap-2">
@@ -540,19 +564,34 @@ export default function EnhancedCartDrawer({ isOpen, onClose }: CartDrawerProps)
 
                 {/* Totals with GST Breakdown */}
                 <div className="pt-4 border-t border-neutral-200 dark:border-neutral-800 space-y-2">
+                  {saleActive && (
+                    <>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-neutral-600 dark:text-neutral-400">Original Price</span>
+                        <span className="font-medium line-through text-neutral-400">
+                          ${(total / 100).toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm text-neutral-600 dark:text-neutral-400">
+                        <span>Boxing Day Discount ({discountPercent}%)</span>
+                        <span>-${((total - saleTotal) / 100).toFixed(2)}</span>
+                      </div>
+                    </>
+                  )}
+
                   <div className="flex justify-between text-sm">
                     <span className="text-neutral-600 dark:text-neutral-400">Subtotal (ex GST)</span>
-                    <span className="font-medium">${(calculateGST(total).totalExGst / 100).toFixed(2)}</span>
+                    <span className="font-medium">${(calculateGST(discountedTotal).totalExGst / 100).toFixed(2)}</span>
                   </div>
 
                   <div className="flex justify-between text-sm">
                     <span className="text-neutral-600 dark:text-neutral-400">GST (10%)</span>
-                    <span className="font-medium">${(calculateGST(total).gstAmount / 100).toFixed(2)}</span>
+                    <span className="font-medium">${(calculateGST(discountedTotal).gstAmount / 100).toFixed(2)}</span>
                   </div>
 
                   {promoDiscount > 0 && (
                     <div className="flex justify-between text-sm text-green-600">
-                      <span>Discount</span>
+                      <span>Promo Discount</span>
                       <span>-${(promoDiscount / 100).toFixed(2)}</span>
                     </div>
                   )}

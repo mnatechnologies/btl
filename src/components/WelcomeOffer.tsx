@@ -2,6 +2,7 @@
 import {useState, useEffect} from 'react';
 import { X } from 'lucide-react';
 import Image from 'next/image';
+import { getSaleConfig } from "@/lib/saleConfig";
 
 const LS_KEY = 'welcomeOfferDismissedAt';
 
@@ -9,6 +10,8 @@ export default function WelcomeOffer() {
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const sale = getSaleConfig()
+
 
   useEffect(() => {
     try {
@@ -89,42 +92,81 @@ export default function WelcomeOffer() {
 
         <div className="space-y-4">
           <div>
-              <div>
-                  <Image
-                      src="/images/btl-logo-black.jpg"
-                      alt="Built To Last Logo"
-                      width={100}
-                      height={100}
-                      className="mx-auto mb-4" />
-              </div>
-            <h2 className="text-2xl font-display font-bold mb-2">Welcome to Built To Last</h2>
-            <p className="text-sm text-neutral-600">Join our mailing list for exclusive updates</p>
+            <div>
+              <Image
+                  src="/images/btl-logo-black.jpg"
+                  alt="Built To Last Logo"
+                  width={100}
+                  height={100}
+                  className="mx-auto mb-4"
+              />
+            </div>
+
+            {sale.isActive ? (
+                <>
+                  <div className="bg-brand-charcoal text-white py-2 px-4 -mx-8 mb-4">
+                    <p className="text-center text-lg font-bold tracking-wide">
+                      BOXING DAY SALE
+                    </p>
+                  </div>
+                  <h2 className="text-3xl font-display font-bold mb-2 text-red-600">
+                    50% OFF
+                  </h2>
+                  <p className="text-lg font-medium text-neutral-800">
+                    ALL PRODUCTS
+                  </p>
+                  <p className="text-sm text-neutral-600 mt-2">
+                    Today only! No code needed.
+                  </p>
+                </>
+            ) : (
+                <>
+                  <h2 className="text-2xl font-display font-bold mb-2">
+                    Welcome to Built To Last
+                  </h2>
+                  <p className="text-sm text-neutral-600">
+                    Join our mailing list for exclusive updates
+                  </p>
+                </>
+            )}
           </div>
 
-          {submitted ? (
-            <div className="text-center py-4">
-              <p className="text-green-600 font-medium">Thank you for subscribing!</p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="your@email.com"
-                  className="w-full border border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/50"
-                />
-              </div>
-              <button
-                type="submit"
-                className="cursor-pointer w-full bg-black text-white py-2 font-medium hover:bg-neutral-800 transition-colors"
-              >
-                Subscribe
-              </button>
+          {/* Only show email form if NOT during sale */}
+          {!sale.isActive && (
+              submitted ? (
+                  <div className="text-center py-4">
+                    <p className="text-green-600 font-medium">Thank you for subscribing!</p>
+                  </div>
+              ) : (
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                      <input
+                          type="email"
+                          required
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="your@email.com"
+                          className="w-full border border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/50"
+                      />
+                    </div>
+                    <button
+                        type="submit"
+                        className="cursor-pointer w-full bg-black text-white py-2 font-medium hover:bg-neutral-800 transition-colors"
+                    >
+                      Subscribe
+                    </button>
+                  </form>
+              )
+          )}
 
-            </form>
+          {/* Show shop button during sale */}
+          {sale.isActive && (
+              <button
+                  onClick={handleClose}
+                  className="cursor-pointer w-full bg-brand-charcoal text-white py-3 font-bold hover:bg-black transition-colors text-lg"
+              >
+                SHOP NOW
+              </button>
           )}
         </div>
       </div>

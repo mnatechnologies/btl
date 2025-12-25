@@ -4,6 +4,8 @@ import { supabaseAdmin } from '@/lib/supabaseServer'
 import { CartItem } from '@/context/CartContext'
 import { getPromoCode } from '@/lib/promoCodes'
 import { checkCSRF } from '@/lib/csrf'
+import { isSaleActive, getSalePrice, getDiscountPercent } from '@/lib/saleConfig'
+
 
 // Get or create a Stripe coupon for the promo code
 async function getOrCreateCoupon(stripe: Stripe, code: string): Promise<string | null> {
@@ -91,17 +93,28 @@ export async function POST(req: NextRequest) {
     }
 
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
+    const saleActive = isSaleActive()
+    const discountPercent = getDiscountPercent()
+    const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = items.map((i) => {
+      const unitAmount = saleActive ? getSalePrice(i.price) : i.price
 
-    const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = items.map((i) => ({
-      quantity: i.quantity || 1,
-      price_data: {
-        currency: 'aud',
-        unit_amount: i.price, // in cents
-        product_data: {
-          name: i.title || 'Item',
+      return {
+        quantity: i.quantity || 1,
+        price_data: {
+          currency: 'aud',
+          unit_amount: unitAmount, // Apply sale discount
+          product_data: {
+            name: saleActive
+              ? `${i.title || 'Item'} (${discountPercent}% OFF)`
+              : (i.title || 'Item'),
+            // Optionally show original price in description
+            ...(saleActive && {
+              description: `Original price: $${(i.price / 100).toFixed(2)}`
+            })
+          },
         },
-      },
-    }))
+      }
+    })
 
     // Get coupon ID if promo code is valid
     let couponId: string | null = null
@@ -147,7 +160,11 @@ export async function POST(req: NextRequest) {
     // Insert provisional order (optional, requires service role and table)
     try {
       if (supabaseAdmin) {
-        const total = items.reduce((s, i) => s + i.price * i.quantity, 0)
+        const rawTotal = items.reduce((s, i) => s + i.price * i.quantity, 0)
+        const total = saleActive
+          ? items.reduce((s, i) => s + getSalePrice(i.price) * i.quantity, 0)
+          : rawTotal
+
         await supabaseAdmin.from('orders').insert({
           stripe_session_id: session.id,
           status: 'created',
@@ -156,6 +173,12 @@ export async function POST(req: NextRequest) {
           shipping_name: name || null,
           shipping_phone: phone || null,
           items,
+          // Optional: track sale info
+          metadata: saleActive ? {
+            sale_applied: true,
+            discount_percent: discountPercent,
+            original_total_cents: rawTotal
+          } : null
         })
       }
     } catch (e) {

@@ -6,6 +6,8 @@ import { X, ShoppingBag, Check } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
 import { getProductByHandle, isProductComingSoon } from '@/lib/products'
 import { Product, ProductVariant } from '@/types/Product'
+import { isSaleActive, getSalePriceFromDollars, getDiscountPercent } from '@/lib/saleConfig'
+
 
 interface QuickViewProps {
   isOpen: boolean
@@ -24,6 +26,17 @@ export default function QuickView({ isOpen, onClose, productHandle, selectedColo
   const [loading, setLoading] = useState(false)
   const [added, setAdded] = useState(false)
   const isComingSoon = product ? isProductComingSoon(product.name) : false;
+  const saleActive = isSaleActive()
+  const discountPercent = getDiscountPercent();
+
+  const getCurrentPrice = () => {
+    const basePrice = selectedVariant?.price || product?.basePrice || 0
+    return saleActive ? getSalePriceFromDollars(basePrice) : basePrice
+  }
+
+  const getOriginalPrice = () => {
+    return selectedVariant?.price || product?.basePrice || 0
+  }
 
 
   const fetchProduct = useCallback(async () => {
@@ -121,9 +134,21 @@ export default function QuickView({ isOpen, onClose, productHandle, selectedColo
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-lg truncate">{product.name}</h3>
                   <p className="text-neutral-500 dark:text-neutral-400 text-sm">{selectedColor}</p>
-                  <p className="font-medium mt-1">
-                    ${(selectedVariant?.price || product.basePrice).toFixed(2)}
-                  </p>
+                  <div className="mt-1">
+                    {saleActive && (
+                      <span className="inline-block bg-black text-white text-xs font-bold px-1.5 py-0.5 rounded mr-2">
+                        {discountPercent}% OFF
+                      </span>
+                    )}
+                    <span className={`font-medium ${saleActive ? 'text-red-600' : ''}`}>
+                      ${getCurrentPrice().toFixed(2)}
+                    </span>
+                    {saleActive && (
+                      <span className="ml-2 text-sm text-neutral-400 line-through">
+                        ${getOriginalPrice().toFixed(2)}
+                      </span>
+                    )}
+                  </div>
 
                   {/* Size Selector */}
                   <div className="mt-3">
@@ -187,7 +212,7 @@ export default function QuickView({ isOpen, onClose, productHandle, selectedColo
                 ) : (
                   <>
                     <ShoppingBag className="w-5 h-5" />
-                    {selectedSize ? `Add to Cart — $${(selectedVariant?.price || 0).toFixed(2)}` : 'Select a Size'}
+                    {selectedSize ? `Add to Cart — $${getCurrentPrice().toFixed(2)}` : 'Select a Size'}
                   </>
                 )}
               </button>
