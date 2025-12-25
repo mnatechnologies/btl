@@ -174,11 +174,11 @@ export async function POST(req: NextRequest) {
           shipping_phone: phone || null,
           items,
           // Optional: track sale info
-          metadata: saleActive ? {
-            sale_applied: true,
-            discount_percent: discountPercent,
-            original_total_cents: rawTotal
-          } : null
+          // metadata: saleActive ? {
+          //   sale_applied: true,
+          //   discount_percent: discountPercent,
+          //   original_total_cents: rawTotal
+          // } : null
         })
       }
     } catch (e) {
