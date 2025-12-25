@@ -20,7 +20,7 @@ const SALE_CONFIG = {
 
 export function isSaleActive(): boolean {
     const now = Date.now()
-    return now >= SALE_CONFIG.startDate && now <= SALE_CONFIG.endDate
+    return now >= SALE_CONFIG.startDate.getTime() && now <= SALE_CONFIG.endDate.getTime()
 }
 
 export function getSaleConfig(): SaleConfig {
