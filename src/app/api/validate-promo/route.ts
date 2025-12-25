@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPromoCode } from '@/lib/promoCodes'
+import { isSaleActive } from '@/lib/saleConfig'
 
 export async function POST(req: NextRequest) {
   try {
     const { code, totalCents } = await req.json()
+
+    if (isSaleActive()) {
+      return NextResponse.json({
+        valid: false,
+        error: 'Promo codes cannot be combined with Boxing Day sale'
+      })
+    }
 
     if (!code || typeof code !== 'string') {
       return NextResponse.json({ valid: false, error: 'No code provided' }, { status: 400 })
