@@ -3,22 +3,44 @@ export type SaleConfig = {
     discountPercent: number
     saleName: string
     saleMessage: string
-    startDate: Date
-    endDate: Date
+    bannerText: string
+    bannerTextMobile: string
+    modalHeader: string
+    modalSubtitle: string
+    modalNote: string
+    startDate: Date | null
+    endDate: Date | null
 }
 
-const BOXING_DAY_START = new Date('2025-12-26T00:00:00+11:00')
-const BOXING_DAY_END = new Date('2025-12-28T00:00:00+11:00')
+export type DefaultPromo = {
+    code: string
+    discountPercent: number
+}
 
 const SALE_CONFIG = {
-    discountPercent: 50,
-    saleName: 'Boxing Day Sale',
-    saleMessage: '50% off our whole range',
-    startDate: BOXING_DAY_START,
-    endDate: BOXING_DAY_END
+    discountPercent: Number(process.env.NEXT_PUBLIC_SALE_DISCOUNT_PERCENT) || 0,
+    saleName: process.env.NEXT_PUBLIC_SALE_NAME || '',
+    saleMessage: process.env.NEXT_PUBLIC_SALE_MESSAGE || '',
+    bannerText: process.env.NEXT_PUBLIC_SALE_BANNER_TEXT || '',
+    bannerTextMobile: process.env.NEXT_PUBLIC_SALE_BANNER_TEXT_MOBILE || '',
+    modalHeader: process.env.NEXT_PUBLIC_SALE_MODAL_HEADER || '',
+    modalSubtitle: process.env.NEXT_PUBLIC_SALE_MODAL_SUBTITLE || '',
+    modalNote: process.env.NEXT_PUBLIC_SALE_MODAL_NOTE || '',
+    startDate: process.env.NEXT_PUBLIC_SALE_START_DATE
+      ? new Date(process.env.NEXT_PUBLIC_SALE_START_DATE)
+      : null,
+    endDate: process.env.NEXT_PUBLIC_SALE_END_DATE
+      ? new Date(process.env.NEXT_PUBLIC_SALE_END_DATE)
+      : null,
+}
+
+const DEFAULT_PROMO: DefaultPromo = {
+    code: process.env.NEXT_PUBLIC_DEFAULT_PROMO_CODE || 'BTL15',
+    discountPercent: Number(process.env.NEXT_PUBLIC_DEFAULT_PROMO_PERCENT) || 15,
 }
 
 export function isSaleActive(): boolean {
+    if (!SALE_CONFIG.startDate || !SALE_CONFIG.endDate) return false
     const now = Date.now()
     return now >= SALE_CONFIG.startDate.getTime() && now <= SALE_CONFIG.endDate.getTime()
 }
@@ -27,8 +49,11 @@ export function getSaleConfig(): SaleConfig {
     return {
         ...SALE_CONFIG,
         isActive: isSaleActive(),
-
     }
+}
+
+export function getDefaultPromo(): DefaultPromo {
+    return DEFAULT_PROMO
 }
 
 export function getSalePrice(priceInCents: number): number {
@@ -43,4 +68,8 @@ export function getSalePriceFromDollars(priceInDollars: number): number {
 
 export function getDiscountPercent(): number {
     return isSaleActive() ? SALE_CONFIG.discountPercent : 0
+}
+
+export function getSaleName(): string {
+    return isSaleActive() ? SALE_CONFIG.saleName : ''
 }

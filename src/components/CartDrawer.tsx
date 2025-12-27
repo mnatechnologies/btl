@@ -258,7 +258,7 @@ import { X, Tag, Check, Shield, Lock, Loader2 } from 'lucide-react'
 import TrustBadges from './TrustBadges'
 import { showErrorToast, showSuccessToast } from './ErrorBoundary'
 import { calculateGST } from '@/lib/gst'
-import { isSaleActive, getSalePrice, getDiscountPercent } from '@/lib/saleConfig'
+import { isSaleActive, getSalePrice, getDiscountPercent, getSaleName } from '@/lib/saleConfig'
 
 
 type CartDrawerProps = {
@@ -278,6 +278,7 @@ export default function EnhancedCartDrawer({ isOpen, onClose }: CartDrawerProps)
   const hasItems = items.length > 0
   const saleActive = isSaleActive()
   const discountPercent = getDiscountPercent()
+  const saleName = getSaleName()
 
   const saleTotal = useMemo(() => {
     if (!saleActive) return total
@@ -573,7 +574,7 @@ export default function EnhancedCartDrawer({ isOpen, onClose }: CartDrawerProps)
                         </span>
                       </div>
                       <div className="flex justify-between text-sm text-neutral-600 dark:text-neutral-400">
-                        <span>Boxing Day Discount ({discountPercent}%)</span>
+                        <span>{saleName} ({discountPercent}%)</span>
                         <span>-${((total - saleTotal) / 100).toFixed(2)}</span>
                       </div>
                     </>

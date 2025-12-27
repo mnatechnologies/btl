@@ -103,22 +103,22 @@ export default function WelcomeOffer() {
             </div>
 
             {sale.isActive ? (
-                <>
-                  <div className="bg-brand-charcoal text-white py-2 px-4 -mx-8 mb-4">
-                    <p className="text-center text-lg font-bold tracking-wide">
-                      BOXING DAY SALE
-                    </p>
-                  </div>
-                  <h2 className="text-3xl font-display font-bold mb-2 text-red-600">
-                    50% OFF
-                  </h2>
-                  <p className="text-lg font-medium text-neutral-800">
-                    ALL PRODUCTS
+              <>
+                <div className="bg-brand-charcoal text-white py-2 px-4 -mx-8 mb-4">
+                  <p className="text-center text-lg font-bold tracking-wide">
+                    {sale.modalHeader}
                   </p>
-                  <p className="text-sm text-neutral-600 mt-2">
-                    Today only! No code needed.
-                  </p>
-                </>
+                </div>
+                <h2 className="text-3xl font-display font-bold mb-2 text-red-600">
+                  {sale.discountPercent}% OFF
+                </h2>
+                <p className="text-lg font-medium text-neutral-800">
+                  {sale.modalSubtitle}
+                </p>
+                <p className="text-sm text-neutral-600 mt-2">
+                  {sale.modalNote}
+                </p>
+              </>
             ) : (
                 <>
                   <h2 className="text-2xl font-display font-bold mb-2">

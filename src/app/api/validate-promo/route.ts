@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPromoCode } from '@/lib/promoCodes'
-import { isSaleActive } from '@/lib/saleConfig'
+import { isSaleActive, getSaleName } from '@/lib/saleConfig'
 
 export async function POST(req: NextRequest) {
   try {
@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     if (isSaleActive()) {
       return NextResponse.json({
         valid: false,
-        error: 'Promo codes cannot be combined with Boxing Day sale'
+        error: `Promo codes cannot be combined with ${getSaleName()}`
       })
     }
 
