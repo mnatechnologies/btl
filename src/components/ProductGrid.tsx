@@ -7,6 +7,8 @@ import QuickView from '@/components/QuickView'
 import { Plus } from 'lucide-react'
 import { isProductComingSoon } from '@/lib/products'
 import ComingSoonOverlay from '@/components/ComingSoonOverlay'
+import TrendingBadge from '@/components/TrendingBadge'
+import { useTrending } from '@/hooks/useTrending'
 
 type ProductItem = {
   handle: string
@@ -55,7 +57,8 @@ function GridItem({
   layout,
   onProductClick,
   onQuickAdd,
-  comingSoon
+  comingSoon,
+  isTrending
 }: {
   item: ProductItem
   size: 'large' | 'small'
@@ -63,6 +66,7 @@ function GridItem({
   onProductClick?: (p: Pick<ProductItem, 'handle' | 'title' | 'color'>) => void
   onQuickAdd?: (handle: string, color: string, image: string) => void
   comingSoon?: boolean
+  isTrending?: boolean
 }) {
   const content = (
     <GridTileImage
@@ -116,6 +120,7 @@ function GridItem({
               aria-label={`View ${item.title}`}
             >
               {content}
+              {isTrending && <TrendingBadge size={size} variant="overlay" />}
             </button>
           ) : (
             <Link
@@ -127,7 +132,7 @@ function GridItem({
               {size === 'large' && (
                 <div className="absolute inset-0 bg-black/15" />
               )}
-
+              {isTrending && <TrendingBadge size={size} variant="overlay" />}
             </Link>
           )}
           {onQuickAdd && (
@@ -149,6 +154,7 @@ function GridItem({
 export default function ProductGrid({ groups, layout = 'left-large', onProductClick }: ProductGridProps) {
   const [quickViewOpen, setQuickViewOpen] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState<{ handle: string; color: string; image: string } | null>(null)
+  const { isTrending } = useTrending()
 
   const openQuickView = (handle: string, color: string, image: string) => {
     setSelectedProduct({ handle, color, image })
@@ -216,6 +222,7 @@ export default function ProductGrid({ groups, layout = 'left-large', onProductCl
                       onProductClick={onProductClick}
                       onQuickAdd={openQuickView}
                       comingSoon={comingSoon}
+                      isTrending={isTrending(item.handle, item.color)}
                     />
                   ))}
                   {/* Empty spacer column */}
@@ -228,6 +235,7 @@ export default function ProductGrid({ groups, layout = 'left-large', onProductCl
                     onProductClick={onProductClick}
                     onQuickAdd={openQuickView}
                     comingSoon={comingSoon}
+                    isTrending={isTrending(firstItem.handle, firstItem.color)}
                   />
                 </>
               ) : (
@@ -240,6 +248,7 @@ export default function ProductGrid({ groups, layout = 'left-large', onProductCl
                     onProductClick={onProductClick}
                     onQuickAdd={openQuickView}
                     comingSoon={comingSoon}
+                    isTrending={isTrending(firstItem.handle, firstItem.color)}
                   />
                   {/* Empty spacer column */}
                   <div className="hidden md:block row-span-3" />
@@ -253,6 +262,7 @@ export default function ProductGrid({ groups, layout = 'left-large', onProductCl
                       onProductClick={onProductClick}
                       onQuickAdd={openQuickView}
                       comingSoon={comingSoon}
+                      isTrending={isTrending(item.handle, item.color)}
                     />
                   ))}
                 </>
