@@ -9,6 +9,8 @@ import TrustBadges from "@/components/TrustBadges";
 import {isProductComingSoon} from "@/lib/products";
 import {showErrorToast, showSuccessToast} from "./ErrorBoundary";
 import { isSaleActive, getSalePriceFromDollars, getDiscountPercent} from "@/lib/saleConfig";
+import TrendingBadge from "@/components/TrendingBadge";
+import { useTrending } from "@/hooks/useTrending";
 
 interface ProductShowcaseProps {
   product: Product;
@@ -21,6 +23,7 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
   const router = useRouter();
   const saleActive = isSaleActive()
   const discountPercent = getDiscountPercent()
+  const { isTrending } = useTrending()
 
   const getCurrentPrice = () => {
     const basePrice = getCurrentVariant()?.price || product.basePrice
@@ -293,13 +296,16 @@ const ProductShowcase = ({product, initialColor}: ProductShowcaseProps) => {
           {/* Product Details */}
           <div className="space-y-6 fade-up">
             <div className="space-y-4">
-              {product.featured && (
-                <div className="inline-flex">
-                  <span className="px-4 py-1.5 border border-black dark:border-white text-black  dark:text-white text-xs font-semibold uppercase tracking-wider transition-colors hover:bg-brand-charcoal hover:text-white">
+              <div className="flex flex-wrap gap-2">
+                {product.featured && (
+                  <span className="px-4 py-1.5 border border-black dark:border-white text-black dark:text-white text-xs font-semibold uppercase tracking-wider transition-colors hover:bg-brand-charcoal hover:text-white">
                     New Release
                   </span>
-                </div>
-              )}
+                )}
+                {isTrending(product.name.toLowerCase().replace(/\s+/g, '-'), selectedColor) && (
+                  <TrendingBadge variant="inline" />
+                )}
+              </div>
 
               <h2 className="text-4xl font-display font-bold text-black dark:text-white">
                 {product.name}
