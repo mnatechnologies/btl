@@ -55,7 +55,7 @@ export async function GET() {
 
     // Filter to trending (> 3 units sold)
     const trendingPrefixes = Object.entries(salesByPrefix)
-      .filter(([, qty]) => qty > 3)
+      .filter(([, qty]) => qty > 2)
       .map(([prefix]) => prefix)
 
     if (trendingPrefixes.length === 0) {
