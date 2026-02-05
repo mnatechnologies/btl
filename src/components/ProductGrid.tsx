@@ -5,8 +5,9 @@ import Link from 'next/link'
 import { useState } from 'react'
 import QuickView from '@/components/QuickView'
 import { Plus } from 'lucide-react'
-import { isProductComingSoon } from '@/lib/products'
+import { isProductComingSoon, isProductOutOfStock } from '@/lib/products'
 import ComingSoonOverlay from '@/components/ComingSoonOverlay'
+import OutOfStockOverlay from '@/components/OutOfStockOverlay'
 import TrendingBadge from '@/components/TrendingBadge'
 import { useTrending } from '@/hooks/useTrending'
 
@@ -58,6 +59,7 @@ function GridItem({
   onProductClick,
   onQuickAdd,
   comingSoon,
+  outOfStock,
   isTrending
 }: {
   item: ProductItem
@@ -66,6 +68,7 @@ function GridItem({
   onProductClick?: (p: Pick<ProductItem, 'handle' | 'title' | 'color'>) => void
   onQuickAdd?: (handle: string, color: string, image: string) => void
   comingSoon?: boolean
+  outOfStock?: boolean
   isTrending?: boolean
 }) {
   const content = (
@@ -75,7 +78,7 @@ function GridItem({
       sizes={size === 'large' ? '(min-width: 768px) 50vw, 100vw' : '(min-width: 768px) 25vw, 100vw'}
       priority={false}
       alt={item.title}
-      showPrice={size === 'large' && !comingSoon}
+      showPrice={size === 'large' && !comingSoon && !outOfStock}
       size={size}
       label={{
         position: 'bottom',
@@ -105,6 +108,11 @@ function GridItem({
         <div className={`relative block ${aspectClass} cursor-not-allowed`}>
           {content}
           <ComingSoonOverlay size={size} />
+        </div>
+      ) : outOfStock ? (
+        <div className={`relative block ${aspectClass} cursor-not-allowed`}>
+          {content}
+          <OutOfStockOverlay size={size} />
         </div>
       ) : (
         <>
@@ -193,6 +201,7 @@ export default function ProductGrid({ groups, layout = 'left-large', onProductCl
       {groups.map((group) => {
         const [firstItem, ...restItems] = group.items
         const comingSoon = isProductComingSoon(group.name)
+        const outOfStock = isProductOutOfStock(group.name)
 
         return (
           <section key={group.handle} className="mx-auto mt-4 max-w-none w-[95vw] sm:w-[90vw] lg:w-[85vw] xl:w-[80vw] 2xl:w-[75vw] px-4 pb-4">
@@ -204,6 +213,11 @@ export default function ProductGrid({ groups, layout = 'left-large', onProductCl
               {comingSoon && (
                 <span className="px-3 py-1 bg-yellow-500 text-black text-sm font-semibold rounded">
                   Coming Soon
+                </span>
+              )}
+              {outOfStock && (
+                <span className="px-3 py-1 bg-red-600 text-white text-sm font-semibold rounded">
+                  Out of Stock
                 </span>
               )}
             </div>
@@ -222,6 +236,7 @@ export default function ProductGrid({ groups, layout = 'left-large', onProductCl
                       onProductClick={onProductClick}
                       onQuickAdd={openQuickView}
                       comingSoon={comingSoon}
+                      outOfStock={outOfStock}
                       isTrending={isTrending(item.handle, item.color)}
                     />
                   ))}
@@ -235,6 +250,7 @@ export default function ProductGrid({ groups, layout = 'left-large', onProductCl
                     onProductClick={onProductClick}
                     onQuickAdd={openQuickView}
                     comingSoon={comingSoon}
+                    outOfStock={outOfStock}
                     isTrending={isTrending(firstItem.handle, firstItem.color)}
                   />
                 </>
@@ -248,6 +264,7 @@ export default function ProductGrid({ groups, layout = 'left-large', onProductCl
                     onProductClick={onProductClick}
                     onQuickAdd={openQuickView}
                     comingSoon={comingSoon}
+                    outOfStock={outOfStock}
                     isTrending={isTrending(firstItem.handle, firstItem.color)}
                   />
                   {/* Empty spacer column */}
@@ -262,6 +279,7 @@ export default function ProductGrid({ groups, layout = 'left-large', onProductCl
                       onProductClick={onProductClick}
                       onQuickAdd={openQuickView}
                       comingSoon={comingSoon}
+                      outOfStock={outOfStock}
                       isTrending={isTrending(item.handle, item.color)}
                     />
                   ))}
