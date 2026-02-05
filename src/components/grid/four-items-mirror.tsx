@@ -3,7 +3,7 @@
 import { GridTileImage } from '@/components/grid/tile';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { getFeaturedProducts, isProductComingSoon } from '@/lib/products';
+import { getFeaturedProducts, isProductComingSoon, isProductOutOfStock } from '@/lib/products';
 import { Product } from '@/types/Product';
 import QuickView from '@/components/QuickView';
 import { Plus } from 'lucide-react';
@@ -43,6 +43,7 @@ function MirrorGridItem({
   onQuickAdd?: (handle: string, color: string, image: string) => void;
 }) {
   const isComingSoon = isProductComingSoon(item.title)
+  const isOutOfStock = isProductOutOfStock(item.title)
 
   const content = (
     <GridTileImage
@@ -51,7 +52,7 @@ function MirrorGridItem({
       sizes={size === 'large' ? '(min-width: 768px) 50vw, 100vw' : '(min-width: 768px) 25vw, 100vw'}
       priority={false}
       alt={item.title}
-      showPrice={size === 'large' && !isComingSoon}
+      showPrice={size === 'large' && !isComingSoon && !isOutOfStock}
       label={{
         position: 'bottom',
         title: item.title as string,
@@ -64,6 +65,22 @@ function MirrorGridItem({
   const spanClass = size === 'large' ? 'col-span-1 row-span-3 col-start-3 row-start-1' : 'col-span-1 row-span-1 col-start-1';
   const aspectClass = size === 'large' ? 'h-full w-full min-h-full' : 'aspect-square h-full w-full';
 
+  const badgePadding = size === 'large'
+    ? 'px-3 py-1.5 sm:px-4 sm:py-2'
+    : 'px-2 py-1 sm:px-3 sm:py-1.5';
+
+  const badgeText = size === 'large'
+    ? 'text-xs sm:text-sm'
+    : 'text-[10px] sm:text-xs';
+
+  const subText = size === 'large'
+    ? 'text-xs sm:text-sm'
+    : 'text-[10px] sm:text-xs';
+
+  const marginBottom = size === 'large'
+    ? 'mb-1 sm:mb-2'
+    : 'mb-0.5 sm:mb-1';
+
   return (
     <div className={`${spanClass} ${size === 'large' ? 'min-h-full' : ''} group relative`}>
       {isComingSoon ? (
@@ -73,10 +90,24 @@ function MirrorGridItem({
           {/* Coming Soon Overlay */}
           <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-30">
             <div className="text-center">
-            <span className="inline-block px-4 py-2 bg-yellow-500 text-black text-sm font-bold rounded mb-2">
+            <span className={`inline-block ${badgePadding} bg-yellow-500 text-black font-bold rounded ${marginBottom} ${badgeText}`}>
               COMING SOON
             </span>
-              <p className="text-white text-xs">Available Soon</p>
+              <p className={`text-white ${subText}`}>Available Soon</p>
+            </div>
+          </div>
+        </div>
+      ) : isOutOfStock ? (
+        // Non-interactive version for out of stock
+        <div className={`relative block ${aspectClass} cursor-not-allowed`}>
+          {content}
+          {/* Out of Stock Overlay */}
+          <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-30">
+            <div className="text-center">
+            <span className={`inline-block ${badgePadding} bg-red-600 text-white font-bold rounded ${marginBottom} ${badgeText}`}>
+              OUT OF STOCK
+            </span>
+              <p className={`text-white ${subText}`}>Check Back Soon</p>
             </div>
           </div>
         </div>

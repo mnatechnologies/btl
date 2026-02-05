@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import { X, ShoppingBag, Check } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
-import { getProductByHandle, isProductComingSoon } from '@/lib/products'
+import { getProductByHandle, isProductComingSoon, isProductOutOfStock } from '@/lib/products'
 import { Product, ProductVariant } from '@/types/Product'
 import { isSaleActive, getSalePriceFromDollars, getDiscountPercent } from '@/lib/saleConfig'
 
@@ -26,6 +26,7 @@ export default function QuickView({ isOpen, onClose, productHandle, selectedColo
   const [loading, setLoading] = useState(false)
   const [added, setAdded] = useState(false)
   const isComingSoon = product ? isProductComingSoon(product.name) : false;
+  const isOutOfStock = product ? isProductOutOfStock(product.name) : false;
   const saleActive = isSaleActive()
   const discountPercent = getDiscountPercent();
 
@@ -190,6 +191,12 @@ export default function QuickView({ isOpen, onClose, productHandle, selectedColo
               <div className="text-center p-4 bg-yellow-500/10 border border-yellow-500 rounded-lg">
                 <p className="text-sm font-medium text-yellow-600 dark:text-yellow-500">
                   Coming Soon
+                </p>
+              </div>
+            ) : isOutOfStock ? (
+              <div className="text-center p-4 bg-red-500/10 border border-red-500 rounded-lg">
+                <p className="text-sm font-medium text-red-600 dark:text-red-500">
+                  Out of Stock
                 </p>
               </div>
             ) : (

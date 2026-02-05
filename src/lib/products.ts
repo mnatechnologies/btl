@@ -345,3 +345,10 @@ export function isProductComingSoon(productName: string): boolean {
     productName.toLowerCase().includes(name)
   );
 }
+
+export function isProductOutOfStock(productName: string): boolean {
+  const outOfStockProducts: string[] = ['monolith', 'eternal'];
+  return outOfStockProducts.some(name =>
+    productName.toLowerCase().includes(name)
+  );
+}
